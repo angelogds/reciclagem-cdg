@@ -1,0 +1,15 @@
+<header style="background:linear-gradient(90deg,#0b8a43,#0a6b35);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:16px;">
+  <img src="/public/logo.png" alt="logo" style="height:56px;border-radius:8px;background:#fff;padding:4px;">
+  <div><h1 style="margin:0;font-size:20px;">Manutenção Reciclagem Campo do Gado</h1><small>Dashboard</small></div>
+  <nav style="margin-left:auto;">
+    <% if(user){ %>
+      <a href="/admin" style="color:#fff;margin-right:12px;">Admin</a>
+      <a href="/admin/equipamentos" style="color:#fff;margin-right:12px;">Equipamentos</a>
+      <a href="/admin/correias" style="color:#fff;margin-right:12px;">Correias</a>
+      <a href="/admin/os" style="color:#fff;margin-right:12px;">Ordens</a>
+      <a href="/admin/logout" style="color:#fff">Sair</a>
+    <% } else { %>
+      <a href="/admin/login" style="color:#fff">Entrar</a>
+    <% } %>
+  </nav>
+</header>
