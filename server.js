@@ -1,235 +1,75 @@
-
-/**
- * Manutenção Reciclagem Campo do Gado - FINAL
- * Integrated with prototype assets (if any). EJS frontend + admin + public panels.
- */
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
-const sqlite3 = require('sqlite3').verbose();
-const bodyParser = require('body-parser');
-const multer = require('multer');
-const QRCode = require('qrcode');
-const PDFDocument = require('pdfkit');
-const session = require('express-session');
-const flash = require('connect-flash');
-const bcrypt = require('bcryptjs');
-const methodOverride = require('method-override');
-require('dotenv').config();
+const express = require("express");
+const sqlite3 = require("sqlite3").verbose();
+const bodyParser = require("body-parser");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+const PDFDocument = require("pdfkit");
+const QRCode = require("qrcode");
+const cors = require("cors");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.set('view engine','ejs');
-app.set('views', path.join(__dirname,'views'));
-app.use('/public', express.static(path.join(__dirname,'public')));
-app.use('/uploads', express.static(path.join(__dirname,'uploads')));
-app.use('/prototype', express.static(path.join(__dirname,'prototype')));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 app.use(bodyParser.json());
-app.use(methodOverride('_method'));
-app.use(session({ secret: process.env.SESSION_SECRET || 'segredo-padrao', resave:false, saveUninitialized:true }));
-app.use(flash());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads/logos", express.static(path.join(__dirname, "uploads/logos")));
+app.use(express.static(path.join(__dirname, "prototype")));
 
-// locals
-app.use((req,res,next)=>{
-  res.locals.success = req.flash('success');
-  res.locals.error = req.flash('error');
-  res.locals.user = req.session.user || null;
-  next();
-});
+const upload = multer({ dest: "uploads/tmp/" });
+
+const DB_PATH = process.env.DB_PATH || "./dbdata/db.sqlite";
 
 // ensure folders
-['data','uploads','uploads/fotos','uploads/manuals','uploads/ordens','uploads/logos'].forEach(d=>{ if(!fs.existsSync(d)) fs.mkdirSync(d,{recursive:true}); });
+["uploads","uploads/logos","uploads/tmp","dbdata","uploads/equipamentos","uploads/ordens"].forEach(d => { if(!fs.existsSync(d)) fs.mkdirSync(d,{recursive:true}); });
 
-const DB_FILE = path.join(__dirname,'data','database.db');
-const db = new sqlite3.Database(DB_FILE);
+const db = new sqlite3.Database(DB_PATH);
 
 // create tables
-db.serialize(()=>{
-  db.run(`CREATE TABLE IF NOT EXISTS users ( id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE, password TEXT, role TEXT )`);
-  db.run(`CREATE TABLE IF NOT EXISTS equipamentos ( id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, modelo TEXT, setor TEXT, correias_utilizadas INTEGER DEFAULT 0, foto TEXT, manual_pdf TEXT, qr_url TEXT )`);
-  db.run(`CREATE TABLE IF NOT EXISTS correias ( id INTEGER PRIMARY KEY AUTOINCREMENT, modelo TEXT UNIQUE, quantidade INTEGER DEFAULT 0, minimo INTEGER DEFAULT 1 )`);
-  db.run(`CREATE TABLE IF NOT EXISTS ordens_servico ( id INTEGER PRIMARY KEY AUTOINCREMENT, equipamento_id INTEGER, descricao TEXT, status TEXT DEFAULT 'Aberta', foto_antes TEXT, foto_depois TEXT, aberto_em DATETIME DEFAULT CURRENT_TIMESTAMP, inicio_em DATETIME, fim_em DATETIME, tempo_minutos INTEGER DEFAULT 0, trocou_correia INTEGER DEFAULT 0 )`);
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS belts (id INTEGER PRIMARY KEY AUTOINCREMENT, model TEXT, stock INTEGER DEFAULT 0, used INTEGER DEFAULT 0, required INTEGER DEFAULT 0, equipment TEXT, last_change TEXT)`);
+  db.run(`CREATE TABLE IF NOT EXISTS movements ( id INTEGER PRIMARY KEY AUTOINCREMENT, belt_id INTEGER, quantity INTEGER, reason TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP )`);
+  db.run(`CREATE TABLE IF NOT EXISTS equipamentos ( id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, setor TEXT, correias_utilizadas INTEGER DEFAULT 0, foto_path TEXT, qr_code TEXT )`);
+  db.run(`CREATE TABLE IF NOT EXISTS ordens_servico ( id INTEGER PRIMARY KEY AUTOINCREMENT, equipamento_id INTEGER, descricao TEXT, prioridade TEXT, status TEXT DEFAULT 'Aberta', foto_antes TEXT, foto_depois TEXT, tecnico_id INTEGER, funcionario_nome TEXT, data_abertura DATETIME DEFAULT CURRENT_TIMESTAMP, data_inicio DATETIME, data_fechamento DATETIME, tempo_total INTEGER )`);
 });
 
-// seed admin
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@campodogado.com';
-const ADMIN_PASS = process.env.ADMIN_PASS || '12345';
-db.get('SELECT id FROM users WHERE email = ?', [ADMIN_EMAIL], (err,row)=>{
-  if(err) console.error(err);
-  if(!row){
-    const hash = bcrypt.hashSync(ADMIN_PASS, 10);
-    db.run('INSERT INTO users (email,password,role) VALUES (?,?,?)', [ADMIN_EMAIL, hash, 'admin']);
-    console.log('Admin user created:', ADMIN_EMAIL);
-  }
-});
-
-// seed removido para Render Free
-
-
-// multer storage (compatible)
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    if(file.fieldname === 'manual_pdf') cb(null, path.join(__dirname,'uploads','manuals'));
-    else cb(null, path.join(__dirname,'uploads','fotos'));
-  },
-  filename: function (req, file, cb) {
-    const name = Date.now() + '-' + file.originalname.replace(/\s+/g,'_');
-    cb(null, name);
-  }
-});
-const upload = multer({ storage: storage });
-
-// auth middleware
-function requireAdmin(req,res,next){
-  if(req.session.user && req.session.user.role === 'admin') return next();
-  req.flash('error','Acesso negado');
-  res.redirect('/admin/login');
+// sync belts_seed.json on every start (upsert)
+const seedPath = path.join(__dirname, 'belts_seed.json');
+if(fs.existsSync(seedPath)){
+  try{
+    const seed = JSON.parse(fs.readFileSync(seedPath,'utf8'));
+    seed.forEach(item => {
+      db.get("SELECT id FROM belts WHERE model = ? AND equipment = ?", [item.model, item.equipment], (err,row)=>{
+        if(row && row.id){
+          db.run("UPDATE belts SET stock=?, used=?, required=? WHERE id=?", [item.stock, item.used, item.required, row.id]);
+        } else {
+          db.run("INSERT INTO belts (model, stock, used, required, equipment) VALUES (?,?,?,?,?)", [item.model, item.stock, item.used, item.required, item.equipment]);
+        }
+      });
+    });
+    console.log('✅ Belts synchronized from belts_seed.json');
+  } catch(e){ console.error('Erro ao ler belts_seed.json', e); }
 }
 
-// Routes - admin auth
-app.get('/admin/login',(req,res)=> res.render('admin/login'));
-app.post('/admin/login',(req,res)=>{
-  const { email, password } = req.body;
-  db.get('SELECT * FROM users WHERE email = ?', [email], (err,user)=>{
-    if(err || !user){ req.flash('error','Credenciais inválidas'); return res.redirect('/admin/login'); }
-    if(!bcrypt.compareSync(password, user.password)){ req.flash('error','Credenciais inválidas'); return res.redirect('/admin/login'); }
-    req.session.user = { id: user.id, email: user.email, role: user.role };
-    res.redirect('/admin');
-  });
-});
-app.get('/admin/logout',(req,res)=>{ req.session.destroy(()=>res.redirect('/admin/login')); });
+// endpoints
+app.get('/api/belts', (req,res)=>{ db.all('SELECT * FROM belts ORDER BY model', [], (err,rows)=>{ if(err) return res.status(500).json({error:err.message}); res.json(rows); }); });
 
-// admin dashboard
-app.get('/admin', requireAdmin, (req,res)=>{
-  db.all('SELECT * FROM equipamentos ORDER BY id DESC', [], (err,equip)=> {
-    db.all('SELECT * FROM ordens_servico ORDER BY aberto_em DESC LIMIT 10', [], (err2,os)=> {
-      res.render('admin/dashboard', { equipamentos: equip, ordens: os });
-    });
-  });
-});
+app.post('/api/movements', (req,res)=>{ const { belt_id, quantity } = req.body; db.get('SELECT stock FROM belts WHERE id = ?', [belt_id], (err,row)=>{ if(err || !row) return res.status(500).json({ error: "Correia não encontrada" }); const newStock = (row.stock||0) - (quantity||0); db.run('UPDATE belts SET stock = ?, last_change = CURRENT_TIMESTAMP WHERE id = ?', [newStock, belt_id], (err2)=>{ if(err2) return res.status(500).json({ error: err2.message }); db.run('INSERT INTO movements (belt_id, quantity, reason) VALUES (?,?,?)', [belt_id, quantity, 'baixa']); res.json({ ok:true }); }); }); });
 
-// equipamentos admin
-app.get('/admin/equipamentos', requireAdmin, (req,res)=> db.all('SELECT * FROM equipamentos ORDER BY id DESC', [], (e,rows)=> res.render('admin/equipamentos',{ equipamentos: rows })));
-app.get('/admin/equipamentos/novo', requireAdmin, (req,res)=> res.render('admin/equipamento_form', { equipamento: null }));
-app.post('/admin/equipamentos', requireAdmin, upload.fields([{ name:'foto' }, { name:'manual_pdf' }]), (req,res)=>{
-  const { nome, modelo, setor, correias_utilizadas } = req.body;
-  const foto = req.files && req.files['foto'] ? req.files['foto'][0].filename : null;
-  const manual = req.files && req.files['manual_pdf'] ? req.files['manual_pdf'][0].filename : null;
-  db.run('INSERT INTO equipamentos (nome,modelo,setor,correias_utilizadas,foto,manual_pdf) VALUES (?,?,?,?,?,?)', [nome,modelo,setor, correias_utilizadas||0, foto, manual], function(err){
-    if(err){ req.flash('error','Erro ao salvar'); return res.redirect('/admin/equipamentos'); }
-    const id = this.lastID;
-    const qrUrl = `${req.protocol}://${req.get('host')}/abrir-os?id=${id}`;
-    db.run('UPDATE equipamentos SET qr_url = ? WHERE id = ?', [qrUrl, id]);
-    req.flash('success','Equipamento cadastrado'); res.redirect('/admin/equipamentos');
-  });
-});
-app.get('/admin/equipamentos/:id', requireAdmin, (req,res)=> db.get('SELECT * FROM equipamentos WHERE id = ?', [req.params.id], (e,row)=> res.render('admin/equipamento_show',{ equipamento: row })));
+app.post('/api/equipamentos', upload.single('foto'), (req,res)=>{ const { nome, setor, correias_utilizadas } = req.body; let foto_path = null; if(req.file){ const dest = `uploads/equipamentos/${Date.now()}_${req.file.originalname}`; fs.renameSync(req.file.path, dest); foto_path=dest; } db.run('INSERT INTO equipamentos (nome,setor,correias_utilizadas,foto_path) VALUES (?,?,?,?)', [nome,setor,correias_utilizadas||0,foto_path], function(err){ if(err) return res.status(500).json({error:err.message}); const id=this.lastID; const qrUrl = `${req.protocol}://${req.get('host')}/qrcode/start?equip_id=${id}`; db.run('UPDATE equipamentos SET qr_code = ? WHERE id = ?', [qrUrl,id]); res.json({id,qrUrl}); }); });
 
-// correias admin
-app.get('/admin/correias', requireAdmin, (req,res)=> db.all('SELECT * FROM correias ORDER BY modelo', [], (e,rows)=> res.render('admin/correias',{ correias: rows })));
-app.get('/admin/correias/novo', requireAdmin, (req,res)=> res.render('admin/correia_form',{ correia:null }));
-app.post('/admin/correias', requireAdmin, (req,res)=> {
-  const { modelo, quantidade, minimo } = req.body;
-  db.run('INSERT OR IGNORE INTO correias (modelo,quantidade,minimo) VALUES (?,?,?)', [modelo, quantidade||0, minimo||1], err=>{ req.flash('success','Correia cadastrada'); res.redirect('/admin/correias'); });
-});
-app.post('/admin/correias/:id/update', requireAdmin, (req,res)=> {
-  const { quantidade, minimo } = req.body;
-  db.run('UPDATE correias SET quantidade = ?, minimo = ? WHERE id = ?', [quantidade||0, minimo||1, req.params.id], err=>{ req.flash('success','Atualizado'); res.redirect('/admin/correias'); });
-});
+app.get('/api/equipamentos', (req,res)=>{ db.all('SELECT * FROM equipamentos ORDER BY nome', [], (err,rows)=>{ if(err) return res.status(500).json({error:err.message}); res.json(rows); }); });
 
-// admin ordens
-app.get('/admin/os', requireAdmin, (req,res)=> db.all('SELECT o.*, e.nome as equipamento_nome FROM ordens_servico o LEFT JOIN equipamentos e ON e.id = o.equipamento_id ORDER BY o.aberto_em DESC', [], (e,rows)=> res.render('admin/os',{ ordens: rows })));
-app.get('/admin/os/:id', requireAdmin, (req,res)=> db.get('SELECT o.*, e.nome as equipamento_nome FROM ordens_servico o LEFT JOIN equipamentos e ON e.id = o.equipamento_id WHERE o.id = ?', [req.params.id], (e,row)=> res.render('admin/os_show',{ os: row })));
+app.post('/api/ordens', upload.single('foto_antes'), (req,res)=>{ const { equipamento_id, descricao, prioridade, funcionario_nome } = req.body; let foto_antes = null; if(req.file){ const dest = `uploads/ordens/${Date.now()}_antes_${req.file.originalname}`; fs.renameSync(req.file.path, dest); foto_antes = dest; } db.run('INSERT INTO ordens_servico (equipamento_id, descricao, prioridade, foto_antes, funcionario_nome) VALUES (?,?,?,?,?)', [equipamento_id, descricao, prioridade||'Média', foto_antes, funcionario_nome||''], function(err){ if(err) return res.status(500).json({ error: err.message }); res.json({ id: this.lastID }); }); });
 
-// public panel - open OS via QR
-app.get('/abrir-os', (req,res)=>{
-  const equip_id = req.query.id;
-  if(!equip_id) return res.send('ID do equipamento não informado');
-  db.get('SELECT * FROM equipamentos WHERE id = ?', [equip_id], (err,equip)=>{
-    if(!equip) return res.send('Equipamento não encontrado');
-    db.get("SELECT * FROM ordens_servico WHERE equipamento_id = ? AND status IN ('Aberta','Em andamento') ORDER BY aberto_em DESC LIMIT 1", [equip_id], (err,os)=>{
-      res.render('public/abrir_os', { equipamento: equip, os: os || null });
-    });
-  });
-});
+app.get('/api/ordens', (req,res)=>{ db.all('SELECT o.*, e.nome as equipamento_nome FROM ordens_servico o LEFT JOIN equipamentos e ON e.id = o.equipamento_id ORDER BY o.data_abertura DESC', [], (err,rows)=>{ if(err) return res.status(500).json({ error: err.message }); res.json(rows); }); });
 
-// create order (employee)
-app.post('/ordens', upload.single('foto_antes'), (req,res)=>{
-  const { equipamento_id, descricao } = req.body;
-  const foto = req.file ? req.file.filename : null;
-  db.run('INSERT INTO ordens_servico (equipamento_id,descricao,foto_antes,status) VALUES (?,?,?,?)', [equipamento_id, descricao, foto, 'Aberta'], function(err){
-    if(err) return res.status(500).send('Erro ao criar OS');
-    res.render('public/os_criada', { id: this.lastID });
-  });
-});
+app.get('/api/report/ordens', (req,res)=>{ db.all('SELECT o.*, e.nome as equipamento_nome FROM ordens_servico o LEFT JOIN equipamentos e ON e.id = o.equipamento_id ORDER BY o.data_abertura DESC', [], (err,rows)=>{ if(err) return res.status(500).json({ error: err.message }); const doc = new PDFDocument({ margin:40, size:'A4' }); res.setHeader('Content-Type','application/pdf'); doc.pipe(res); doc.fontSize(18).text('Relatório de Ordens de Serviço', { align:'center' }); doc.moveDown(); rows.forEach(r=>{ doc.fontSize(12).text(`OS #${r.id} - Equip: ${r.equipamento_nome||r.equipamento_id}`); doc.text(`Desc: ${r.descricao}`); doc.moveDown(0.5); }); doc.end(); }); });
 
-// mechanic start and finish
-app.post('/ordens/:id/start', (req,res)=>{
-  const id = req.params.id;
-  db.run('UPDATE ordens_servico SET status = ?, inicio_em = CURRENT_TIMESTAMP WHERE id = ?', ['Em andamento', id], function(err){
-    if(err) return res.status(500).send('Erro ao iniciar'); res.json({ ok:true });
-  });
-});
-app.post('/ordens/:id/finish', upload.single('foto_depois'), (req,res)=>{
-  const id = req.params.id;
-  const foto_depois = req.file ? req.file.filename : null;
-  db.get('SELECT inicio_em, aberto_em FROM ordens_servico WHERE id = ?', [id], (err,row)=>{
-    const inicio = row && row.inicio_em ? new Date(row.inicio_em) : new Date(row.aberto_em);
-    const fim = new Date();
-    const diffMin = Math.round((fim - inicio)/60000);
-    db.run('UPDATE ordens_servico SET status = ?, fim_em = CURRENT_TIMESTAMP, foto_depois = ?, tempo_minutos = ? WHERE id = ?', ['Fechada', foto_depois, diffMin, id], function(err2){
-      if(err2) return res.status(500).send('Erro ao finalizar');
-      const modelo = req.body.trocou_modelo;
-      const qtd = parseInt(req.body.trocou_qtd || '0');
-      if(modelo && qtd > 0){
-        db.get('SELECT * FROM correias WHERE modelo = ?', [modelo], (e,c)=>{
-          if(c){
-            const novo = Math.max(0, (c.quantidade||0) - qtd);
-            db.run('UPDATE correias SET quantidade = ? WHERE id = ?', [novo, c.id]);
-          }
-        });
-      }
-      res.json({ ok:true });
-    });
-  });
-});
+app.get('/qrcode/start', (req,res)=>{ const equip_id = req.query.equip_id; res.redirect(`/prototype/start-os.html?equip_id=${equip_id}`); });
 
-// qrcode image
-app.get('/qrcode/:id', (req,res)=>{
-  const id = req.params.id;
-  const target = `${req.protocol}://${req.get('host')}/abrir-os?id=${id}`;
-  res.setHeader('Content-Type','image/png');
-  QRCode.toFileStream(res, target);
-});
+app.post('/api/settings/logo', upload.single('file'), (req,res)=>{ if(!req.file) return res.status(400).json({ error:'Arquivo faltando' }); const dest = `uploads/logos/${Date.now()}_${req.file.originalname}`; fs.renameSync(req.file.path, dest); res.json({ path: dest }); });
 
-// download manual
-app.get('/manual/:id', (req,res)=>{
-  db.get('SELECT manual_pdf FROM equipamentos WHERE id = ?', [req.params.id], (err,row)=>{
-    if(!row || !row.manual_pdf) return res.status(404).send('Manual não encontrado');
-    const p = path.join(__dirname,'uploads','manuals', row.manual_pdf);
-    res.download(p);
-  });
-});
+app.get('*', (req,res)=>{ res.sendFile(path.join(__dirname, 'prototype', 'index.html')); });
 
-// backup route - admin only
-app.get('/backup', requireAdmin, (req,res)=>{
-  res.download(DB_FILE, 'database_backup.db');
-});
-
-// import prototype route (optional) - serve prototype pages
-app.get('/prototype/:page', (req,res)=>{
-  const p = req.params.page;
-  const filePath = path.join(__dirname,'prototype', p);
-  if(fs.existsSync(filePath)) return res.sendFile(filePath);
-  res.status(404).send('Not found');
-});
-
-// catch-all
-app.get('*', (req,res)=>{
-  if(req.session.user && req.session.user.role === 'admin') return res.redirect('/admin');
-  res.redirect('/admin/login');
-});
-
-app.listen(PORT, ()=> console.log('Manutenção Reciclagem - rodando na porta', PORT));
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, ()=> console.log('Servidor rodando na porta', PORT));
