@@ -72,22 +72,14 @@ if(fs.existsSync(seedPath)){
     const seed = JSON.parse(fs.readFileSync(seedPath,'utf8'));
     seed.forEach(item=>{
       db.get('SELECT id FROM correias WHERE modelo = ?', [item.model], (e,row)=>{
-        if(row){
-          db.run(
-            'UPDATE correias SET quantidade = COALESCE(quantidade,0) + ?, minimo = COALESCE(minimo,1) WHERE id = ?',
-            [item.stock || 0, row.id]
-          );
+        if(row && row.id){
+          db.run('UPDATE correias SET quantidade = ?, minimo = ? WHERE id = ?', [item.stock || 0, 1, row.id]);
         } else {
-          db.run(
-            'INSERT INTO correias (modelo, quantidade, minimo) VALUES (?,?,?)',
-            [item.model, item.stock || 0, 1]
-          );
+          db.run('INSERT INTO correias (modelo, quantidade, minimo) VALUES (?,?,?)', [item.model, item.stock || 0, 1]);
         }
       });
     });
-    console.log('Belts seed synchronized (safe mode).');
-  } catch(e){ console.error('Seed parse error', e); }
-}
+    console.log('Belts seed synchronized.');
   } catch(e){ console.error('Seed parse error', e); }
 }
 
