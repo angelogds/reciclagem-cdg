@@ -1,3 +1,40 @@
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
+const sqlite3 = require("sqlite3").verbose();
+const QRCode = require("qrcode");
+
+const app = express();   // <-- TEM QUE VIR AQUI EM CIMA
+
+// Configurações do Express
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use("/public", express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Configuração do upload
+const upload = multer({ dest: "uploads/tmp/" });
+
+// Banco de dados
+const db = new sqlite3.Database("./data/database.sqlite");
+
+// Criar tabelas
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS equipamentos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT,
+      setor TEXT,
+      correias_utilizadas INTEGER DEFAULT 0,
+      foto_path TEXT,
+      qr_code TEXT
+    )
+  `);
+});
+
 // ------------------------------------------
 // ROTAS DE EQUIPAMENTOS
 // ------------------------------------------
@@ -50,3 +87,5 @@ app.post("/admin/equipamentos/novo", uploadEquip, (req, res) => {
     }
   );
 });
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log("Rodando na porta", PORT));
