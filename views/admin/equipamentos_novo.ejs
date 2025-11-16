@@ -1,1 +1,25 @@
-<html><body><h2>Novo Equipamento</h2></body></html>
+
+<%- include('../partials/cabecalho') %>
+<div class="card">
+  <h2>Cadastrar equipamento</h2>
+  <form action="/admin/equipamentos/novo" method="POST" enctype="multipart/form-data">
+    <div class="form-row">
+      <label>Nome</label>
+      <input type="text" name="nome" required>
+    </div>
+    <div class="form-row">
+      <label>Setor</label>
+      <input type="text" name="setor" required>
+    </div>
+    <div class="form-row">
+      <label>Correias utilizadas</label>
+      <input type="number" name="correias_utilizadas" min="0" value="0">
+    </div>
+    <div class="form-row">
+      <label>Foto</label>
+      <input type="file" name="foto">
+    </div>
+    <button type="submit">Salvar</button>
+  </form>
+</div>
+<%- include('../partials/rodape') %>

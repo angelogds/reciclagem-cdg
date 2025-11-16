@@ -1,1 +1,24 @@
-<html><body><h2>Ordens</h2></body></html>
+
+<%- include('../partials/cabecalho') %>
+<div class="card">
+  <h2>Ordens de Serviço</h2>
+  <table class="table">
+    <thead><tr><th>ID</th><th>Equipamento</th><th>Descrição</th><th>Status</th><th>Foto Antes</th></tr></thead>
+    <tbody>
+      <% ordens.forEach(function(o){ %>
+        <tr>
+          <td><%= o.id %></td>
+          <td><%= o.equipamento_nome %></td>
+          <td><%= o.descricao %></td>
+          <td><%= o.status %></td>
+          <td>
+            <% if(o.foto_antes){ %>
+              <img src="/<%= o.foto_antes %>" style="max-width:120px;border-radius:6px">
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/rodape') %>

@@ -1,1 +1,8 @@
-<html><body><h2>Dashboard</h2></body></html>
+
+<%- include('../partials/cabecalho') %>
+<div class="card">
+  <h2>Visão geral</h2>
+  <p class="small-muted">Equipamentos cadastrados: <strong><%= stats.equipamentos %></strong></p>
+  <p class="small-muted">Ordens abertas: <strong><%= stats.ordens %></strong></p>
+</div>
+<%- include('../partials/rodape') %>

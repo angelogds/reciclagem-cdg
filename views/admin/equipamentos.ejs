@@ -1,1 +1,32 @@
-<html><body><h2>Equipamentos</h2></body></html>
+
+<%- include('../partials/cabecalho') %>
+<div class="card">
+  <h2>Equipamentos</h2>
+  <a href="/admin/equipamentos/novo"><button>Cadastrar novo equipamento</button></a>
+  <table class="table" style="margin-top:12px">
+    <thead><tr><th>Foto</th><th>Nome</th><th>Setor</th><th>Correias</th><th>QR</th></tr></thead>
+    <tbody>
+      <% equipamentos.forEach(function(e){ %>
+        <tr>
+          <td>
+            <% if(e.foto_path){ %>
+              <img src="/<%= e.foto_path %>" class="equip-photo">
+            <% } %>
+          </td>
+          <td><%= e.nome %></td>
+          <td><%= e.setor %></td>
+          <td><%= e.correias_utilizadas %></td>
+          <td>
+            <% if(e.qr_code){ %>
+              <a href="/<%= e.qr_code %>" target="_blank">Ver QR</a>
+              | <a href="/funcionario/abrir_os?equip_id=<%= e.id %>">Abrir OS</a>
+            <% } else { %>
+              <a href="/funcionario/abrir_os?equip_id=<%= e.id %>">Abrir OS</a>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/rodape') %>

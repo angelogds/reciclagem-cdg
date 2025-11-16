@@ -1,1 +1,44 @@
-<html><body><h2>Abrir OS</h2></body></html>
+
+<%- include('../partials/cabecalho') %>
+<div class="card">
+  <h2>Abrir Ordem de Serviço — <%= equip.nome %></h2>
+  <div style="display:flex;gap:20px;align-items:flex-start">
+    <div style="flex:1">
+      <form action="/funcionario/abrir_os" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="equipamento_id" value="<%= equip.id %>">
+        <div class="form-row">
+          <label>Funcionário (seu nome)</label>
+          <input type="text" name="funcionario_nome" placeholder="Nome do funcionário">
+        </div>
+        <div class="form-row">
+          <label>Descrição do problema</label>
+          <textarea name="descricao" rows="5" required></textarea>
+        </div>
+        <div class="form-row">
+          <label>Prioridade</label>
+          <select name="prioridade">
+            <option>Média</option>
+            <option>Alta</option>
+            <option>Baixa</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Foto do defeito (opcional)</label>
+          <input type="file" name="foto_antes">
+        </div>
+        <button type="submit">Enviar OS</button>
+      </form>
+    </div>
+    <div style="width:260px">
+      <% if(equip.foto_path){ %>
+        <img src="/<%= equip.foto_path %>" style="width:100%;border-radius:6px;margin-bottom:10px">
+      <% } %>
+      <p class="small-muted">Setor: <strong><%= equip.setor %></strong></p>
+      <p class="small-muted">Correias usadas: <strong><%= equip.correias_utilizadas %></strong></p>
+      <% if(equip.qr_code){ %>
+        <p><a href="/<%= equip.qr_code %>" target="_blank">QR Code</a></p>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('../partials/rodape') %>
