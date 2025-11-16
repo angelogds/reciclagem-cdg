@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/public/style.css">
+</head>
+
+<body>
+    <%- include("../partials/cabecalho") %>
+
+    <div class="box">
+        <h2>Ordens de Serviço</h2>
+
+        <table border="1" cellpadding="8" width="100%">
+            <tr>
+                <th>ID</th>
+                <th>Equipamento</th>
+                <th>Descrição</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+
+            <% ordens.forEach(o => { %>
+                <tr>
+                    <td><%= o.id %></td>
+                    <td><%= o.equipamento_nome %></td>
+                    <td><%= o.descricao %></td>
+                    <td><%= o.status %></td>
+                    <td>
+                        <a href="#">Finalizar</a>
+                    </td>
+                </tr>
+            <% }) %>
+
+        </table>
+    </div>
+</body>
+</html>
