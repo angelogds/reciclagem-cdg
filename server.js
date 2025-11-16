@@ -137,6 +137,68 @@ app.get('/qrcode/:file', (req,res)=>{
 
 // simple health
 app.get('/health', (req,res)=> res.send('OK'));
+// --------- Iniciar OS (mecânico inicia o atendimento) ----------
+app.post('/admin/ordens/:id/start', (req, res) => {
+  const id = req.params.id;
+  // marca data_inicio e altera status para "Em Andamento"
+  const now = new Date().toISOString().replace('T',' ').split('.')[0]; // 'YYYY-MM-DD HH:MM:SS'
+  db.run(`UPDATE ordens_servico SET status='Em Andamento', data_inicio = ? WHERE id = ?`, [now, id], function(err){
+    if(err) {
+      console.error('Erro ao iniciar OS', err.message);
+      return res.status(500).send('Erro ao iniciar OS');
+    }
+    res.redirect('/admin/ordens');
+  });
+});
+
+// --------- Finalizar OS (upload foto_depois + cálculo tempo) ----------
+const uploadFinish = upload.single('foto_depois');
+
+app.post('/admin/ordens/:id/finish', uploadFinish, (req, res) => {
+  const id = req.params.id;
+
+  // se houver foto, move para uploads/ordens
+  let foto_depois = null;
+  if (req.file) {
+    const dest = `uploads/ordens/${Date.now()}_depois_${req.file.originalname}`;
+    fs.renameSync(req.file.path, dest);
+    foto_depois = dest;
+  }
+
+  // pegar a ordem para ler data_inicio
+  db.get('SELECT data_inicio FROM ordens_servico WHERE id = ?', [id], (err, row) => {
+    if (err) {
+      console.error('Erro ao buscar OS', err.message);
+      return res.status(500).send('Erro interno');
+    }
+
+    // calcula tempo_total em segundos
+    let tempo_total = null;
+    const now = new Date();
+    if (row && row.data_inicio) {
+      // sqlite retorna 'YYYY-MM-DD HH:MM:SS' — transformar para 'YYYY-MM-DDTHH:MM:SS' para Date()
+      const started = new Date(row.data_inicio.replace(' ', 'T'));
+      if (!isNaN(started.getTime())) {
+        tempo_total = Math.round((now.getTime() - started.getTime()) / 1000); // segundos
+      }
+    }
+
+    const finishedAt = new Date().toISOString().replace('T',' ').split('.')[0];
+    db.run(
+      `UPDATE ordens_servico
+       SET status = 'Finalizada', foto_depois = ?, data_fechamento = ?, tempo_total = ?
+       WHERE id = ?`,
+      [foto_depois, finishedAt, tempo_total, id],
+      function(upErr) {
+        if (upErr) {
+          console.error('Erro ao finalizar OS', upErr.message);
+          return res.status(500).send('Erro ao finalizar OS');
+        }
+        res.redirect('/admin/ordens');
+      }
+    );
+  });
+});
 
 // Start
 const PORT = process.env.PORT || 10000;
