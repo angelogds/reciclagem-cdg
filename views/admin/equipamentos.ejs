@@ -17,7 +17,9 @@
       <td><%= equip.descricao %></td>
       <td>
         <% if (equip.foto) { %>
-          <img src="/<%= equip.foto %>" alt="Foto do equipamento" width="120">
+          <!-- Agora usamos /uploads/... -->
+          <img src="/uploads/<%= equip.foto.split('uploads/')[1] %>" 
+               alt="Foto do equipamento" width="120">
         <% } else { %>
           Sem foto
         <% } %>
