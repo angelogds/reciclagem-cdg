@@ -1,70 +1,36 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Ordens de Serviço - Admin</title>
-  <link rel="stylesheet" href="/public/style.css">
-</head>
-<body>
-  <% include ../partials/cabecalho.ejs %>
+<%- include("../partials/cabecalho") %>
 
-  <main class="container">
-    <h1>🛠️ Ordens de Serviço</h1>
+<h2>Ordens de Serviço</h2>
 
-    <% if (ordens.length === 0) { %>
-      <p>Nenhuma ordem de serviço registrada ainda.</p>
-    <% } else { %>
-      <table class="tabela">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Equipamento</th>
-            <th>Descrição</th>
-            <th>Status</th>
-            <th>Técnico</th>
-            <th>Abertura</th>
-            <th>Início</th>
-            <th>Fechamento</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% ordens.forEach(os => { %>
-            <tr>
-              <td><%= os.id %></td>
-              <td><%= os.equipamento_nome %></td>
-              <td><%= os.descricao %></td>
-              <td><%= os.status %></td>
-              <td><%= os.tecnico_nome || "-" %></td>
-              <td><%= os.data_abertura %></td>
-              <td><%= os.data_inicio || "-" %></td>
-              <td><%= os.data_fechamento || "-" %></td>
-              <td>
-                <% if (os.status === "Aberta") { %>
-                  <form action="/admin/ordens/<%= os.id %>/start" method="POST" style="display:inline;">
-                    <input type="text" name="tecnico_nome" placeholder="Nome do técnico" required>
-                    <button type="submit" class="btn">▶️ Iniciar</button>
-                  </form>
-                <% } else if (os.status === "Em Andamento") { %>
-                  <form action="/admin/ordens/<%= os.id %>/finish" method="POST" enctype="multipart/form-data" style="display:inline;">
-                    <input type="file" name="foto_depois" accept="image/*" required>
-                    <button type="submit" class="btn">✅ Finalizar</button>
-                  </form>
-                <% } else { %>
-                  <span>✔️ Concluída</span>
-                <% } %>
-              </td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    <% } %>
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Equipamento</th>
+    <th>Status</th>
+    <th>Foto Antes</th>
+    <th>Foto Depois</th>
+  </tr>
+  <% ordens.forEach(os => { %>
+    <tr>
+      <td><%= os.id %></td>
+      <td><%= os.equipamento_nome %></td>
+      <td><%= os.status %></td>
+      <td>
+        <% if (os.foto_antes) { %>
+          <img src="/<%= os.foto_antes %>" alt="Foto antes" width="120">
+        <% } else { %>
+          -
+        <% } %>
+      </td>
+      <td>
+        <% if (os.foto_depois) { %>
+          <img src="/<%= os.foto_depois %>" alt="Foto depois" width="120">
+        <% } else { %>
+          -
+        <% } %>
+      </td>
+    </tr>
+  <% }) %>
+</table>
 
-    <p>
-      <a href="/admin/ordens/report" class="btn">📄 Gerar Relatório PDF</a>
-    </p>
-  </main>
-
-  <% include ../partials/rodape.ejs %>
-</body>
-</html>
+<%- include("../partials/rodape") %>
