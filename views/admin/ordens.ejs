@@ -17,14 +17,16 @@
       <td><%= os.status %></td>
       <td>
         <% if (os.foto_antes) { %>
-          <img src="/<%= os.foto_antes %>" alt="Foto antes" width="120">
+          <img src="/uploads/<%= os.foto_antes.split('uploads/')[1] %>" 
+               alt="Foto antes" width="120">
         <% } else { %>
           -
         <% } %>
       </td>
       <td>
         <% if (os.foto_depois) { %>
-          <img src="/<%= os.foto_depois %>" alt="Foto depois" width="120">
+          <img src="/uploads/<%= os.foto_depois.split('uploads/')[1] %>" 
+               alt="Foto depois" width="120">
         <% } else { %>
           -
         <% } %>
