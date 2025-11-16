@@ -144,6 +144,33 @@ app.get("/funcionario/abrir_os", (req, res) => {
     res.render("funcionario/abrir_os", { equip: row });
   });
 });
+// ------------------------------------------
+// SALVAR OS ABERTA PELO FUNCIONÁRIO
+// ------------------------------------------
+const uploadOS = upload.single("foto_antes");
+
+app.post("/funcionario/abrir_os", uploadOS, (req, res) => {
+  const { equipamento_id, descricao } = req.body;
+
+  let fotoAntes = null;
+
+  if (req.file) {
+    const dest = `uploads/ordens/${Date.now()}_antes_${req.file.originalname}`;
+    fs.renameSync(req.file.path, dest);
+    fotoAntes = dest;
+  }
+
+  db.run(
+    `INSERT INTO ordens_servico (equipamento_id, descricao, foto_antes, status)
+     VALUES (?, ?, ?, 'Aberta')`,
+    [equipamento_id, descricao, fotoAntes],
+    function (err) {
+      if (err) return res.send("Erro ao salvar OS: " + err.message);
+
+      res.redirect("/admin/ordens");
+    }
+  );
+});
 
 // ------------------------------------------
 // SERVIDOR
