@@ -1,1 +1,36 @@
 
+<%
+  const title = "Correias - Estoque";
+  const active = "correias";
+%>
+
+<h1 class="page-title">Correias (Estoque)</h1>
+
+<a href="/correias/novo" class="btn-add">+ Nova Correia</a>
+<a href="/correias/relatorio" class="btn-add" style="background:#0b66a3">Relatório Mensal</a>
+
+<table class="tabela">
+  <thead>
+    <tr><th>ID</th><th>Nome</th><th>Modelo</th><th>Medida</th><th>Quantidade</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    <% if (correias.length === 0) { %>
+      <tr><td colspan="6" class="no-data">Nenhuma correia cadastrada.</td></tr>
+    <% } %>
+    <% correias.forEach(c => { %>
+      <tr>
+        <td><%= c.id %></td>
+        <td><%= c.nome %></td>
+        <td><%= c.modelo || '-' %></td>
+        <td><%= c.medida || '-' %></td>
+        <td><%= c.quantidade %></td>
+        <td>
+          <a href="/correias/<%= c.id %>/editar" class="btn-edit">Editar</a>
+          <form method="POST" action="/correias/<%= c.id %>/delete" style="display:inline;">
+            <button class="btn-del">Excluir</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
