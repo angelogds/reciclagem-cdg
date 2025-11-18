@@ -1,207 +1,55 @@
-<!-- Título da página -->
+<!-- views/admin/dashboard.ejs -->
+
 <h1 class="page-title">Dashboard</h1>
 
-<!-- ===================== CARDS ===================== -->
-<div class="dashboard-cards">
+<div class="cards-container">
 
-    <!-- Card 1 -->
     <div class="card">
         <h3>Total de Equipamentos</h3>
         <p class="card-number"><%= totais.equipamentos %></p>
     </div>
 
-    <!-- Card 2 -->
     <div class="card">
         <h3>OS Abertas</h3>
-        <p class="card-number orange"><%= totais.abertas %></p>
+        <p class="card-number"><%= totais.abertas %></p>
     </div>
 
-    <!-- Card 3 -->
     <div class="card">
         <h3>OS Fechadas</h3>
-        <p class="card-number green"><%= totais.fechadas %></p>
+        <p class="card-number"><%= totais.fechadas %></p>
     </div>
 
 </div>
 
-<!-- ===================== GRÁFICOS ===================== -->
-<div class="charts-container">
+<hr>
 
-    <div class="chart-box">
-        <h3>OS por Tipo</h3>
-        <canvas id="graficoPizza"></canvas>
-    </div>
+<h2>Últimas Ordens de Serviço</h2>
 
-    <div class="chart-box">
-        <h3>OS por Mês</h3>
-        <canvas id="graficoBarras"></canvas>
-    </div>
-
-</div>
-
-<!-- ===================== ÚLTIMAS ORDENS ===================== -->
-<h2 class="section-title">Últimas Ordens</h2>
-
-<table class="tabela-os">
+<table class="table">
     <thead>
         <tr>
             <th>ID</th>
             <th>Equipamento</th>
-            <th>Solicitante</th>
+            <th>Tipo</th>
             <th>Status</th>
             <th>Data</th>
         </tr>
     </thead>
-
     <tbody>
-        <% if (ultimas.length === 0) { %>
+        <% ultimas.forEach(item => { %>
             <tr>
-                <td colspan="5" class="no-data">Nenhuma OS encontrada.</td>
+                <td><%= item.id %></td>
+                <td><%= item.equipamento_nome || '-' %></td>
+                <td><%= item.tipo %></td>
+                <td>
+                    <% if (item.status === 'aberta') { %>
+                        <span class="status-open">Aberta</span>
+                    <% } else { %>
+                        <span class="status-closed">Fechada</span>
+                    <% } %>
+                </td>
+                <td><%= item.aberta_em %></td>
             </tr>
-        <% } else { %>
-            <% ultimas.forEach(os => { %>
-                <tr>
-                    <td><%= os.id %></td>
-                    <td><%= os.equipamento_nome || "-" %></td>
-                    <td><%= os.solicitante %></td>
-                    <td class="<%= os.status === 'aberta' ? 'status-aberta' : 'status-fechada' %>">
-                        <%= os.status %>
-                    </td>
-                    <td><%= os.aberta_em %></td>
-                </tr>
-            <% }) %>
-        <% } %>
+        <% }) %>
     </tbody>
 </table>
-
-<!-- ===================== SCRIPTS DO DASHBOARD ===================== -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-    // ---------- Pizza ----------
-    const tipos = <%- JSON.stringify(tipos) %>;
-    const labelsPizza = tipos.map(t => t.tipo);
-    const valuesPizza = tipos.map(t => t.total);
-
-    new Chart(document.getElementById('graficoPizza'), {
-        type: 'pie',
-        data: {
-            labels: labelsPizza,
-            datasets: [{
-                data: valuesPizza,
-                backgroundColor: ["#4CAF50", "#8BC34A", "#CDDC39", "#FFC107", "#FF5722"]
-            }]
-        }
-    });
-
-    // ---------- Barras ----------
-    const meses = <%- JSON.stringify(porMes) %>;
-    const labelsBarras = meses.map(m => m.mes);
-    const valuesBarras = meses.map(m => m.total);
-
-    new Chart(document.getElementById('graficoBarras'), {
-        type: 'bar',
-        data: {
-            labels: labelsBarras,
-            datasets: [{
-                label: "OS por mês",
-                data: valuesBarras,
-                backgroundColor: "#4CAF50"
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
-    });
-</script>
-
-<style>
-/* ===================== ESTILOS ===================== */
-
-.page-title {
-    color: #2e7d32;
-    margin-bottom: 20px;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.dashboard-cards {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 35px;
-}
-
-.card {
-    flex: 1;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.1);
-    text-align: center;
-}
-
-.card h3 {
-    margin-bottom: 10px;
-    color: #444;
-}
-
-.card-number {
-    font-size: 28px;
-    font-weight: bold;
-    color: #333;
-}
-
-.card-number.green { color: #2e7d32; }
-.card-number.orange { color: #e65100; }
-
-.charts-container {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-.chart-box {
-    flex: 1;
-    background: #fff;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.1);
-}
-
-.section-title {
-    font-size: 22px;
-    margin-bottom: 10px;
-}
-
-.tabela-os {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.tabela-os th {
-    background: #2e7d32;
-    color: white;
-    padding: 10px;
-    text-align: left;
-}
-
-.tabela-os td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-.status-aberta { color: #e65100; font-weight: bold; }
-.status-fechada { color: #2e7d32; font-weight: bold; }
-
-.no-data {
-    text-align: center;
-    padding: 20px;
-    color: #777;
-}
-</style>
