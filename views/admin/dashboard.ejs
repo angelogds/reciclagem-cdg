@@ -3,105 +3,81 @@
 <h1 class="page-title">Dashboard Bonitão ✔️</h1>
 
 <div class="dashboard-grid">
-
-    <!-- CARD 1 -->
-    <div class="dash-card">
-        <div class="dash-icon bg-green">
-            📦
-        </div>
+    <div class="dash-card card">
+        <div class="dash-icon bg-green">📦</div>
         <div class="dash-info">
             <h3>Equipamentos</h3>
             <p><%= totals.equipamentos %></p>
         </div>
     </div>
 
-    <!-- CARD 2 -->
-    <div class="dash-card">
-        <div class="dash-icon bg-blue">
-            🛠️
-        </div>
+    <div class="dash-card card">
+        <div class="dash-icon bg-blue">🛠️</div>
         <div class="dash-info">
             <h3>Ordens Abertas</h3>
-
             <p><%= totals.abertas %></p>
         </div>
     </div>
 
-    <!-- CARD 3 -->
-    <div class="dash-card">
-        <div class="dash-icon bg-orange">
-            ✔️
-        </div>
+    <div class="dash-card card">
+        <div class="dash-icon bg-orange">✔️</div>
         <div class="dash-info">
             <h3>Ordens Fechadas</h3>
             <p><%= totals.fechadas %></p>
         </div>
     </div>
-
 </div>
 
-
-<!-- GRÁFICOS -->
 <div class="charts-container">
-
-    <div class="chart-card">
+    <div class="chart-card card">
         <h3>Ordens por Tipo</h3>
         <canvas id="chartTipos"></canvas>
     </div>
-
-    <div class="chart-card">
+    <div class="chart-card card">
         <h3>Status das Ordens</h3>
         <canvas id="chartStatus"></canvas>
     </div>
-
 </div>
 
-<!-- ULTIMAS ORDENS -->
-<div class="list-card">
+<div class="list-card card">
     <h3>Últimas Ordens Abertas</h3>
-
-    <% if (ultimas.length === 0) { %>
+    <% if (!ultimas || ultimas.length === 0) { %>
         <p>Nenhuma ordem aberta recentemente.</p>
     <% } else { %>
         <ul class="ultima-lista">
             <% ultimas.forEach(u => { %>
                 <li>
-                    <strong><%= u.id %></strong> — <%= u.equipamento_nome || "Sem equipamento" %>  
-                    <span class="badge"><%= u.tipo %></span>
+                    <strong><%= u.id %></strong> — <%= u.equipamento_nome || "Sem equipamento" %>
+                    <span class="badge"><%= u.tipo || "—" %></span>
                 </li>
-            <% }); %>
+            <% }) %>
         </ul>
     <% } %>
-
 </div>
 
-
-<!-- Chart JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-    // === GRÁFICO 1 - Tipos ===
-    const ctxTipos = document.getElementById('chartTipos');
+  const ctxTipos = document.getElementById('chartTipos');
+  if (ctxTipos) {
     new Chart(ctxTipos, {
-        type: 'bar',
-        data: {
-            labels: <%- JSON.stringify(tipos.labels) %>,
-            datasets: [{
-                label: 'Quantidade',
-                data: <%- JSON.stringify(tipos.valores) %>,
-            }]
-        },
+      type: 'bar',
+      data: {
+        labels: <%- JSON.stringify(tipos.labels || []) %>,
+        datasets: [{ label: 'Quantidade', data: <%- JSON.stringify(tipos.valores || []) %> }]
+      },
+      options: {}
     });
+  }
 
-    // === GRÁFICO 2 - Status ===
-    const ctxStatus = document.getElementById('chartStatus');
+  const ctxStatus = document.getElementById('chartStatus');
+  if (ctxStatus) {
     new Chart(ctxStatus, {
-        type: 'pie',
-        data: {
-            labels: ['Abertas', 'Fechadas'],
-            datasets: [{
-                data: [<%= totals.abertas %>, <%= totals.fechadas %>],
-            }]
-        }
+      type: 'pie',
+      data: {
+        labels: ['Abertas', 'Fechadas'],
+        datasets: [{ data: [<%= totals.abertas %>, <%= totals.fechadas %>] }]
+      },
+      options: {}
     });
+  }
 </script>
