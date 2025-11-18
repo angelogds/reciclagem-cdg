@@ -189,6 +189,42 @@ function getAsync(sql, params = []) {
     });
   });
 }
+// Tabela de correias (estoque)
+db.run(`
+  CREATE TABLE IF NOT EXISTS correias (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    modelo TEXT,
+    medida TEXT,
+    quantidade INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+
+// Relação correias <-> equipamentos (quantidade usada por equipamento)
+db.run(`
+  CREATE TABLE IF NOT EXISTS correias_equipamentos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    equipamento_id INTEGER,
+    correia_id INTEGER,
+    quantidade_usada INTEGER DEFAULT 1,
+    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id),
+    FOREIGN KEY (correia_id) REFERENCES correias(id)
+  );
+`);
+
+// Histórico/consumo de correias
+db.run(`
+  CREATE TABLE IF NOT EXISTS consumo_correias (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    equipamento_id INTEGER,
+    correia_id INTEGER,
+    quantidade INTEGER,
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id),
+    FOREIGN KEY (correia_id) REFERENCES correias(id)
+  );
+`);
 
 // ---------------------- (FIM BLOCO 2) ----------------------
 // ---------------------- BLOCO 3/9 ----------------------
