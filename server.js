@@ -1029,7 +1029,7 @@ app.get("/equipamentos/:id/qrcode", authRequired, async (req, res) => {
 
     // URL que o QR Code deve abrir → MENU MOBILE
     const baseUrl = process.env.BASE_URL || `https://${req.headers.host}`;
-    const url = `${baseUrl}/equipamento/${equipamento.id}/menu`;
+    const url = `${baseUrl}/equipamentos/${equipamento.id}/baixar-correia`;
 
     // Gera QR Code base64
     const qr = await QRCode.toDataURL(url);
