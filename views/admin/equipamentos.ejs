@@ -1,1 +1,13 @@
-<h1>Lista Equipamentos</h1>
+<% layout('layout', { title: "Dashboard", active: "dashboard" }) %>
+
+<h1>Dashboard Bonitão ✔️</h1>
+
+<div class="card">
+    <h3>Total de Equipamentos</h3>
+    <p><%= totals.equipamentos %></p>
+</div>
+
+<div class="card">
+    <h3>Total de Ordens</h3>
+    <p><%= totals.ordens %></p>
+</div>
