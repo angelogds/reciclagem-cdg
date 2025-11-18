@@ -1,18 +1,19 @@
-<% layout('layout', { title: "QR Code", active: "equipamentos" }) %>
+<% layout('layout', { title: "QR Code do Equipamento", active: "equipamentos" }) %>
 
-<h1 class="page-title">QR Code do Equipamento</h1>
+<h1 class="page-title">QR Code — <%= equipamento.nome %></h1>
 
-<div class="card" style="text-align:center; padding:20px;">
+<div class="card" style="text-align:center; padding:30px;">
 
     <h2><%= equipamento.nome %></h2>
-    <p><strong>Código:</strong> <%= equipamento.codigo || "-" %></p>
+    <p>Código: <strong><%= equipamento.codigo || "-" %></strong></p>
 
-    <img src="<%= qr %>" class="qr-img">
+    <img src="<%= qr %>" style="width:260px; margin:20px auto; display:block;">
 
-    <p style="margin-top:10px;">
-        <strong>Ação:</strong><br>
-        Escaneie para abrir a tela de baixa da máquina.<br>
-    </p>
+    <p>Ao escanear este QR Code o funcionário será direcionado para:</p>
+    <div class="descricao-box"><%= url %></div>
 
-    <a href="<%= url %>" class="btn-link">Abrir link</a>
+    <a href="/equipamentos/<%= equipamento.id %>/baixar" class="btn-save" style="margin-top:20px;">
+        Acessar Menu de Baixa
+    </a>
+
 </div>
