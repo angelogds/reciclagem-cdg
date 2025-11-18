@@ -1,6 +1,7 @@
-// server.js — CRUD completo para "manutencao-reciclagem"
-// Requer: express, sqlite3, multer, ejs, pdfkit
+// server.js — CRUD completo + Layout EJS integrado
+// Requer: express, sqlite3, multer, ejs, pdfkit, express-ejs-layouts
 const express = require('express');
+const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
@@ -14,8 +15,12 @@ const DB_FILE = path.join(__dirname, 'database.sqlite');
 // ========== MIDDLEWARE ==========
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
+
+// EJS Layouts
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use(expressLayouts);
+app.set('layout', 'layout'); // layout.ejs padrão
 
 // ========== MULTER (uploads) ==========
 const uploadsDir = path.join(__dirname, 'public', 'uploads');
@@ -57,7 +62,7 @@ db.serialize(() => {
     solicitante TEXT,
     tipo TEXT,
     descricao TEXT,
-    status TEXT DEFAULT 'aberta', -- aberta | fechada
+    status TEXT DEFAULT 'aberta',
     aberta_em DATETIME DEFAULT CURRENT_TIMESTAMP,
     fechada_em DATETIME,
     resultado TEXT,
@@ -65,12 +70,12 @@ db.serialize(() => {
   );`);
 });
 
-// Helper: run DB with Promise
+// Helpers Promises
 function runAsync(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
       if (err) return reject(err);
-      resolve(this); // this.lastID, this.changes
+      resolve(this);
     });
   });
 }
@@ -98,41 +103,46 @@ app.get('/', async (req, res) => {
   try {
     const totalEquip = await getAsync('SELECT COUNT(*) AS c FROM equipamentos');
     const totalOrdens = await getAsync('SELECT COUNT(*) AS c FROM ordens');
+
     res.render('admin/dashboard', {
-      totals: { equipamentos: totalEquip ? totalEquip.c : 0, ordens: totalOrdens ? totalOrdens.c : 0 }
+      layout: 'layout',
+      active: 'dashboard',
+      totals: {
+        equipamentos: totalEquip?.c || 0,
+        ordens: totalOrdens?.c || 0
+      }
     });
   } catch (err) {
     console.error(err);
-    res.render('admin/dashboard', { totals: { equipamentos: 0, ordens: 0 } });
+    res.render('admin/dashboard', { layout: 'layout', active: 'dashboard', totals: { equipamentos: 0, ordens: 0 } });
   }
 });
 
 // ---------------- Equipamentos CRUD ----------------
-// Listar
 app.get('/equipamentos', async (req, res) => {
   try {
     const equipamentos = await allAsync('SELECT * FROM equipamentos ORDER BY created_at DESC');
-    res.render('equipamentos', { equipamentos });
+    res.render('equipamentos', { layout: 'layout', active: 'equipamentos', equipamentos });
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro ao listar equipamentos.');
   }
 });
 
-// Form novo
 app.get('/equipamentos/novo', (req, res) => {
-  res.render('equipamentos_novo');
+  res.render('equipamentos_novo', { layout: 'layout', active: 'equipamentos', equipamento: null });
 });
 
-// Criar (com upload opcional de imagem)
 app.post('/equipamentos', upload.single('imagem'), async (req, res) => {
   try {
     const { nome, codigo, local, descricao } = req.body;
     const imagem = req.file ? path.join('uploads', req.file.filename) : null;
-    const result = await runAsync(
+
+    await runAsync(
       `INSERT INTO equipamentos (nome, codigo, local, descricao, imagem) VALUES (?, ?, ?, ?, ?)`,
       [nome, codigo, local, descricao, imagem]
     );
+
     res.redirect('/equipamentos');
   } catch (err) {
     console.error(err);
@@ -140,40 +150,39 @@ app.post('/equipamentos', upload.single('imagem'), async (req, res) => {
   }
 });
 
-// Editar (form)
 app.get('/equipamentos/:id/editar', async (req, res) => {
   try {
-    const id = req.params.id;
-    const equipamento = await getAsync('SELECT * FROM equipamentos WHERE id = ?', [id]);
+    const equipamento = await getAsync('SELECT * FROM equipamentos WHERE id = ?', [req.params.id]);
     if (!equipamento) return res.status(404).send('Equipamento não encontrado.');
-    res.render('equipamentos_novo', { equipamento });
+
+    res.render('equipamentos_novo', { layout: 'layout', active: 'equipamentos', equipamento });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Erro ao carregar formulário.');
+    res.status(500).send('Erro ao abrir formulário.');
   }
 });
 
-// Atualizar
 app.post('/equipamentos/:id', upload.single('imagem'), async (req, res) => {
   try {
-    const id = req.params.id;
     const { nome, codigo, local, descricao } = req.body;
-    const equipamento = await getAsync('SELECT * FROM equipamentos WHERE id = ?', [id]);
-    if (!equipamento) return res.status(404).send('Equipamento não encontrado.');
+    const eq = await getAsync('SELECT * FROM equipamentos WHERE id = ?', [req.params.id]);
 
-    let imagem = equipamento.imagem;
+    if (!eq) return res.status(404).send('Equipamento não encontrado.');
+
+    let imagem = eq.imagem;
     if (req.file) {
-      // remove antigo (se existir)
-      if (imagem) {
-        const oldPath = path.join(__dirname, 'public', imagem);
+      if (eq.imagem) {
+        const oldPath = path.join(__dirname, 'public', eq.imagem);
         if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
       }
       imagem = path.join('uploads', req.file.filename);
     }
+
     await runAsync(
       `UPDATE equipamentos SET nome = ?, codigo = ?, local = ?, descricao = ?, imagem = ? WHERE id = ?`,
-      [nome, codigo, local, descricao, imagem, id]
+      [nome, codigo, local, descricao, imagem, req.params.id]
     );
+
     res.redirect('/equipamentos');
   } catch (err) {
     console.error(err);
@@ -181,180 +190,133 @@ app.post('/equipamentos/:id', upload.single('imagem'), async (req, res) => {
   }
 });
 
-// Deletar
 app.post('/equipamentos/:id/delete', async (req, res) => {
   try {
-    const id = req.params.id;
-    const equipamento = await getAsync('SELECT * FROM equipamentos WHERE id = ?', [id]);
-    if (!equipamento) return res.status(404).send('Equipamento não encontrado.');
+    const eq = await getAsync('SELECT * FROM equipamentos WHERE id = ?', [req.params.id]);
+    if (!eq) return res.status(404).send('Equipamento não encontrado.');
 
-    if (equipamento.imagem) {
-      const imgPath = path.join(__dirname, 'public', equipamento.imagem);
+    if (eq.imagem) {
+      const imgPath = path.join(__dirname, 'public', eq.imagem);
       if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
     }
-    await runAsync('DELETE FROM equipamentos WHERE id = ?', [id]);
+
+    await runAsync('DELETE FROM equipamentos WHERE id = ?', [req.params.id]);
     res.redirect('/equipamentos');
   } catch (err) {
     console.error(err);
-    res.status(500).send('Erro ao deletar equipamento.');
+    res.status(500).send('Erro ao deletar.');
   }
 });
 
-// ---------------- Ordens (OS) ----------------
-// Listar ordens
+// ---------------- Ordens ----------------
 app.get('/ordens', async (req, res) => {
   try {
-    const ordens = await allAsync(
-      `SELECT o.*, e.nome AS equipamento_nome
-       FROM ordens o
-       LEFT JOIN equipamentos e ON e.id = o.equipamento_id
-       ORDER BY o.aberta_em DESC`);
-    res.render('ordens', { ordens });
+    const ordens = await allAsync(`
+      SELECT o.*, e.nome AS equipamento_nome
+      FROM ordens o
+      LEFT JOIN equipamentos e ON e.id = o.equipamento_id
+      ORDER BY o.aberta_em DESC
+    `);
+
+    res.render('ordens', { layout: 'layout', active: 'ordens', ordens });
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro ao listar ordens.');
   }
 });
 
-// Form abrir OS (pode ser chamada por func)
 app.get('/ordens/novo', async (req, res) => {
   try {
     const equipamentos = await allAsync('SELECT id, nome FROM equipamentos ORDER BY nome');
-    res.render('abrir_os', { equipamentos });
+    res.render('abrir_os', { layout: 'layout', active: 'abrir_os', equipamentos });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Erro ao abrir formulário de OS.');
+    res.status(500).send('Erro.');
   }
 });
 
-// Criar OS
 app.post('/ordens', async (req, res) => {
   try {
     const { equipamento_id, solicitante, tipo, descricao } = req.body;
-    const result = await runAsync(
-      `INSERT INTO ordens (equipamento_id, solicitante, tipo, descricao, status) VALUES (?, ?, ?, ?, 'aberta')`,
+
+    await runAsync(
+      `INSERT INTO ordens (equipamento_id, solicitante, tipo, descricao, status)
+       VALUES (?, ?, ?, ?, 'aberta')`,
       [equipamento_id || null, solicitante, tipo, descricao]
     );
+
     res.redirect('/ordens');
   } catch (err) {
     console.error(err);
-    res.status(500).send('Erro ao criar ordem.');
+    res.status(500).send('Erro ao criar OS.');
   }
 });
 
-// Visualizar OS
-app.get('/ordens/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-    const ordem = await getAsync(
-      `SELECT o.*, e.nome AS equipamento_nome, e.codigo AS equipamento_codigo
-       FROM ordens o
-       LEFT JOIN equipamentos e ON e.id = o.equipamento_id
-       WHERE o.id = ?`,
-      [id]
-    );
-    if (!ordem) return res.status(404).send('Ordem não encontrada.');
-    res.render('ordens_fechar', { ordem });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Erro ao carregar ordem.');
-  }
-});
-
-// Fechar OS (form confirm)
 app.get('/ordens/:id/fechar', async (req, res) => {
   try {
-    const id = req.params.id;
-    const ordem = await getAsync('SELECT * FROM ordens WHERE id = ?', [id]);
-    if (!ordem) return res.status(404).send('Ordem não encontrada.');
-    res.render('ordens_fechar', { ordem });
+    const ordem = await getAsync('SELECT * FROM ordens WHERE id = ?', [req.params.id]);
+    if (!ordem) return res.status(404).send('OS não encontrada.');
+
+    res.render('ordens_fechar', { layout: 'layout', active: 'ordens', ordem });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Erro ao abrir fechar OS.');
+    res.status(500).send('Erro ao carregar OS.');
   }
 });
 
-// Fechar OS (ação)
 app.post('/ordens/:id/fechar', async (req, res) => {
   try {
-    const id = req.params.id;
-    const { resultado } = req.body;
     await runAsync(
-      `UPDATE ordens SET status = 'fechada', resultado = ?, fechada_em = CURRENT_TIMESTAMP WHERE id = ?`,
-      [resultado, id]
+      `UPDATE ordens
+       SET status='fechada', resultado=?, fechada_em=CURRENT_TIMESTAMP
+       WHERE id=?`,
+      [req.body.resultado, req.params.id]
     );
+
     res.redirect('/ordens');
   } catch (err) {
     console.error(err);
-    res.status(500).send('Erro ao fechar ordem.');
+    res.status(500).send('Erro ao fechar OS.');
   }
 });
 
-// Gerar PDF de solicitação (exemplo simples)
+// PDF
 app.get('/solicitacao/pdf/:id', async (req, res) => {
   try {
-    const id = req.params.id;
-    const ordem = await getAsync(
-      `SELECT o.*, e.nome AS equipamento_nome, e.codigo AS equipamento_codigo
-       FROM ordens o
-       LEFT JOIN equipamentos e ON e.id = o.equipamento_id
-       WHERE o.id = ?`, [id]
+    const ordem = await getAsync(`
+      SELECT o.*, e.nome AS equipamento_nome, e.codigo AS equipamento_codigo
+      FROM ordens o
+      LEFT JOIN equipamentos e ON e.id = o.equipamento_id
+      WHERE o.id = ?`, [req.params.id]
     );
-    if (!ordem) return res.status(404).send('Ordem não encontrada.');
+
+    if (!ordem) return res.status(404).send('OS não encontrada.');
 
     const doc = new PDFDocument({ margin: 40 });
-    res.setHeader('Content-disposition', `attachment; filename=solicitacao_os_${id}.pdf`);
+    res.setHeader('Content-disposition', `attachment; filename=os_${ordem.id}.pdf`);
     res.setHeader('Content-type', 'application/pdf');
     doc.pipe(res);
 
-    doc.fontSize(18).text('Solicitação de Serviço / Ordem de Serviço', { align: 'center' });
-    doc.moveDown();
+    doc.fontSize(18).text('Ordem de Serviço', { align: 'center' }).moveDown();
 
     doc.fontSize(12).text(`OS ID: ${ordem.id}`);
-    doc.text(`Solicitante: ${ordem.solicitante || '-'}`);
-    doc.text(`Tipo: ${ordem.tipo || '-'}`);
-    doc.text(`Equipamento: ${ordem.equipamento_nome || '-'} (${ordem.equipamento_codigo || '-'})`);
+    doc.text(`Solicitante: ${ordem.solicitante}`);
+    doc.text(`Tipo: ${ordem.tipo}`);
+    doc.text(`Equipamento: ${ordem.equipamento_nome} (${ordem.equipamento_codigo})`);
     doc.moveDown();
     doc.text('Descrição:');
-    doc.fontSize(11).text(ordem.descricao || '-', { indent: 10, lineGap: 4 });
-    doc.moveDown(2);
-
+    doc.text(ordem.descricao, { indent: 10 }).moveDown();
     doc.text(`Status: ${ordem.status}`);
-    if (ordem.status === 'fechada') {
-      doc.text(`Fechada em: ${ordem.fechada_em}`);
-      doc.text(`Resultado: ${ordem.resultado || '-'}`);
-    }
-
-    doc.moveDown(2);
-    doc.text('Assinatura: ____________________________', { align: 'left' });
 
     doc.end();
-
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro ao gerar PDF.');
   }
 });
 
-// ========== API endpoints JSON (opcionais) ==========
-app.get('/api/equipamentos', async (req, res) => {
-  try {
-    const equipamentos = await allAsync('SELECT * FROM equipamentos ORDER BY created_at DESC');
-    res.json(equipamentos);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro' });
-  }
-});
-app.get('/api/ordens', async (req, res) => {
-  try {
-    const ordens = await allAsync('SELECT * FROM ordens ORDER BY aberta_em DESC');
-    res.json(ordens);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro' });
-  }
-});
+// ========== START ==========
 
-// ========== START SERVER ==========
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
