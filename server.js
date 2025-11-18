@@ -1,8 +1,9 @@
-// server.js — CRUD completo + Dashboard moderno + Layout
-// Requer: express, express-ejs-layouts, sqlite3, multer, ejs, pdfkit
+// server.js — Sistema de Manutenção CDG
+// Layout + Login + Dashboard + CRUD + PDF
 
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const session = require("express-session");
 const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
@@ -13,10 +14,23 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const DB_FILE = path.join(__dirname, 'database.sqlite');
 
-// ========== MIDDLEWARE ==========
+// ================= CONFIGURAÇÕES BÁSICAS ================
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
-app.set('trust proxy', 1); // Railway usa proxy
+
+app.set('trust proxy', 1);
+
+// Sessão
+app.use(session({
+  secret: "segredo_cdg_2025",
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+});
 
 // EJS + Layouts
 app.set('view engine', 'ejs');
@@ -24,48 +38,45 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 app.set('layout', 'layout');
 
-// ========== UPLOADS ==========
-const uploadsDir = path.join(__dirname, 'public', 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+// Middleware auth
+function authRequired(req, res, next) {
+  if (!req.session.user) return res.redirect('/login');
+  next();
+}
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    const unique = Date.now() + "-" + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + "-" + unique + path.extname(file.originalname));
-  }
-});
-const upload = multer({ storage });
-
-// ========== BANCO ==========
+// ================= DATABASE =================
 const db = new sqlite3.Database(DB_FILE, (err) => {
-  if (err) return console.error(err);
-  console.log(`SQLite conectado em ${DB_FILE}`);
+  if (err) console.error(err);
+  else console.log("SQLite conectado em", DB_FILE);
 });
 
+// Criação das tabelas
 db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS equipamentos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
-    codigo TEXT,
-    local TEXT,
-    descricao TEXT,
-    imagem TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS equipamentos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT,
+      codigo TEXT,
+      local TEXT,
+      descricao TEXT,
+      imagem TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
 
-  db.run(`CREATE TABLE IF NOT EXISTS ordens (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    equipamento_id INTEGER,
-    solicitante TEXT,
-    tipo TEXT,
-    descricao TEXT,
-    status TEXT DEFAULT 'aberta',
-    aberta_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    fechada_em DATETIME,
-    resultado TEXT,
-    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id)
-  )`);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS ordens (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      equipamento_id INTEGER,
+      solicitante TEXT,
+      tipo TEXT,
+      descricao TEXT,
+      status TEXT DEFAULT 'aberta',
+      aberta_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+      fechada_em DATETIME,
+      resultado TEXT
+    );
+  `);
 });
 
 // Helpers
@@ -73,10 +84,42 @@ const runAsync = (sql, p=[]) => new Promise((ok, err)=> db.run(sql,p,function(e)
 const allAsync = (sql, p=[]) => new Promise((ok, err)=> db.all(sql,p,(e,r)=>e?err(e):ok(r)));
 const getAsync = (sql, p=[]) => new Promise((ok, err)=> db.get(sql,p,(e,r)=>e?err(e):ok(r)));
 
-// ========== ROTAS ==========
+// ================= UPLOADS =================
+const uploadsDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
-// DASHBOARD COMPLETO
-app.get('/', async (req, res) => {
+const storage = multer.diskStorage({
+  destination(req, file, cb) { cb(null, uploadsDir) },
+  filename(req, file, cb) {
+    const unique = Date.now() + "-" + Math.round(Math.random()*1e9);
+    cb(null, file.fieldname + "-" + unique + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage });
+
+// ================= LOGIN =================
+
+app.get('/login', (req, res) => {
+  res.render('login', { layout: false, error: null });
+});
+
+app.post('/login', (req, res) => {
+  const { usuario, senha } = req.body;
+
+  if (usuario === "admin" && senha === "123") {
+    req.session.user = { nome: "Administrador" };
+    return res.redirect('/');
+  }
+
+  res.render('login', { layout: false, error: "Usuário ou senha incorretos" });
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => res.redirect('/login'));
+});
+
+// ================= DASHBOARD =================
+app.get('/', authRequired, async (req, res) => {
   try {
     const totalEquip = await getAsync(`SELECT COUNT(*) c FROM equipamentos`);
     const totalAbertas = await getAsync(`SELECT COUNT(*) c FROM ordens WHERE status='aberta'`);
@@ -92,22 +135,17 @@ app.get('/', async (req, res) => {
 
     const tipos = await allAsync(`
       SELECT tipo, COUNT(*) c
-      FROM ordens
-      GROUP BY tipo
+      FROM ordens GROUP BY tipo
     `);
 
     res.render('admin/dashboard', {
-      layout: 'layout',
       active: 'dashboard',
-
       totals: {
         equipamentos: totalEquip.c,
         abertas: totalAbertas.c,
         fechadas: totalFechadas.c
       },
-
       ultimas,
-
       tipos: {
         labels: tipos.map(t => t.tipo),
         valores: tipos.map(t => t.c)
@@ -115,184 +153,135 @@ app.get('/', async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
-    res.send("Erro ao carregar dashboard.");
+    res.send("Erro no dashboard");
   }
 });
 
-// ========== EQUIPAMENTOS ==========
-
-app.get('/equipamentos', async (req, res) => {
-  try {
-    const equipamentos = await allAsync(`SELECT * FROM equipamentos ORDER BY id DESC`);
-    res.render('equipamentos', { layout: 'layout', active: 'equipamentos', equipamentos });
-  } catch (e) {
-    res.status(500).send("Erro ao listar equipamentos");
-  }
+// ================= EQUIPAMENTOS =================
+app.get('/equipamentos', authRequired, async (req, res) => {
+  const equipamentos = await allAsync(`SELECT * FROM equipamentos ORDER BY id DESC`);
+  res.render('equipamentos', { active: 'equipamentos', equipamentos });
 });
 
-app.get('/equipamentos/novo', (req, res) => {
-  res.render('equipamentos_novo', {
-    layout: 'layout',
-    active: 'equipamentos',
-    equipamento: null
-  });
+app.get('/equipamentos/novo', authRequired, (req, res) => {
+  res.render('equipamentos_novo', { active: 'equipamentos', equipamento: null });
 });
 
-app.post('/equipamentos', upload.single('imagem'), async (req, res) => {
-  try {
-    const { nome, codigo, local, descricao } = req.body;
-    const imagem = req.file ? "uploads/"+req.file.filename : null;
+app.post('/equipamentos', authRequired, upload.single('imagem'), async (req, res) => {
+  const { nome, codigo, local, descricao } = req.body;
+  const imagem = req.file ? "uploads/" + req.file.filename : null;
 
-    await runAsync(
-      `INSERT INTO equipamentos (nome, codigo, local, descricao, imagem)
-       VALUES (?, ?, ?, ?, ?)`,
-      [nome, codigo, local, descricao, imagem]
-    );
+  await runAsync(`
+    INSERT INTO equipamentos (nome, codigo, local, descricao, imagem)
+    VALUES (?, ?, ?, ?, ?)
+  `, [nome, codigo, local, descricao, imagem]);
 
-    res.redirect('/equipamentos');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao criar equipamento");
-  }
+  res.redirect('/equipamentos');
 });
 
-app.get('/equipamentos/:id/editar', async (req, res) => {
-  try {
-    const equipamento = await getAsync(`SELECT * FROM equipamentos WHERE id=?`, [req.params.id]);
-    if (!equipamento) return res.send("Equipamento não encontrado");
-
-    res.render('equipamentos_novo', {
-      layout: 'layout',
-      active: 'equipamentos',
-      equipamento
-    });
-  } catch (err) {
-    res.status(500).send("Erro");
-  }
+app.get('/equipamentos/:id/editar', authRequired, async (req, res) => {
+  const equipamento = await getAsync(`SELECT * FROM equipamentos WHERE id=?`, [req.params.id]);
+  res.render('equipamentos_novo', { active: 'equipamentos', equipamento });
 });
 
-app.post('/equipamentos/:id', upload.single('imagem'), async (req, res) => {
-  try {
-    const { nome, codigo, local, descricao } = req.body;
-    const eq = await getAsync(`SELECT * FROM equipamentos WHERE id=?`, [req.params.id]);
+app.post('/equipamentos/:id', authRequired, upload.single('imagem'), async (req, res) => {
+  const eq = await getAsync(`SELECT * FROM equipamentos WHERE id=?`, [req.params.id]);
+  let imagem = eq.imagem;
 
-    let imagem = eq.imagem;
-    if (req.file) {
-      if (imagem) {
-        const old = path.join(__dirname, 'public', imagem);
-        if (fs.existsSync(old)) fs.unlinkSync(old);
-      }
-      imagem = "uploads/"+req.file.filename;
+  if (req.file) {
+    if (imagem) {
+      const oldP = path.join(__dirname, 'public', imagem);
+      if (fs.existsSync(oldP)) fs.unlinkSync(oldP);
     }
-
-    await runAsync(
-      `UPDATE equipamentos SET nome=?, codigo=?, local=?, descricao=?, imagem=? WHERE id=?`,
-      [nome, codigo, local, descricao, imagem, req.params.id]
-    );
-
-    res.redirect('/equipamentos');
-  } catch (err) {
-    res.status(500).send("Erro ao atualizar");
+    imagem = "uploads/" + req.file.filename;
   }
+
+  const { nome, codigo, local, descricao } = req.body;
+
+  await runAsync(`
+    UPDATE equipamentos SET nome=?, codigo=?, local=?, descricao=?, imagem=? WHERE id=?
+  `, [nome, codigo, local, descricao, imagem, req.params.id]);
+
+  res.redirect('/equipamentos');
 });
 
-app.post('/equipamentos/:id/delete', async (req, res) => {
-  try {
-    const eq = await getAsync(`SELECT * FROM equipamentos WHERE id=?`, [req.params.id]);
+app.post('/equipamentos/:id/delete', authRequired, async (req, res) => {
+  const eq = await getAsync(`SELECT * FROM equipamentos WHERE id=?`, [req.params.id]);
 
-    if (eq.imagem) {
-      const imgPath = path.join(__dirname, 'public', eq.imagem);
-      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
-    }
-
-    await runAsync(`DELETE FROM equipamentos WHERE id=?`, [req.params.id]);
-    res.redirect('/equipamentos');
-
-  } catch (err) {
-    res.status(500).send("Erro ao deletar");
+  if (eq.imagem) {
+    const imgP = path.join(__dirname, 'public', eq.imagem);
+    if (fs.existsSync(imgP)) fs.unlinkSync(imgP);
   }
+
+  await runAsync(`DELETE FROM equipamentos WHERE id=?`, [req.params.id]);
+  res.redirect('/equipamentos');
 });
 
-// ========== ORDENS (OS) ==========
-
-app.get('/ordens', async (req, res) => {
-  try {
-    const ordens = await allAsync(`
-      SELECT o.*, e.nome AS equipamento_nome
-      FROM ordens o
-      LEFT JOIN equipamentos e ON o.equipamento_id = e.id
-      ORDER BY o.aberta_em DESC
-    `);
-
-    res.render('ordens', { layout: 'layout', active: 'ordens', ordens });
-  } catch (err) {
-    res.status(500).send("Erro ao listar ordens");
-  }
+// ================= ORDENS =================
+app.get('/ordens', authRequired, async (req, res) => {
+  const ordens = await allAsync(`
+    SELECT o.*, e.nome AS equipamento_nome
+    FROM ordens o
+    LEFT JOIN equipamentos e ON o.equipamento_id = e.id
+    ORDER BY o.aberta_em DESC
+  `);
+  res.render('ordens', { active: 'ordens', ordens });
 });
 
-app.get('/ordens/novo', async (req, res) => {
+app.get('/ordens/novo', authRequired, async (req, res) => {
   const equipamentos = await allAsync(`SELECT id, nome FROM equipamentos ORDER BY nome`);
-  res.render('abrir_os', { layout: 'layout', active: 'abrir_os', equipamentos });
+  res.render('abrir_os', { active: 'abrir_os', equipamentos });
 });
 
-app.post('/ordens', async (req, res) => {
+app.post('/ordens', authRequired, async (req, res) => {
   const { equipamento_id, solicitante, tipo, descricao } = req.body;
 
-  await runAsync(
-    `INSERT INTO ordens (equipamento_id, solicitante, tipo, descricao)
-     VALUES (?, ?, ?, ?)`,
-    [equipamento_id || null, solicitante, tipo, descricao]
-  );
+  await runAsync(`
+    INSERT INTO ordens (equipamento_id, solicitante, tipo, descricao)
+    VALUES (?, ?, ?, ?)
+  `, [equipamento_id || null, solicitante, tipo, descricao]);
 
   res.redirect('/ordens');
 });
 
-app.get('/ordens/:id/fechar', async (req, res) => {
+app.get('/ordens/:id/fechar', authRequired, async (req, res) => {
   const ordem = await getAsync(`SELECT * FROM ordens WHERE id=?`, [req.params.id]);
-  res.render('ordens_fechar', { layout: 'layout', active: 'ordens', ordem });
+  res.render('ordens_fechar', { active: 'ordens', ordem });
 });
 
-app.post('/ordens/:id/fechar', async (req, res) => {
-  await runAsync(
-    `UPDATE ordens SET status='fechada', resultado=?, fechada_em=CURRENT_TIMESTAMP WHERE id=?`,
-    [req.body.resultado, req.params.id]
-  );
+app.post('/ordens/:id/fechar', authRequired, async (req, res) => {
+  await runAsync(`
+    UPDATE ordens
+    SET status='fechada', resultado=?, fechada_em=CURRENT_TIMESTAMP
+    WHERE id=?
+  `, [req.body.resultado, req.params.id]);
 
   res.redirect('/ordens');
 });
 
-// ========== PDF ==========
-app.get('/solicitacao/pdf/:id', async (req, res) => {
-  try {
-    const ordem = await getAsync(`
-      SELECT o.*, e.nome equipamento_nome, e.codigo equipamento_codigo
-      FROM ordens o
-      LEFT JOIN equipamentos e ON o.equipamento_id = e.id
-      WHERE o.id=?`,
-      [req.params.id]
-    );
+// PDF
+app.get('/solicitacao/pdf/:id', authRequired, async (req, res) => {
+  const ordem = await getAsync(`
+    SELECT o.*, e.nome equipamento_nome, e.codigo equipamento_codigo
+    FROM ordens o LEFT JOIN equipamentos e ON o.equipamento_id = e.id
+    WHERE o.id=?
+  `, [req.params.id]);
 
-    if (!ordem) return res.send("OS não encontrada");
+  const doc = new PDFDocument({ margin: 40 });
+  res.setHeader("Content-Disposition", `attachment; filename=os_${ordem.id}.pdf`);
+  res.setHeader("Content-Type", "application/pdf");
+  doc.pipe(res);
 
-    const doc = new PDFDocument({ margin: 40 });
-    res.setHeader("Content-Disposition", `attachment; filename=os_${ordem.id}.pdf`);
-    res.setHeader("Content-Type", "application/pdf");
-    doc.pipe(res);
+  doc.fontSize(20).text("Ordem de Serviço", { align: "center" }).moveDown();
+  doc.fontSize(12).text(`ID: ${ordem.id}`);
+  doc.text(`Solicitante: ${ordem.solicitante}`);
+  doc.text(`Tipo: ${ordem.tipo}`);
+  doc.text(`Equipamento: ${ordem.equipamento_nome}`);
+  doc.text(`Descrição: ${ordem.descricao}`).moveDown();
+  doc.text(`Status: ${ordem.status}`);
 
-    doc.fontSize(18).text("Ordem de Serviço", { align: "center" }).moveDown();
-    doc.fontSize(12).text(`ID: ${ordem.id}`);
-    doc.text(`Solicitante: ${ordem.solicitante}`);
-    doc.text(`Tipo: ${ordem.tipo}`);
-    doc.text(`Equipamento: ${ordem.equipamento_nome}`);
-    doc.text(`Descrição: ${ordem.descricao}`).moveDown();
-    doc.text(`Status: ${ordem.status}`);
-
-    doc.end();
-  } catch (err) {
-    res.send("Erro ao gerar PDF");
-  }
+  doc.end();
 });
 
-// ========== START ==========
-app.listen(PORT, () => console.log(`Servidor ativo na porta ${PORT}`));
+// ================= START =================
+app.listen(PORT, () => console.log("Servidor ativo na porta", PORT));
