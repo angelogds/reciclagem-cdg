@@ -1,0 +1,33 @@
+<% layout(false) %>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Redefinir Senha</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="login-body">
+
+<div class="login-container">
+
+  <h2 class="login-title">Nova Senha</h2>
+
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <form class="login-card" method="POST" action="/reset/<%= token %>">
+
+    <label>Nova Senha</label>
+    <input type="password" name="senha" required>
+
+    <button class="btn-save" style="width:100%">Salvar</button>
+  </form>
+
+  <a href="/login" class="login-forgot">Voltar ao login</a>
+
+</div>
+
+</body>
+</html>
