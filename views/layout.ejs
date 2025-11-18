@@ -1,10 +1,62 @@
-<nav class="sidebar-menu">
-  <a href="/" class="<%= active==='dashboard'?'active':'' %>">Dashboard</a>
-  <a href="/equipamentos" class="<%= active==='equipamentos'?'active':'' %>">Equipamentos</a>
-  <a href="/ordens" class="<%= active==='ordens'?'active':'' %>">Ordens</a>
-  <a href="/ordens/novo" class="<%= active==='abrir_os'?'active':'' %>">Abrir OS</a>
-  <% if (session && session.role === 'admin') { %>
-    <a href="/users" class="<%= active==='users'?'active':'' %>">Usuários</a>
-  <% } %>
-  <a href="/logout">Sair</a>
-</nav>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title><%= title || "Sistema Manutenção" %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS global -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+    <!-- MENU LATERAL -->
+    <aside class="sidebar">
+        <div class="logo">CAMPO DO GADO</div>
+
+        <nav>
+            <a href="/" class="<%= active === 'dashboard' ? 'active' : '' %>">
+                <i class="ri-dashboard-2-line"></i> Dashboard
+            </a>
+
+            <a href="/equipamentos" class="<%= active === 'equipamentos' ? 'active' : '' %>">
+                <i class="ri-tools-line"></i> Equipamentos
+            </a>
+
+            <a href="/ordens" class="<%= active === 'ordens' ? 'active' : '' %>">
+                <i class="ri-file-list-3-line"></i> Ordens de Serviço
+            </a>
+
+            <% if (session.role === 'admin') { %>
+            <a href="/users" class="<%= active === 'users' ? 'active' : '' %>">
+                <i class="ri-user-settings-line"></i> Usuários
+            </a>
+            <% } %>
+
+            <a href="/logout">
+                <i class="ri-logout-box-line"></i> Sair
+            </a>
+        </nav>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="content">
+        <header class="topbar">
+            <span>Bem-vindo, <strong><%= session.usuario %></strong></span>
+        </header>
+
+        <section class="page-content">
+            <%- body %>
+        </section>
+    </main>
+
+</body>
+</html>
