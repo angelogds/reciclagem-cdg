@@ -1,39 +1,32 @@
-<% layout('layout', { title: "Correias (Estoque)", active: "correias" }) %>
-
 <h1 class="page-title">Estoque de Correias</h1>
 
 <a href="/correias/novo" class="btn-add">+ Nova Correia</a>
 
 <table class="tabela">
-    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Modelo</th>
+        <th>Medida</th>
+        <th>Qtd</th>
+        <th>Ações</th>
+    </tr>
+
+    <% correias.forEach(c => { %>
         <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Modelo</th>
-            <th>Medida</th>
-            <th>Quantidade</th>
-            <th>Ações</th>
+            <td><%= c.id %></td>
+            <td><%= c.nome %></td>
+            <td><%= c.modelo || '-' %></td>
+            <td><%= c.medida || '-' %></td>
+            <td><%= c.quantidade %></td>
+            <td>
+                <a href="/correias/<%= c.id %>/editar" class="btn-edit">Editar</a>
+
+                <form method="POST" action="/correias/<%= c.id %>/delete"
+                      style="display:inline" onsubmit="return confirm('Excluir correia?')">
+                    <button class="btn-del">Excluir</button>
+                </form>
+            </td>
         </tr>
-    </thead>
-
-    <tbody>
-        <% correias.forEach(c => { %>
-            <tr>
-                <td><%= c.id %></td>
-                <td><%= c.nome %></td>
-                <td><%= c.modelo || "-" %></td>
-                <td><%= c.medida || "-" %></td>
-                <td><strong><%= c.quantidade %></strong></td>
-
-                <td style="display:flex; gap:6px;">
-                    <a href="/correias/<%= c.id %>/editar" class="btn-edit">Editar</a>
-
-                    <form action="/correias/<%= c.id %>/delete" method="POST"
-                        onsubmit="return confirm('Excluir esta correia?');">
-                        <button class="btn-del">Excluir</button>
-                    </form>
-                </td>
-            </tr>
-        <% }) %>
-    </tbody>
+    <% }) %>
 </table>
