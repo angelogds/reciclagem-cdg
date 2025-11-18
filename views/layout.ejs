@@ -1,62 +1,56 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-   <title><%= typeof title !== "undefined" ? title : "Sistema Manutenção" %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== "undefined" ? title : "Sistema Manutenção" %></title>
 
-    <!-- CSS global -->
     <link rel="stylesheet" href="/css/style.css">
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css">
-
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <!-- Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
-
 <body>
 
-    <!-- MENU LATERAL -->
-    <aside class="sidebar">
-        <div class="logo">CAMPO DO GADO</div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <h2>Campo do Gado</h2>
 
-        <nav>
-            <a href="/" class="<%= active === 'dashboard' ? 'active' : '' %>">
-                <i class="ri-dashboard-2-line"></i> Dashboard
-            </a>
-
-            <a href="/equipamentos" class="<%= active === 'equipamentos' ? 'active' : '' %>">
-                <i class="ri-tools-line"></i> Equipamentos
-            </a>
-
-            <a href="/ordens" class="<%= active === 'ordens' ? 'active' : '' %>">
-                <i class="ri-file-list-3-line"></i> Ordens de Serviço
-            </a>
+        <ul>
+            <li><a href="/" class="<%= active === 'dashboard' ? 'active' : '' %>"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="/equipamentos" class="<%= active === 'equipamentos' ? 'active' : '' %>"><i class="fa-solid fa-truck"></i> Equipamentos</a></li>
+            <li><a href="/ordens" class="<%= active === 'ordens' ? 'active' : '' %>"><i class="fa-solid fa-list-check"></i> Ordens</a></li>
 
             <% if (session.role === 'admin') { %>
-            <a href="/users" class="<%= active === 'users' ? 'active' : '' %>">
-                <i class="ri-user-settings-line"></i> Usuários
-            </a>
+            <li><a href="/users" class="<%= active === 'users' ? 'active' : '' %>"><i class="fa-solid fa-users"></i> Usuários</a></li>
             <% } %>
 
-            <a href="/logout">
-                <i class="ri-logout-box-line"></i> Sair
-            </a>
-        </nav>
+            <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+        </ul>
     </aside>
 
-    <!-- ÁREA PRINCIPAL -->
-    <main class="content">
-        <header class="topbar">
-            <span>Bem-vindo, <strong><%= session.usuario %></strong></span>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-container">
+
+        <header>
+            <span class="menu-toggle" onclick="toggleMenu()">☰</span>
+
+            <div class="user-info">
+                Logado como: <strong><%= session.usuario %></strong>
+            </div>
         </header>
 
-        <section class="page-content">
+        <main>
             <%- body %>
-        </section>
-    </main>
+        </main>
+
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById("sidebar").classList.toggle("open");
+        }
+    </script>
 
 </body>
 </html>
