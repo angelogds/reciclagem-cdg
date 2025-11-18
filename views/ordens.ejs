@@ -1,0 +1,49 @@
+<% layout('layout', { title: "Ordens de Serviço", active: "ordens" }) %>
+
+<h1 class="page-title">Ordens de Serviço</h1>
+
+<a href="/ordens/novo" class="btn-add">+ Abrir Nova OS</a>
+
+<table class="tabela">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Equipamento</th>
+            <th>Solicitante</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Abertura</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% ordens.forEach(o => { %>
+            <tr>
+                <td><%= o.id %></td>
+                <td><%= o.equipamento_nome || "-" %></td>
+                <td><%= o.solicitante || "-" %></td>
+                <td><%= o.tipo || "-" %></td>
+
+                <td>
+                    <% if (o.status === "aberta") { %>
+                        <span class="tag aberta">Aberta</span>
+                    <% } else { %>
+                        <span class="tag fechada">Fechada</span>
+                    <% } %>
+                </td>
+
+                <td><%= o.aberta_em %></td>
+
+                <td style="display:flex; gap:6px;">
+                    <a href="/ordens/<%= o.id %>" class="btn-edit">Ver</a>
+
+                    <% if (o.status === 'fechada') { %>
+                        <a href="/solicitacao/pdf/<%= o.id %>" class="btn-download" title="Baixar PDF">
+                            PDF
+                        </a>
+                    <% } %>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
