@@ -1,4 +1,8 @@
-<% layout('layout', { title: "Equipamentos", active: "equipamentos" }) %>
+<%
+    // Variáveis usadas no layout
+    const title = "Equipamentos";
+    const active = "equipamentos";
+%>
 
 <h1 class="page-title">Equipamentos</h1>
 
@@ -11,11 +15,9 @@
         <th>Nome</th>
         <th>Código</th>
         <th>Local</th>
+        <th>QR</th>
         <th>Ações</th>
     </tr>
-<a href="/equipamentos/<%= eq.id %>/qrcode" class="btn-qr">
-    <i class="fa-solid fa-qrcode"></i>
-</a>
 
     <% equipamentos.forEach(e => { %>
         <tr>
@@ -34,13 +36,10 @@
             <td><%= e.local || "-" %></td>
 
             <td>
-                <a href="/equipamentos/<%= e.id %>/editar" class="btn-edit">Editar</a>
-
-                <form method="POST" action="/equipamentos/<%= e.id %>/delete"
-                      style="display:inline;" onsubmit="return confirm('Excluir este equipamento?')">
-                    <button class="btn-del">Excluir</button>
-                </form>
+                <a href="/equipamentos/<%= e.id %>/qrcode" class="btn-qr">
+                    <i class="fa-solid fa-qrcode"></i>
+                </a>
             </td>
-        </tr>
-    <% }) %>
-</table>
+
+            <td>
+                <a href="/equipamentos/<%= e.id %>/editar" class="btn-edit">Editar<
