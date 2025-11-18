@@ -481,39 +481,6 @@ app.use((req, res, next) => {
 });
 
 // ---------------------- (FIM BLOCO 5) ----------------------
-// ---------------------- BLOCO 5/9 ----------------------
-// PROTEÇÃO GLOBAL DAS ROTAS INTERNAS
-
-// Rotas que NÃO precisam estar logadas
-const rotasAbertas = [
-  '/login',
-  '/forgot',
-  '/reset',
-];
-
-// Proteção global para todas as outras rotas
-app.use((req, res, next) => {
-  const url = req.path;
-
-  // permitir arquivos estáticos
-  if (url.startsWith('/css') || url.startsWith('/js') || url.startsWith('/img') || url.startsWith('/uploads')) {
-    return next();
-  }
-
-  // permitir rotas abertas
-  if (rotasAbertas.some(r => url.startsWith(r))) {
-    return next();
-  }
-
-  // se não estiver logado, redireciona
-  if (!req.session.usuario) {
-    return res.redirect('/login');
-  }
-
-  next();
-});
-
-// ---------------------- (FIM BLOCO 5) ----------------------
 // ---------------------- BLOCO 6/9 ----------------------
 // CRUD DE EQUIPAMENTOS — protegido por login
 
