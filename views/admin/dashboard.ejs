@@ -1,5 +1,3 @@
-<% layout('layout', { title: "Dashboard", active: "dashboard" }) %>
-
 <h1 class="page-title">Dashboard Bonitão ✔️</h1>
 
 <div class="dashboard-grid">
@@ -33,6 +31,7 @@
         <h3>Ordens por Tipo</h3>
         <canvas id="chartTipos"></canvas>
     </div>
+
     <div class="chart-card card">
         <h3>Status das Ordens</h3>
         <canvas id="chartStatus"></canvas>
@@ -41,14 +40,15 @@
 
 <div class="list-card card">
     <h3>Últimas Ordens Abertas</h3>
+
     <% if (!ultimas || ultimas.length === 0) { %>
-        <p>Nenhuma ordem aberta recentemente.</p>
+        <p>Nenhuma ordem aberta no momento.</p>
     <% } else { %>
         <ul class="ultima-lista">
             <% ultimas.forEach(u => { %>
                 <li>
-                    <strong><%= u.id %></strong> — <%= u.equipamento_nome || "Sem equipamento" %>
-                    <span class="badge"><%= u.tipo || "—" %></span>
+                    <strong>#<%= u.id %></strong> — <%= u.equipamento_nome || "Sem equipamento" %>
+                    <span class="badge"><%= u.tipo %></span>
                 </li>
             <% }) %>
         </ul>
@@ -57,27 +57,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const ctxTipos = document.getElementById('chartTipos');
-  if (ctxTipos) {
-    new Chart(ctxTipos, {
-      type: 'bar',
-      data: {
-        labels: <%- JSON.stringify(tipos.labels || []) %>,
-        datasets: [{ label: 'Quantidade', data: <%- JSON.stringify(tipos.valores || []) %> }]
-      },
-      options: {}
-    });
-  }
+new Chart(document.getElementById("chartTipos"), {
+    type: "bar",
+    data: {
+        labels: <%- JSON.stringify(tipos.labels) %>,
+        datasets: [{
+            label: "Quantidade",
+            data: <%- JSON.stringify(tipos.valores) %>
+        }]
+    }
+});
 
-  const ctxStatus = document.getElementById('chartStatus');
-  if (ctxStatus) {
-    new Chart(ctxStatus, {
-      type: 'pie',
-      data: {
-        labels: ['Abertas', 'Fechadas'],
+new Chart(document.getElementById("chartStatus"), {
+    type: "pie",
+    data: {
+        labels: ["Abertas", "Fechadas"],
         datasets: [{ data: [<%= totals.abertas %>, <%= totals.fechadas %>] }]
-      },
-      options: {}
-    });
-  }
+    }
+});
 </script>
