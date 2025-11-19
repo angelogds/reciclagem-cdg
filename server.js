@@ -635,6 +635,50 @@ app.get('/correias/relatorio', authRequired, allowRoles('admin', 'funcionario'),
     res.send('Erro ao gerar relatório.');
   }
 });
+// ==============================================
+// HISTÓRICO COMPLETO DO EQUIPAMENTO
+// ==============================================
+app.get('/equipamentos/:id/historico', authRequired, async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const equipamento = await getAsync(
+      `SELECT * FROM equipamentos WHERE id = ?`,
+      [id]
+    );
+    if (!equipamento) return res.send("Equipamento não encontrado.");
+
+    // Histórico de OS
+    const ordens = await allAsync(
+      `SELECT id, tipo, status, aberta_em, fechada_em
+       FROM ordens
+       WHERE equipamento_id = ?
+       ORDER BY aberta_em DESC`,
+      [id]
+    );
+
+    // Histórico de correias consumidas
+    const correias = await allAsync(
+      `SELECT c.nome AS correia, cc.quantidade, cc.data
+       FROM consumo_correias cc
+       LEFT JOIN correias c ON c.id = cc.correia_id
+       WHERE cc.equipamento_id = ?
+       ORDER BY cc.data DESC`,
+      [id]
+    );
+
+    res.render('equipamento_historico', {
+      equipamento,
+      ordens,
+      correias,
+      active: 'equipamentos'
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.send("Erro ao carregar histórico.");
+  }
+});
 
 // ========== ORDENS DE SERVIÇO (OS) ==========
 // ORDENS: admin, funcionario, operador (operador vê apenas as próprias OS)
