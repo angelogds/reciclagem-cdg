@@ -477,7 +477,7 @@ app.get('/equipamentos/:id/qrcode', async (req, res) => {
     if (!equipamento) return res.send('Equipamento não encontrado.');
 
     const baseUrl = process.env.BASE_URL || `https://${req.headers.host}`;
-    const url = `${baseUrl}/equipamentos/${equipamento.id}/baixar`;
+    const url = `${baseUrl}/equipamentos/${equipamento.id}/menu`;
     const qr = await QRCode.toDataURL(url);
 
     res.render('equipamento_qr', { equipamento, qr, url, active: 'equipamentos' });
