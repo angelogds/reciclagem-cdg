@@ -1,3 +1,40 @@
-<a class="btn" href="/equipamentos/<%= equipamento.id %>/baixar">
-  🔧 Realizar troca de correia
-</a>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Menu do Equipamento</title>
+  <link rel="stylesheet" href="/css/mobile.css">
+</head>
+
+<body class="mobile-body">
+
+<div class="mobile-container">
+
+  <h2 class="mobile-title"><%= equipamento.nome %></h2>
+  <p class="mobile-sub">Código: <%= equipamento.codigo || '-' %></p>
+
+  <div class="mobile-buttons">
+
+    <a class="mobile-btn" href="/ordens/novo?equip=<%= equipamento.id %>">
+      📋 Abrir Ordem de Serviço
+    </a>
+
+    <a class="mobile-btn" href="/equipamentos/<%= equipamento.id %>/baixar">
+      🔧 Dar Baixa em Correias
+    </a>
+
+    <a class="mobile-btn" href="/equipamentos/<%= equipamento.id %>/historico">
+      📑 Histórico da Máquina
+    </a>
+
+    <a class="mobile-btn" href="/equipamentos/<%= equipamento.id %>">
+      🖥️ Ver Detalhes
+    </a>
+
+  </div>
+
+</div>
+
+</body>
+</html>
