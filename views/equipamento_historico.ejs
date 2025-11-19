@@ -1,0 +1,57 @@
+<% layout('layout', { title: "Histórico do Equipamento", active: "equipamentos" }) %>
+
+<h1 class="page-title">Histórico — <%= equipamento.nome %></h1>
+
+<div class="card">
+    <p><strong>Código:</strong> <%= equipamento.codigo || '-' %></p>
+    <p><strong>Local:</strong> <%= equipamento.local || '-' %></p>
+</div>
+
+<h2 class="sub-title">Ordens de Serviço</h2>
+
+<table class="tabela">
+    <tr>
+        <th>ID</th>
+        <th>Tipo</th>
+        <th>Status</th>
+        <th>Abertura</th>
+        <th>Fechamento</th>
+    </tr>
+
+    <% if (ordens.length === 0) { %>
+        <tr><td colspan="5" class="empty">Nenhuma OS registrada.</td></tr>
+    <% } %>
+
+    <% ordens.forEach(o => { %>
+        <tr>
+            <td><%= o.id %></td>
+            <td><%= o.tipo %></td>
+            <td><%= o.status %></td>
+            <td><%= o.aberta_em %></td>
+            <td><%= o.fechada_em || '-' %></td>
+        </tr>
+    <% }) %>
+</table>
+
+
+<h2 class="sub-title" style="margin-top:35px">Consumo de Correias</h2>
+
+<table class="tabela">
+    <tr>
+        <th>Correia</th>
+        <th>Quantidade</th>
+        <th>Data</th>
+    </tr>
+
+    <% if (correias.length === 0) { %>
+        <tr><td colspan="3" class="empty">Nenhuma troca registrada.</td></tr>
+    <% } %>
+
+    <% correias.forEach(c => { %>
+        <tr>
+            <td><%= c.correia %></td>
+            <td><%= c.quantidade %></td>
+            <td><%= c.data %></td>
+        </tr>
+    <% }) %>
+</table>
