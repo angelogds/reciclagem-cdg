@@ -2,22 +2,24 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title><%= typeof title !== "undefined" ? title : "Sistema Manutenção" %></title>
 
   <link rel="stylesheet" href="/css/style.css">
-
-  <!-- Font Awesome (CDN) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-
+  <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
+
 <body>
+
+  <!-- OVERLAY PARA MOBILE -->
+  <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
 
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <a href="/" class="brand-link">
-        <img src="/img/logo.png" alt="logo" class="brand-logo" onerror="this.style.display='none'">
         <span class="brand-text">Campo do Gado</span>
       </a>
     </div>
@@ -27,19 +29,21 @@
         <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
       </a>
 
+      <% if (session.role === 'admin' || session.role === 'funcionario') { %>
       <a href="/equipamentos" class="nav-item <%= active === 'equipamentos' ? 'active' : '' %>">
-        <i class="fa-solid fa-truck-moving"></i><span>Equipamentos</span>
-      </a>
-
-      <a href="/ordens" class="nav-item <%= active === 'ordens' ? 'active' : '' %>">
-        <i class="fa-solid fa-list-check"></i><span>Ordens</span>
+        <i class="fa-solid fa-truck"></i><span>Equipamentos</span>
       </a>
 
       <a href="/correias" class="nav-item <%= active === 'correias' ? 'active' : '' %>">
-        <i class="fa-solid fa-cog"></i><span>Correias (Estoque)</span>
+        <i class="fa-solid fa-gears"></i><span>Correias / Estoque</span>
+      </a>
+      <% } %>
+
+      <a href="/ordens" class="nav-item <%= active === 'ordens' ? 'active' : '' %>">
+        <i class="fa-solid fa-list-check"></i><span>Ordens de Serviço</span>
       </a>
 
-      <% if (session && session.role === 'admin') { %>
+      <% if (session.role === 'admin') { %>
       <a href="/users" class="nav-item <%= active === 'users' ? 'active' : '' %>">
         <i class="fa-solid fa-users"></i><span>Usuários</span>
       </a>
@@ -59,45 +63,39 @@
   <div class="main-container">
 
     <header class="topbar">
-      <button class="btn-toggle" id="btnToggle" aria-label="abrir menu">☰</button>
+      <button class="btn-toggle" onclick="toggleMenu()">☰</button>
 
       <div class="topbar-right">
-        <div class="user">
-          <i class="fa-solid fa-user"></i>
-          <span class="user-name"><%= session && session.usuario ? session.usuario : 'Convidado' %></span>
-        </div>
+        <i class="fa-solid fa-user"></i>
+        <span><%= session.usuario %></span>
       </div>
     </header>
 
     <main class="content">
-      <!-- Flash/info area (padrão) -->
-      <% if (typeof error !== 'undefined' && error) { %>
+
+      <% if (error) { %>
         <div class="alert alert-error"><%= error %></div>
       <% } %>
 
-      <% if (typeof info !== 'undefined' && info) { %>
+      <% if (info) { %>
         <div class="alert alert-info"><%= info %></div>
       <% } %>
 
-      <!-- Página renderiza aqui -->
       <%- body %>
     </main>
 
   </div>
 
+  <!-- SCRIPT DO MENU -->
   <script>
-    (function () {
-      const btn = document.getElementById('btnToggle');
-      const sidebar = document.getElementById('sidebar');
-      btn && btn.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
-    })();
+    function toggleMenu() {
+      const s = document.getElementById('sidebar');
+      const o = document.getElementById('menuOverlay');
+
+      s.classList.toggle('open');
+      o.classList.toggle('show');
+    }
   </script>
-<script>
-function toggleMenu() {
-    document.querySelector('.sidebar').classList.toggle('open');
-    document.querySelector('.menu-overlay').classList.toggle('show');
-}
-</script>
 
 </body>
 </html>
