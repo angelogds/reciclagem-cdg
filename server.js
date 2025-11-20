@@ -924,7 +924,7 @@ app.get('/equipamentos/:id/menu', authRequired, async (req, res) => {
 });
 
 // ---------------------------------------------
-// DASHBOARD COMPLETO COM GRÁFICO POR MÊS
+// DASHBOARD
 // ---------------------------------------------
 app.get('/', authRequired, async (req, res) => {
   try {
@@ -941,7 +941,7 @@ app.get('/', authRequired, async (req, res) => {
       LIMIT 6
     `);
 
-    // -------- GRÁFICO DE TIPOS --------
+    // Gráfico por tipo
     const tipos = await allAsync(`
       SELECT modelo AS tipo, COUNT(*) AS total
       FROM correias
@@ -949,7 +949,7 @@ app.get('/', authRequired, async (req, res) => {
       ORDER BY modelo
     `);
 
-    // -------- GRÁFICO POR MÊS --------
+    // Gráfico por mês (corrigido!)
     const porMes = await allAsync(`
       SELECT strftime('%Y-%m', aberta_em) AS mes,
              COUNT(*) AS total
@@ -966,7 +966,7 @@ app.get('/', authRequired, async (req, res) => {
       },
       ultimas,
       tipos,
-      porMes,
+      porMes,   // <<---- ESSENCIAL!!
       active: "dashboard",
     });
 
@@ -975,4 +975,3 @@ app.get('/', authRequired, async (req, res) => {
     res.send("Erro ao carregar dashboard.");
   }
 });
-
