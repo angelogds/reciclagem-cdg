@@ -942,7 +942,7 @@ app.get('/', authRequired, async (req, res) => {
       LIMIT 6
     `);
 
-    // ADICIONADO — resolve o erro do dashboard
+    // 👇 ADICIONADO — sem isso o dashboard explode
     const tipos = await allAsync(`
       SELECT modelo AS tipo, COUNT(*) AS total
       FROM correias
@@ -957,7 +957,7 @@ app.get('/', authRequired, async (req, res) => {
         fechadas: totalFechadas.c
       },
       ultimas,
-      tipos,    // <<<<<< obrigatório para o EJS não quebrar
+      tipos,  // <-- essencial
       active: "dashboard",
     });
 
