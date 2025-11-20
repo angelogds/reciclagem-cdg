@@ -23,40 +23,64 @@
         </div>
     </header>
 
-    <!-- MENU LATERAL -->
-    <nav id="sidebar" class="sidebar">
+   <!-- MENU LATERAL MODERNO -->
+<aside class="sidebar">
 
-        <div class="sidebar-title">MENU</div>
+    <div class="sidebar-header">
+        <i class="fa-solid fa-recycle logo-icone"></i>
+        <span class="logo-text">Campo do Gado</span>
+    </div>
 
-        <ul>
-            <li class="<%= active === 'dashboard' ? 'active' : '' %>">
-                <a href="/"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+    <ul class="menu-list">
+        <li>
+            <a href="/" class="<%= active === 'dashboard' ? 'active' : '' %>">
+                <i class="fa-solid fa-gauge"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <% if (session.role === 'admin' || session.role === 'funcionario') { %>
+            <li>
+                <a href="/equipamentos" class="<%= active === 'equipamentos' ? 'active' : '' %>">
+                    <i class="fa-solid fa-truck"></i>
+                    Equipamentos
+                </a>
             </li>
-
-            <% if (session.role === 'admin' || session.role === 'funcionario') { %>
-                <li class="<%= active === 'equipamentos' ? 'active' : '' %>">
-                    <a href="/equipamentos"><i class="fa-solid fa-truck"></i> Equipamentos</a>
-                </li>
-
-                <li class="<%= active === 'correias' ? 'active' : '' %>">
-                    <a href="/correias"><i class="fa-solid fa-gears"></i> Correias / Estoque</a>
-                </li>
-            <% } %>
-
-            <li class="<%= active === 'ordens' ? 'active' : '' %>">
-                <a href="/ordens"><i class="fa-solid fa-list-check"></i> Ordens</a>
-            </li>
-
-            <% if (session.role === 'admin') { %>
-                <li class="<%= active === 'users' ? 'active' : '' %>">
-                    <a href="/users"><i class="fa-solid fa-users"></i> Usuários</a>
-                </li>
-            <% } %>
 
             <li>
-                <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
+                <a href="/correias" class="<%= active === 'correias' ? 'active' : '' %>">
+                    <i class="fa-solid fa-gears"></i>
+                    Correias / Estoque
+                </a>
             </li>
-        </ul>
+        <% } %>
+
+        <li>
+            <a href="/ordens" class="<%= active === 'ordens' ? 'active' : '' %>">
+                <i class="fa-solid fa-list-check"></i>
+                Ordens
+            </a>
+        </li>
+
+        <% if (session.role === 'admin') { %>
+        <li>
+            <a href="/users" class="<%= active === 'users' ? 'active' : '' %>">
+                <i class="fa-solid fa-users"></i>
+                Usuários
+            </a>
+        </li>
+        <% } %>
+
+        <li>
+            <a href="/logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Sair
+            </a>
+        </li>
+    </ul>
+
+</aside>
+
 
     </nav>
 
