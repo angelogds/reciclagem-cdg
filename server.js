@@ -776,6 +776,31 @@ app.post('/ordens', upload.array('fotos', 10), async (req, res) => {
     res.send('Erro ao criar OS.');
   }
 });
+// ==============================================
+// DELETAR FOTO DA OS
+// ==============================================
+app.post('/os_fotos/:id/delete', authRequired, allowRoles('admin', 'funcionario'), async (req, res) => {
+  try {
+    const fotoId = req.params.id;
+
+    // Buscar a foto
+    const foto = await getAsync(`SELECT * FROM os_fotos WHERE id = ?`, [fotoId]);
+    if (!foto) return res.send("Foto não encontrada.");
+
+    // Apagar arquivo do sistema
+    const filePath = path.join(__dirname, 'public', foto.caminho);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+    // Remover banco
+    await runAsync(`DELETE FROM os_fotos WHERE id = ?`, [fotoId]);
+
+    res.redirect('/ordens/' + foto.os_id);
+
+  } catch (err) {
+    console.error(err);
+    res.send("Erro ao deletar foto.");
+  }
+});
 
 // ---------------------------------------------
 // VER OS (com fotos)
