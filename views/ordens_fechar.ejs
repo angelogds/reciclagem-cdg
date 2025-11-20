@@ -22,6 +22,27 @@
     <% if (ordem.status === "fechada") { %>
         <h3>Resultado do Serviço</h3>
         <div class="descricao-box"><%= ordem.resultado %></div>
+<h3 style="margin-top:25px;">📸 Fotos da Ordem</h3>
+
+<div class="galeria">
+  <% if (fotos.length === 0) { %>
+      <p style="color:#777;">Nenhuma foto enviada.</p>
+  <% } else { %>
+      <% fotos.forEach(f => { %>
+          <div class="foto-item">
+              <img src="/<%= f.caminho %>" onclick="abrirZoom('/<%= f.caminho %>')">
+              <span class="foto-legenda">
+                  <%= f.tipo === 'abertura' ? 'Abertura' : 'Fechamento' %>
+              </span>
+          </div>
+      <% }) %>
+  <% } %>
+</div>
+
+<!-- MODAL DE ZOOM -->
+<div id="zoomModal" class="zoom-modal" onclick="fecharZoom()">
+  <img id="zoomImg">
+</div>
 
         <p><strong>Fechada em:</strong> <%= ordem.fechada_em %></p>
 
