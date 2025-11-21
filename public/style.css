@@ -555,3 +555,37 @@ canvas {
 .btn-table-del:hover {
     background: #d32f2f;
 }
+/* Botões */
+.btn-view {
+    background: #2b6e44;
+    color: #fff;
+}
+.btn-view:hover { background:#245c39; }
+
+.btn-pdf {
+    background: #b42323;
+    color: #fff;
+}
+.btn-pdf:hover { background:#8a1b1b; }
+
+.btn-delete {
+    background: #ff4d4d;
+    color: #fff;
+}
+.btn-delete:hover { background:#d93636; }
+
+.btn-history {
+    background: #275b8a;
+    color: #fff;
+}
+.btn-history:hover { background:#1f4a70; }
+
+/* TAGs de status */
+.tag.aberta {
+    background:#eab308;
+    color:#4a3900;
+}
+.tag.fechada {
+    background:#15803d;
+    color:white;
+}
