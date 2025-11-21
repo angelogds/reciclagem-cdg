@@ -1,50 +1,34 @@
-<h1 class="page-title">
-    <%= correia ? "Editar Correia" : "Nova Correia" %>
-</h1>
+<% layout('layout', { title: correia ? 'Editar Correia' : 'Nova Correia', active: 'correias' }) %>
 
-<div class="form-card">
+<h1 class="page-title"><i class="fa-solid fa-plus"></i> <%= correia ? 'Editar Correia' : 'Cadastrar Correia' %></h1>
 
-    <form method="POST" 
-          action="<%= correia ? '/correias/' + correia.id + '/editar' : '/correias/novo' %>" 
-          class="form-grid">
+<div class="card">
+  <form method="POST" action="<%= correia ? '/correias/' + correia.id + '/editar' : '/correias/novo' %>" class="form-card">
+    <div class="form-grid">
+      <div>
+        <label>Nome da Correia</label>
+        <input name="nome" required value="<%= correia?.nome || '' %>">
+      </div>
 
-        <!-- Nome -->
-        <div>
-            <label>Nome da Correia</label>
-            <input name="nome" required 
-                   placeholder="Ex.: Correia A-32"
-                   value="<%= correia?.nome || "" %>">
-        </div>
+      <div>
+        <label>Modelo</label>
+        <input name="modelo" value="<%= correia?.modelo || '' %>">
+      </div>
 
-        <!-- Modelo -->
-        <div>
-            <label>Modelo</label>
-            <input name="modelo" 
-                   placeholder="Ex.: A / B / C..."
-                   value="<%= correia?.modelo || "" %>">
-        </div>
+      <div>
+        <label>Medida</label>
+        <input name="medida" value="<%= correia?.medida || '' %>">
+      </div>
 
-        <!-- Medida -->
-        <div>
-            <label>Medida</label>
-            <input name="medida"
-                   placeholder="Ex.: 32 mm"
-                   value="<%= correia?.medida || "" %>">
-        </div>
+      <div>
+        <label>Quantidade em estoque</label>
+        <input type="number" name="quantidade" min="0" value="<%= correia?.quantidade || 0 %>">
+      </div>
+    </div>
 
-        <!-- Quantidade -->
-        <div>
-            <label>Quantidade em estoque</label>
-            <input type="number" name="quantidade" min="0" 
-                   value="<%= correia?.quantidade || 0 %>"
-                   placeholder="0">
-        </div>
-
-        <div style="grid-column: 1 / -1; text-align:right;">
-            <button class="btn-primary">
-                <%= correia ? "Salvar Alterações" : "Cadastrar Correia" %>
-            </button>
-        </div>
-
-    </form>
+    <div style="margin-top:12px;">
+      <button class="btn-primary"><%= correia ? 'Salvar Alterações' : 'Cadastrar' %></button>
+      <a href="/correias" class="btn-primary" style="background:#777; margin-left:8px;">Voltar</a>
+    </div>
+  </form>
 </div>
