@@ -1,83 +1,59 @@
-<h1 class="page-title">Correias do Equipamento</h1>
+<% layout('layout', { title: "Correias do Equipamento", active: "equipamentos" }) %>
+
+<h1 class="page-title">
+    <i class="fa-solid fa-gears"></i> Correias — <%= equipamento.nome %>
+</h1>
 
 <div class="card">
 
-    <h2 style="margin-bottom: 10px;"><%= equipamento.nome %></h2>
+    <p><strong>ID:</strong> <%= equipamento.id %></p>
     <p><strong>Código:</strong> <%= equipamento.codigo %></p>
-    <p><strong>Local:</strong> <%= equipamento.local %></p>
-
-    <hr style="margin:20px 0;">
-
-    <form method="POST" action="/equipamentos/<%= equipamento.id %>/correias" class="form-card">
-
-        <h3>Correias Instaladas</h3>
-
-        <div class="correias-list">
-
-            <% correias.forEach(c => { %>
-
-                <div class="correia-item">
-
-                    <label class="check-line">
-
-                        <input type="checkbox"
-                               name="correia"
-                               value="<%= c.id %>"
-                               <%= mapLigados[c.id] ? "checked" : "" %> >
-
-                        <span><strong><%= c.nome %></strong> — <%= c.modelo || "-" %></span>
-
-                    </label>
-
-                    <input type="number"
-                           min="1"
-                           name="qtd_<%= c.id %>"
-                           value="<%= mapLigados[c.id] || 1 %>"
-                           class="qtd-input">
-
-                </div>
-
-            <% }) %>
-
-        </div>
-
-        <button class="btn-primary" style="margin-top:20px;">
-            <i class="fa-solid fa-save"></i> Salvar
-        </button>
-
-    </form>
-
-    <div class="actions" style="margin-top:25px;">
-        <a href="/equipamentos/<%= equipamento.id %>" class="btn-secondary">
-            <i class="fa-solid fa-arrow-left"></i> Voltar
-        </a>
-    </div>
 
 </div>
 
-<style>
-    .correias-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-    .correia-item {
-        background: #f7f7f7;
-        border-radius: 10px;
-        padding: 12px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .check-line {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    }
-    .qtd-input {
-        width: 70px;
-        padding: 6px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-    }
-</style>
+<h2 class="section-title">Registrar Consumo</h2>
+
+<form method="POST" action="/equipamentos/<%= equipamento.id %>/correias" class="form-card">
+
+    <label>Correia</label>
+    <select name="correia_id" required>
+        <option value="">Selecione</option>
+        <% listaCorreias.forEach(c => { %>
+            <option value="<%= c.id %>"><%= c.nome %> — <%= c.modelo %></option>
+        <% }) %>
+    </select>
+
+    <label>Quantidade</label>
+    <input type="number" min="1" name="quantidade" required>
+
+    <button class="btn-primary">Registrar</button>
+</form>
+
+<h2 class="section-title">
+    <i class="fa-solid fa-boxes-stacked"></i> Histórico de Consumo
+</h2>
+
+<div class="card table-card">
+    <table class="table-modern">
+        <thead>
+            <tr>
+                <th>Correia</th>
+                <th>Qtd</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (historico.length === 0) { %>
+                <tr><td colspan="3" class="empty">Nenhum consumo lançado.</td></tr>
+            <% } %>
+
+            <% historico.forEach(h => { %>
+                <tr>
+                    <td><%= h.nome %> — <%= h.modelo %></td>
+                    <td><%= h.quantidade %></td>
+                    <td><%= h.data %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
