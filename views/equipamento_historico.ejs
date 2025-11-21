@@ -1,57 +1,95 @@
 <% layout('layout', { title: "Histórico do Equipamento", active: "equipamentos" }) %>
 
-<h1 class="page-title">Histórico — <%= equipamento.nome %></h1>
+<h1 class="page-title">
+    <i class="fa-solid fa-clock-rotate-left"></i> Histórico — <%= equipamento.nome %>
+</h1>
 
 <div class="card">
-    <p><strong>Código:</strong> <%= equipamento.codigo || '-' %></p>
-    <p><strong>Local:</strong> <%= equipamento.local || '-' %></p>
+
+    <div class="equip-info">
+        <p><strong>ID:</strong> <%= equipamento.id %></p>
+        <p><strong>Código:</strong> <%= equipamento.codigo || "-" %></p>
+        <p><strong>Local:</strong> <%= equipamento.local || "-" %></p>
+
+        <% if (equipamento.imagem) { %>
+            <img src="/<%= equipamento.imagem %>" class="equip-preview">
+        <% } %>
+    </div>
+
 </div>
 
-<h2 class="sub-title">Ordens de Serviço</h2>
+<hr>
 
-<table class="tabela">
-    <tr>
-        <th>ID</th>
-        <th>Tipo</th>
-        <th>Status</th>
-        <th>Abertura</th>
-        <th>Fechamento</th>
-    </tr>
+<h2 class="section-title">
+    <i class="fa-solid fa-list-check"></i> Ordens de Serviço
+</h2>
 
-    <% if (ordens.length === 0) { %>
-        <tr><td colspan="5" class="empty">Nenhuma OS registrada.</td></tr>
-    <% } %>
+<div class="card table-card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                <th>Abertura</th>
+                <th>Fechamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (ordens.length === 0) { %>
+                <tr>
+                    <td colspan="5" class="empty">Nenhuma OS encontrada para este equipamento.</td>
+                </tr>
+            <% } %>
 
-    <% ordens.forEach(o => { %>
-        <tr>
-            <td><%= o.id %></td>
-            <td><%= o.tipo %></td>
-            <td><%= o.status %></td>
-            <td><%= o.aberta_em %></td>
-            <td><%= o.fechada_em || '-' %></td>
-        </tr>
-    <% }) %>
-</table>
+            <% ordens.forEach(o => { %>
+                <tr>
+                    <td><%= o.id %></td>
+                    <td><%= o.tipo %></td>
+                    <td>
+                        <% if (o.status === "aberta") { %>
+                            <span class="tag aberta">Aberta</span>
+                        <% } else { %>
+                            <span class="tag fechada">Fechada</span>
+                        <% } %>
+                    </td>
+                    <td><%= o.aberta_em %></td>
+                    <td><%= o.fechada_em || "-" %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
 
+<hr>
 
-<h2 class="sub-title" style="margin-top:35px">Consumo de Correias</h2>
+<h2 class="section-title">
+    <i class="fa-solid fa-gears"></i> Consumo de Correias
+</h2>
 
-<table class="tabela">
-    <tr>
-        <th>Correia</th>
-        <th>Quantidade</th>
-        <th>Data</th>
-    </tr>
+<div class="card table-card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Correia</th>
+                <th>Quantidade</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (correias.length === 0) { %>
+                <tr>
+                    <td colspan="3" class="empty">Nenhum consumo registrado.</td>
+                </tr>
+            <% } %>
 
-    <% if (correias.length === 0) { %>
-        <tr><td colspan="3" class="empty">Nenhuma troca registrada.</td></tr>
-    <% } %>
-
-    <% correias.forEach(c => { %>
-        <tr>
-            <td><%= c.correia %></td>
-            <td><%= c.quantidade %></td>
-            <td><%= c.data %></td>
-        </tr>
-    <% }) %>
-</table>
+            <% correias.forEach(c => { %>
+                <tr>
+                    <td><%= c.correia %></td>
+                    <td><%= c.quantidade %></td>
+                    <td><%= c.data %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
