@@ -1,32 +1,33 @@
-<h1 class="page-title">Abrir Nova Ordem de Serviço</h1>
+<h1 class="page-title">Abrir Ordem de Serviço</h1>
 
-<form method="POST" action="/ordens" enctype="multipart/form-data" class="form-card"> 
+<div class="card form-card">
 
-<label>Fotos (opcional)</label>
-<input type="file" name="fotos" accept="image/*" multiple>
+    <form method="POST" action="/ordens" enctype="multipart/form-data">
 
-    <label>Equipamento</label>
-    <select name="equipamento_id" required>
-        <option value="">Selecione</option>
-        <% equipamentos.forEach(e => { %>
-            <option value="<%= e.id %>"><%= e.nome %></option>
-        <% }) %>
-    </select>
+        <label>Equipamento</label>
+        <select name="equipamento_id" required>
+            <option value="">Selecione...</option>
+            <% equipamentos.forEach(eq => { %>
+                <option value="<%= eq.id %>"><%= eq.nome %></option>
+            <% }) %>
+        </select>
 
-   
-    <label>Tipo da OS</label>
-    <select name="tipo" required>
-        <option value="">Selecione</option>
-        <option value="Mecânica">Mecânica</option>
-        <option value="Elétrica">Elétrica</option>
-        <option value="Hidráulica">Hidráulica</option>
-        <option value="Preventiva">Preventiva</option>
-        <option value="Corretiva">Corretiva</option>
-        <option value="Outra">Outra</option>
-    </select>
+        <label>Tipo</label>
+        <select name="tipo" required>
+            <option value="Mecânica">Mecânica</option>
+            <option value="Elétrica">Elétrica</option>
+            <option value="Preventiva">Preventiva</option>
+            <option value="Corretiva">Corretiva</option>
+        </select>
 
-    <label>Descrição do Problema</label>
-    <textarea name="descricao" rows="4" required></textarea>
+        <label>Descrição</label>
+        <textarea name="descricao" rows="4" required></textarea>
 
-    <button class="btn-save">Abrir OS</button>
-</form>
+        <label>Fotos (opcional)</label>
+        <input type="file" name="fotos" multiple accept="image/*">
+
+        <button class="btn-primary">Abrir OS</button>
+
+    </form>
+
+</div>
