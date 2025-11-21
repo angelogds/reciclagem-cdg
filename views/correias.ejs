@@ -1,65 +1,35 @@
-<h1 class="page-title">Correias / Estoque</h1>
+<% layout('layout', { title: "Correias (Estoque)", active: "correias" }) %>
+
+<h1 class="page-title"><i class="fa-solid fa-gears"></i> Estoque de Correias</h1>
 
 <div class="top-actions">
-    <a href="/correias/novo" class="btn-primary">
-        <i class="fa-solid fa-plus"></i> Nova Correia
-    </a>
+  <a href="/correias/novo" class="btn-primary"><i class="fa-solid fa-plus"></i> Nova Correia</a>
 </div>
 
 <div class="card">
+  <table class="table-modern">
+    <thead><tr><th>ID</th><th>Nome</th><th>Modelo</th><th>Medida</th><th>Qtd</th><th style="text-align:center;">Ações</th></tr></thead>
+    <tbody>
+      <% if (correias.length === 0) { %>
+        <tr><td colspan="6" class="empty">Nenhuma correia cadastrada.</td></tr>
+      <% } %>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Modelo</th>
-                <th>Medida</th>
-                <th>Quantidade</th>
-                <th style="text-align:center;">Ações</th>
-            </tr>
-        </thead>
+      <% correias.forEach(c => { %>
+        <tr>
+          <td><%= c.id %></td>
+          <td><%= c.nome %></td>
+          <td><%= c.modelo || '-' %></td>
+          <td><%= c.medida || '-' %></td>
+          <td><%= c.quantidade %></td>
+          <td class="acoes-col" style="justify-content:center;">
+            <a href="/correias/<%= c.id %>/editar" class="btn-table-edit">Editar</a>
 
-        <tbody>
-
-            <% if (correias.length === 0) { %>
-                <tr>
-                    <td colspan="6" class="empty">Nenhuma correia cadastrada.</td>
-                </tr>
-            <% } %>
-
-            <% correias.forEach(c => { %>
-                <tr>
-                    <td><%= c.id %></td>
-                    <td><%= c.nome %></td>
-                    <td><%= c.modelo || "-" %></td>
-                    <td><%= c.medida || "-" %></td>
-                    <td>
-                        <% if (c.quantidade <= 0) { %>
-                            <span class="status-bad">0</span>
-                        <% } else { %>
-                            <span class="status-good"><%= c.quantidade %></span>
-                        <% } %>
-                    </td>
-
-                    <td class="actions">
-
-                        <a href="/correias/<%= c.id %>/editar" class="btn-edit">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-
-                        <form method="POST" action="/correias/<%= c.id %>/delete"
-                              onsubmit="return confirm('Excluir correia?');">
-                            <button class="btn-delete">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </form>
-
-                    </td>
-                </tr>
-            <% }) %>
-
-        </tbody>
-    </table>
-
+            <form method="POST" action="/correias/<%= c.id %>/delete" onsubmit="return confirm('Excluir correia?');" style="display:inline-block; margin-left:8px;">
+              <button class="btn-table-del">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
 </div>
