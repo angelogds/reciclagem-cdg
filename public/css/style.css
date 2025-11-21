@@ -169,3 +169,194 @@ body { background:#eef2f3; color:#12321a; }
   font-style: italic;
   color: #666;
 }
+/* Container dos botões */
+.top-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.btn-add {
+    background: #0b3d20;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-add:hover {
+    background: #0e522b;
+}
+
+/* Tabela padrão moderna */
+.table-card {
+    padding: 0;
+}
+
+.table-modern {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-modern thead {
+    background: #0b3d20;
+    color: #fff;
+}
+
+.table-modern th, .table-modern td {
+    padding: 12px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.table-modern tbody tr:hover {
+    background: #f2f7f3;
+}
+
+/* Status */
+.status-danger {
+    background: #b30000;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.status-ok {
+    background: #0b3d20;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+/* Botões da tabela */
+.acoes-col {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-table-edit,
+.btn-table-del {
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.btn-table-edit {
+    background: #1b5e20;
+}
+
+.btn-table-del {
+    background: #b71c1c;
+}
+
+.btn-table-edit:hover {
+    background: #2e7d32;
+}
+
+.btn-table-del:hover {
+    background: #d32f2f;
+}
+/* Cabeçalho */
+.page-title {
+    font-size: 22px;
+    margin-bottom: 18px;
+    color: #0b2a16;
+}
+
+/* Ações superiores */
+.top-actions {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-primary {
+    background: #1a8f4b;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: .2s;
+}
+.btn-primary:hover {
+    background: #15763d;
+}
+
+/* CARD */
+.card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+/* TABELA MODERNA */
+.table-modern {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-modern th {
+    background: #f4fdf7;
+    color: #0b2a16;
+    text-align: left;
+    padding: 12px;
+    font-size: 14px;
+}
+
+.table-modern td {
+    padding: 12px;
+    border-bottom: 1px solid #e9e9e9;
+}
+
+.table-modern tr:hover {
+    background: #f6fbf8;
+}
+
+/* TAGS DE QUANTIDADE */
+.tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.tag.green { background: #d9f7e8; color: #0b4726; }
+.tag.yellow { background: #fff5cc; color: #665200; }
+.tag.red { background: #ffd6d6; color: #7a0000; }
+
+/* BOTÕES AÇÕES */
+.btn-sm {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: .2s;
+    font-size: 14px;
+}
+
+.btn-edit {
+    background: #1a8f4b;
+    color: #fff;
+}
+.btn-edit:hover {
+    background: #146b3a;
+}
+
+.btn-delete {
+    background: #d63c3c;
+    color: #fff;
+}
+.btn-delete:hover {
+    background: #b82e2e;
+}
+
+.center {
+    text-align: center;
+}
