@@ -1,27 +1,40 @@
-<h1 class="page-title">Baixa de Correias</h1>
+<h1 class="page-title">
+    Baixar Correia — <%= equipamento.nome %>
+</h1>
 
 <div class="card">
 
-    <h2><%= equipamento.nome %></h2>
-    <p>Código: <strong><%= equipamento.codigo || "-" %></strong></p>
+    <p><strong>Equipamento:</strong> <%= equipamento.nome %></p>
+    <p><strong>Código:</strong> <%= equipamento.codigo || "-" %></p>
+    <p><strong>Local:</strong> <%= equipamento.local || "-" %></p>
+
+    <hr style="margin:20px 0;">
+
+    <h3>Selecionar Correia para Baixa</h3>
 
     <form method="POST" action="/equipamentos/<%= equipamento.id %>/baixar-correia" class="form-card">
 
-        <label>Selecione a correia utilizada</label>
+        <label>Correia</label>
         <select name="correia_id" required>
-            <option value="">Escolher</option>
-
+            <option value="">Selecione...</option>
             <% correias.forEach(c => { %>
                 <option value="<%= c.id %>">
-                    <%= c.nome %> — Estoque: <%= c.quantidade %>
+                    <%= c.nome %> — <%= c.modelo || '-' %> | Estoque: <%= c.quantidade %>
                 </option>
             <% }) %>
         </select>
 
-        <label>Quantidade usada</label>
-        <input type="number" name="quantidade" min="1" required>
+        <label>Quantidade a debitar</label>
+        <input type="number" name="quantidade" min="1" placeholder="0" required>
 
-        <button class="btn-save">Registrar Baixa</button>
+        <button class="btn-primary" style="margin-top:20px;">
+            <i class="fa-solid fa-minus"></i> Baixar do Estoque
+        </button>
+
     </form>
-
 </div>
+
+<a href="/equipamentos/<%= equipamento.id %>" class="btn-secondary" style="margin-top:20px;">
+    <i class="fa-solid fa-arrow-left"></i> Voltar
+</a>
+
