@@ -5,7 +5,6 @@
 <div class="card qr-card">
 
     <div class="equip-info">
-
         <p><strong>ID:</strong> <%= equipamento.id %></p>
         <p><strong>Código:</strong> <%= equipamento.codigo %></p>
         <p><strong>Local:</strong> <%= equipamento.local %></p>
@@ -13,16 +12,16 @@
         <% if (equipamento.imagem) { %>
             <img src="/<%= equipamento.imagem %>" class="equip-preview">
         <% } %>
-
     </div>
 
     <div class="qr-area">
         <h3>QR Code Gerado</h3>
 
-        <img src="/qrcodes/<%= equipamento.id %>.png" class="qr-img">
+        <!-- *** AQUI É O QR EM BASE64 *** -->
+        <img src="<%= qr %>" class="qr-img">
 
         <a 
-            href="/qrcodes/<%= equipamento.id %>.png" 
+            href="<%= qr %>"
             download="QR_Equipamento_<%= equipamento.id %>.png"
             class="btn-primary" 
             style="margin-top:20px;">
@@ -31,51 +30,3 @@
     </div>
 
 </div>
-
-<style>
-    .qr-card {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 25px;
-        align-items: center;
-    }
-
-    .equip-info p {
-        margin-bottom: 6px;
-        font-size: 15px;
-        color: #073b20;
-    }
-
-    .equip-preview {
-        width: 130px;
-        height: 130px;
-        object-fit: cover;
-        border-radius: 10px;
-        margin-top: 10px;
-        border: 3px solid #e5f7ea;
-    }
-
-    .qr-area {
-        text-align: center;
-    }
-
-    .qr-img {
-        width: 220px;
-        height: 220px;
-        padding: 15px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-
-    @media (max-width: 800px) {
-        .qr-card {
-            grid-template-columns: 1fr;
-            text-align: center;
-        }
-
-        .equip-preview {
-            margin: 0 auto;
-        }
-    }
-</style>
