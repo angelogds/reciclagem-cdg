@@ -1,17 +1,64 @@
-<h1 class="page-title">QR Code — <%= equipamento.nome %></h1>
+<% layout('layout', { title: "QR Code do Equipamento", active: "equipamentos" }) %>
 
-<div class="card" style="text-align:center; padding:30px;">
+<h1 class="page-title">
+    <i class="fa-solid fa-qrcode"></i> QR Code do Equipamento
+</h1>
 
-    <h2><%= equipamento.nome %></h2>
-    <p>Código: <strong><%= equipamento.codigo || "-" %></strong></p>
+<div class="card qr-card">
 
-    <img src="<%= qr %>" style="width:260px; margin:20px auto; display:block;">
+    <h2 class="equip-name"><%= equipamento.nome %></h2>
 
-    <p>Ao escanear este QR Code o funcionário será direcionado para:</p>
-    <div class="descricao-box"><%= url %></div>
+    <p><strong>Código:</strong> <%= equipamento.codigo || "-" %></p>
+    <p><strong>Local:</strong> <%= equipamento.local || "-" %></p>
 
-    <a href="/equipamentos/<%= equipamento.id %>/baixar" class="btn-save" style="margin-top:20px;">
-        Acessar Menu de Baixa
+    <hr>
+
+    <h3>QR Code</h3>
+
+    <div class="qr-wrapper">
+        <img src="<%= qr %>" class="qr-image">
+    </div>
+
+    <div class="qr-url-box">
+        <p>URL de acesso pelo QR:</p>
+        <span><%= url %></span>
+    </div>
+
+    <a href="/equipamentos" class="btn-primary" style="margin-top:20px;">
+        <i class="fa-solid fa-arrow-left"></i> Voltar
     </a>
 
 </div>
+
+<style>
+.qr-card {
+    text-align: center;
+}
+
+.qr-wrapper {
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    margin: 20px auto;
+    width: 260px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.qr-image {
+    width: 100%;
+}
+
+.qr-url-box {
+    background: #e8f3ec;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #1b3d2d;
+    word-break: break-all;
+}
+
+.equip-name {
+    margin-bottom: 10px;
+    color: #1b3d2d;
+}
+</style>
