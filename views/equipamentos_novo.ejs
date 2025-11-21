@@ -1,30 +1,57 @@
-<h1 class="page-title"><%= equipamento ? "Editar Equipamento" : "Novo Equipamento" %></h1>
+<h1 class="page-title">
+    <%= equipamento ? "Editar Equipamento" : "Novo Equipamento" %>
+</h1>
 
-<form method="POST" enctype="multipart/form-data" 
-      action="<%= equipamento ? '/equipamentos/' + equipamento.id : '/equipamentos' %>"
-      class="form-card">
+<div class="card form-card">
 
-    <label>Nome</label>
-    <input name="nome" required value="<%= equipamento?.nome || '' %>">
+    <form method="POST"
+          action="<%= equipamento ? '/equipamentos/' + equipamento.id : '/equipamentos' %>"
+          enctype="multipart/form-data">
 
-    <label>Código</label>
-    <input name="codigo" value="<%= equipamento?.codigo || '' %>">
+        <!-- Nome -->
+        <label>Nome do Equipamento</label>
+        <input type="text" name="nome" required
+               value="<%= equipamento ? equipamento.nome : '' %>">
 
-    <label>Local</label>
-    <input name="local" value="<%= equipamento?.local || '' %>">
+        <!-- Código -->
+        <label>Código / Tag</label>
+        <input type="text" name="codigo"
+               value="<%= equipamento ? equipamento.codigo : '' %>">
 
-    <label>Descrição</label>
-    <textarea name="descricao" rows="3"><%= equipamento?.descricao || '' %></textarea>
+        <!-- Local -->
+        <label>Local</label>
+        <input type="text" name="local"
+               value="<%= equipamento ? equipamento.local : '' %>">
 
-    <label>Imagem</label>
+        <!-- Descrição -->
+        <label>Descrição</label>
+        <textarea name="descricao" rows="4"><%= equipamento ? equipamento.descricao : '' %></textarea>
 
-    <% if (equipamento && equipamento.imagem) { %>
-        <img src="/<%= equipamento.imagem %>" class="thumb" style="margin-bottom:10px;">
-    <% } %>
+        <!-- Imagem -->
+        <label>Imagem do Equipamento</label>
 
-    <input type="file" name="imagem" accept="image/*">
+        <% if (equipamento && equipamento.imagem) { %>
+            <div class="img-preview">
+                <img src="/<%= equipamento.imagem %>" alt="Imagem atual">
+                <p class="img-info">Imagem atual — enviar nova para substituir</p>
+            </div>
+        <% } %>
 
-    <button class="btn-save">
-        <%= equipamento ? "Salvar Alterações" : "Cadastrar Equipamento" %>
-    </button>
-</form>
+        <input type="file" name="imagem" accept="image/*">
+
+        <!-- Botão Salvar -->
+        <button class="btn-primary" style="margin-top:20px;">
+            <i class="fa-solid fa-save"></i>
+            <%= equipamento ? "Salvar Alterações" : "Cadastrar Equipamento" %>
+        </button>
+
+    </form>
+
+</div>
+
+<!-- Botão voltar -->
+<div class="top-actions">
+    <a href="/equipamentos" class="btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Voltar
+    </a>
+</div>
