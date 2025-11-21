@@ -7,6 +7,7 @@
 </div>
 
 <div class="card">
+
     <table class="table">
         <thead>
             <tr>
@@ -20,6 +21,7 @@
         </thead>
 
         <tbody>
+
             <% if (correias.length === 0) { %>
                 <tr>
                     <td colspan="6" class="empty">Nenhuma correia cadastrada.</td>
@@ -32,7 +34,13 @@
                     <td><%= c.nome %></td>
                     <td><%= c.modelo || "-" %></td>
                     <td><%= c.medida || "-" %></td>
-                    <td><%= c.quantidade %></td>
+                    <td>
+                        <% if (c.quantidade <= 0) { %>
+                            <span class="status-bad">0</span>
+                        <% } else { %>
+                            <span class="status-good"><%= c.quantidade %></span>
+                        <% } %>
+                    </td>
 
                     <td class="actions">
 
@@ -50,6 +58,8 @@
                     </td>
                 </tr>
             <% }) %>
+
         </tbody>
     </table>
+
 </div>
