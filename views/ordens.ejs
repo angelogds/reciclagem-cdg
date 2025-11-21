@@ -2,12 +2,11 @@
 
 <div class="top-actions">
     <a href="/ordens/novo" class="btn-primary">
-        <i class="fa-solid fa-plus"></i> Abrir Nova OS
+        <i class="fa-solid fa-plus"></i> Nova OS
     </a>
 </div>
 
 <div class="card">
-
     <table class="table">
         <thead>
             <tr>
@@ -21,6 +20,7 @@
         </thead>
 
         <tbody>
+
             <% if (ordens.length === 0) { %>
                 <tr>
                     <td colspan="6" class="empty">Nenhuma OS encontrada.</td>
@@ -34,7 +34,7 @@
                     <td><%= o.tipo %></td>
 
                     <td>
-                        <% if (o.status === "aberta") { %>
+                        <% if (o.status === 'aberta') { %>
                             <span class="status-open">Aberta</span>
                         <% } else { %>
                             <span class="status-closed">Fechada</span>
@@ -44,14 +44,19 @@
                     <td><%= o.aberta_em %></td>
 
                     <td class="actions">
-                        <a href="/ordens/<%= o.id %>" class="btn-view">
+
+                        <a href="/ordens/<%= o.id %>" class="btn-edit">
                             <i class="fa-solid fa-eye"></i>
                         </a>
+
+                        <a href="/solicitacao/pdf/<%= o.id %>" class="btn-qr">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </a>
+
                     </td>
                 </tr>
             <% }) %>
 
         </tbody>
     </table>
-
 </div>
