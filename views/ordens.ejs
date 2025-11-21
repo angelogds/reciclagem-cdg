@@ -1,62 +1,59 @@
-<h1 class="page-title">Ordens de Serviço</h1>
+<% layout('layout', { title: "Ordens de Serviço", active: "ordens" }) %>
+
+<h1 class="page-title"><i class="fa-solid fa-list-check"></i> Ordens de Serviço</h1>
 
 <div class="top-actions">
-    <a href="/ordens/novo" class="btn-primary">
-        <i class="fa-solid fa-plus"></i> Nova OS
-    </a>
+  <a href="/ordens/novo" class="btn-primary"><i class="fa-solid fa-plus"></i> Abrir Nova OS</a>
 </div>
 
 <div class="card">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Equipamento</th>
-                <th>Tipo</th>
-                <th>Status</th>
-                <th>Abertura</th>
-                <th style="text-align:center;">Ações</th>
-            </tr>
-        </thead>
+  <table class="table-modern">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Equipamento</th>
+        <th>Tipo</th>
+        <th>Solicitante</th>
+        <th>Status</th>
+        <th>Data</th>
+        <th style="text-align:center;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (ordens.length === 0) { %>
+        <tr><td colspan="7" class="empty">Nenhuma ordem encontrada.</td></tr>
+      <% } %>
 
-        <tbody>
+      <% ordens.forEach(o => { %>
+        <tr>
+          <td><%= o.id %></td>
+          <td><%= o.equipamento_nome || '-' %></td>
+          <td><%= o.tipo %></td>
+          <td><%= o.solicitante %></td>
+          <td>
+            <% if (o.status === 'aberta') { %>
+              <span class="tag green">Aberta</span>
+            <% } else { %>
+              <span class="tag">Fechada</span>
+            <% } %>
+          </td>
+          <td><%= o.aberta_em %></td>
+          <td class="acoes-col" style="justify-content:center;">
+            <a class="btn-table-edit" href="/ordens/<%= o.id %>"><i class="fa-solid fa-eye"></i> Ver</a>
 
-            <% if (ordens.length === 0) { %>
-                <tr>
-                    <td colspan="6" class="empty">Nenhuma OS encontrada.</td>
-                </tr>
+            <% if (session.role === 'admin' || (session.role === 'operador' && o.solicitante === session.usuario)) { %>
+              <form method="POST" action="/ordens/<%= o.id %>/fechar" style="display:inline-block; margin-left:6px;">
+                <input type="hidden" name="resultado" value="Fechado via lista" />
+                <button class="btn-table-edit" style="background:#0b6b2e; border-radius:6px; color:#fff;">Fechar</button>
+              </form>
             <% } %>
 
-            <% ordens.forEach(o => { %>
-                <tr>
-                    <td><%= o.id %></td>
-                    <td><%= o.equipamento_nome || "-" %></td>
-                    <td><%= o.tipo %></td>
-
-                    <td>
-                        <% if (o.status === 'aberta') { %>
-                            <span class="status-open">Aberta</span>
-                        <% } else { %>
-                            <span class="status-closed">Fechada</span>
-                        <% } %>
-                    </td>
-
-                    <td><%= o.aberta_em %></td>
-
-                    <td class="actions">
-
-                        <a href="/ordens/<%= o.id %>" class="btn-edit">
-                            <i class="fa-solid fa-eye"></i>
-                        </a>
-
-                        <a href="/solicitacao/pdf/<%= o.id %>" class="btn-qr">
-                            <i class="fa-solid fa-file-pdf"></i>
-                        </a>
-
-                    </td>
-                </tr>
-            <% }) %>
-
-        </tbody>
-    </table>
+            <form method="POST" action="/ordens/<%= o.id %>/delete" onsubmit="return confirm('Excluir essa OS?');" style="display:inline-block; margin-left:6px;">
+              <button class="btn-table-del">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
 </div>
