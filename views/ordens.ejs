@@ -2,11 +2,12 @@
 
 <div class="top-actions">
     <a href="/ordens/novo" class="btn-primary">
-        <i class="fa-solid fa-plus"></i> Nova OS
+        <i class="fa-solid fa-plus"></i> Abrir Nova OS
     </a>
 </div>
 
 <div class="card">
+
     <table class="table">
         <thead>
             <tr>
@@ -20,59 +21,37 @@
         </thead>
 
         <tbody>
-
             <% if (ordens.length === 0) { %>
                 <tr>
-                    <td colspan="6" class="empty">Nenhuma ordem encontrada.</td>
+                    <td colspan="6" class="empty">Nenhuma OS encontrada.</td>
                 </tr>
             <% } %>
 
             <% ordens.forEach(o => { %>
                 <tr>
                     <td><%= o.id %></td>
-
                     <td><%= o.equipamento_nome || "-" %></td>
-
                     <td><%= o.tipo %></td>
 
                     <td>
                         <% if (o.status === "aberta") { %>
-                            <span class="tag aberta">Aberta</span>
+                            <span class="status-open">Aberta</span>
                         <% } else { %>
-                            <span class="tag fechada">Fechada</span>
+                            <span class="status-closed">Fechada</span>
                         <% } %>
                     </td>
 
                     <td><%= o.aberta_em %></td>
 
                     <td class="actions">
-
-                        <!-- Ver OS -->
                         <a href="/ordens/<%= o.id %>" class="btn-view">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-
-                        <!-- PDF -->
-                        <a href="/solicitacao/pdf/<%= o.id %>" class="btn-pdf">
-                            <i class="fa-solid fa-file-pdf"></i>
-                        </a>
-
-                        <% if (session.role === "admin") { %>
-                        <!-- Excluir -->
-                        <form method="POST" action="/ordens/<%= o.id %>/delete"
-                              onsubmit="return confirm('Excluir OS?');">
-                            <button class="btn-delete">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </form>
-                        <% } %>
-
                     </td>
-
                 </tr>
             <% }) %>
 
         </tbody>
-
     </table>
+
 </div>
