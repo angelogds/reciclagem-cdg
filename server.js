@@ -487,7 +487,9 @@ app.get('/equipamentos/:id/qrcode', async (req, res) => {
     const equipamento = await getAsync(`SELECT * FROM equipamentos WHERE id = ?`, [req.params.id]);
     if (!equipamento) return res.send('Equipamento não encontrado.');
 
-    const baseUrl = process.env.BASE_URL || `https://${req.headers.host}`;
+    // CORRIGIDO — remover HTTPS que quebra no container
+    const baseUrl = process.env.BASE_URL || `http://${req.headers.host}`;
+
     const url = `${baseUrl}/equipamentos/${equipamento.id}/menu`;
     const qr = await QRCode.toDataURL(url);
 
