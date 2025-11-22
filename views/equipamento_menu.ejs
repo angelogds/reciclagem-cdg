@@ -1,149 +1,61 @@
-<h1 class="page-title">
-    <i class="fa-solid fa-truck"></i> <%= equipamento.nome %>
-</h1>
+<% layout('layout', { title: equipamento.nome + ' — Menu', active: 'equipamentos' }) %>
 
-<div class="card equip-header">
+<h1 class="page-title"><i class="fa-solid fa-truck"></i> <%= equipamento.nome %></h1>
 
-    <div class="equip-info">
-        <p><strong>ID:</strong> <%= equipamento.id %></p>
-        <p><strong>Código:</strong> <%= equipamento.codigo || "-" %></p>
-        <p><strong>Local:</strong> <%= equipamento.local || "-" %></p>
+<div class="card">
+  <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+    <div style="flex:1">
+      <p><strong>Código:</strong> <%= equipamento.codigo || '-' %></p>
+      <p><strong>Local:</strong> <%= equipamento.local || '-' %></p>
+      <p><strong>Cadastro:</strong> <%= equipamento.created_at %></p>
     </div>
 
-    <div>
-        <% if (equipamento.imagem) { %>
-            <img src="/<%= equipamento.imagem %>" class="equip-pic">
-        <% } else { %>
-            <div class="no-image-box">Sem imagem</div>
-        <% } %>
+    <div style="width:160px; text-align:center;">
+      <% if (equipamento.imagem) { %>
+        <img src="/<%= equipamento.imagem %>" style="width:140px; height:100px; object-fit:cover; border-radius:8px;">
+      <% } else { %>
+        <div style="width:140px; height:100px; border-radius:8px; background:#f0f6f1; display:flex; align-items:center; justify-content:center; color:#7a8b7a;">
+          Sem imagem
+        </div>
+      <% } %>
     </div>
+  </div>
 
-</div>
+  <hr style="margin:14px 0;">
 
-<h2 class="section-title">Ações Rápidas</h2>
-
-<div class="menu-grid">
-
-    <!-- EDITAR -->
-    <a href="/equipamentos/<%= equipamento.id %>/editar" class="menu-btn green">
-        <i class="fa-solid fa-pen"></i>
-        Editar
+  <div class="top-actions" style="justify-content:flex-start;">
+    <a href="/equipamentos/<%= equipamento.id %>/editar" class="btn-primary">
+      <i class="fa-solid fa-pen"></i> Editar
     </a>
 
-    <!-- HISTÓRICO -->
-    <a href="/equipamentos/<%= equipamento.id %>/historico" class="menu-btn blue">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        Histórico
+    <a href="/equipamentos/<%= equipamento.id %>/qrcode" class="btn-primary" style="margin-left:8px; background:#0b8a44;">
+      <i class="fa-solid fa-qrcode"></i> QR Code
     </a>
 
-    <!-- CONSUMO DE CORREIAS -->
-    <a href="/equipamentos/<%= equipamento.id %>/correias" class="menu-btn yellow">
-        <i class="fa-solid fa-gears"></i>
-        Correias
+    <a href="/equipamentos/<%= equipamento.id %>/correias" class="btn-primary" style="margin-left:8px; background:#1b7f42;">
+      <i class="fa-solid fa-gears"></i> Correias (associar)
     </a>
 
-    <!-- BAIXA DE CORREIAS / MANUTENÇÃO -->
-    <a href="/equipamentos/<%= equipamento.id %>/baixar" class="menu-btn orange">
-        <i class="fa-solid fa-arrow-down"></i>
-        Baixa
+    <a href="/equipamentos/<%= equipamento.id %>/historico" class="btn-primary" style="margin-left:8px; background:#0c6b3a;">
+      <i class="fa-solid fa-clock-rotate-left"></i> Histórico
     </a>
 
-    <!-- QR CODE -->
-    <a href="/equipamentos/<%= equipamento.id %>/qrcode" class="menu-btn dark">
-        <i class="fa-solid fa-qrcode"></i>
-        QR Code
-    </a>
-
-    <!-- EXCLUIR -->
-    <form action="/equipamentos/<%= equipamento.id %>/delete" method="POST"
-          onsubmit="return confirm('Tem certeza que deseja REMOVER este equipamento?');">
-        <button class="menu-btn red">
-            <i class="fa-solid fa-trash"></i>
-            Excluir
-        </button>
+    <form method="POST" action="/equipamentos/<%= equipamento.id %>/delete" style="display:inline-block; margin-left:8px;" onsubmit="return confirm('Remover equipamento?');">
+      <button class="btn-delete btn-sm"><i class="fa-solid fa-trash"></i> Excluir</button>
     </form>
-
+  </div>
 </div>
 
-<style>
-/* Cabeçalho do equipamento */
-.equip-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.equip-info p {
-    margin: 4px 0;
-}
-.equip-pic {
-    width: 110px;
-    height: 110px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-.no-image-box {
-    width: 110px;
-    height: 110px;
-    background: #e8f0e8;
-    color: #4b6b4b;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-}
+<hr>
 
-/* Título da seção */
-.section-title {
-    font-size: 22px;
-    color: var(--green-700);
-    margin: 20px 0 10px;
-}
-
-/* GRID DE BOTÕES */
-.menu-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 18px;
-    margin-bottom: 40px;
-}
-
-.menu-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 20px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 600;
-    color: white;
-    font-size: 15px;
-    cursor: pointer;
-    transition: .2s;
-    text-align: center;
-}
-
-.menu-btn i {
-    font-size: 26px;
-}
-
-/* CORES */
-.menu-btn.green { background: #1a7f42; }
-.menu-btn.green:hover { background: #0f5c30; }
-
-.menu-btn.blue { background: #1a5f8f; }
-.menu-btn.blue:hover { background: #12496d; }
-
-.menu-btn.yellow { background: #c28f00; }
-.menu-btn.yellow:hover { background: #8a6600; }
-
-.menu-btn.orange { background: #c75712; }
-.menu-btn.orange:hover { background: #9a400c; }
-
-.menu-btn.dark { background: #0d2a16; }
-.menu-btn.dark:hover { background: #06180c; }
-
-.menu-btn.red { background: #b81f1f; border:none; width:100%; }
-.menu-btn.red:hover { background: #941414; }
-
-</style>
+<div class="card">
+  <h3>Menu Rápido</h3>
+  <ul style="list-style:none; padding-left:0; margin-top:8px;">
+    <li style="margin:8px 0">
+      <a href="/equipamentos/<%= equipamento.id %>/baixar" class="btn-primary" style="background:#0f6f36;">Baixar correia (consumo)</a>
+    </li>
+    <li style="margin:8px 0">
+      <a href="/ordens/novo?equipamento_id=<%= equipamento.id %>" class="btn-primary">Abrir OS para este equipamento</a>
+    </li>
+  </ul>
+</div>
