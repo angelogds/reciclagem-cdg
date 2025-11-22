@@ -1,0 +1,57 @@
+<h1 class="page-title">
+    <%= equipamento ? "Editar Equipamento" : "Novo Equipamento" %>
+</h1>
+
+<div class="card form-card">
+
+    <form method="POST"
+          action="<%= equipamento ? '/equipamentos/' + equipamento.id : '/equipamentos' %>"
+          enctype="multipart/form-data">
+
+        <!-- Nome -->
+        <label>Nome do Equipamento</label>
+        <input type="text" name="nome" required
+               value="<%= equipamento ? equipamento.nome : '' %>">
+
+        <!-- Código -->
+        <label>Código / Tag</label>
+        <input type="text" name="codigo"
+               value="<%= equipamento ? equipamento.codigo : '' %>">
+
+        <!-- Local -->
+        <label>Local</label>
+        <input type="text" name="local"
+               value="<%= equipamento ? equipamento.local : '' %>">
+
+        <!-- Descrição -->
+        <label>Descrição</label>
+        <textarea name="descricao" rows="4"><%= equipamento ? equipamento.descricao : '' %></textarea>
+
+        <!-- Imagem -->
+        <label>Imagem do Equipamento</label>
+
+        <% if (equipamento && equipamento.imagem) { %>
+            <div class="img-preview">
+                <img src="/<%= equipamento.imagem %>" alt="Imagem atual">
+                <p class="img-info">Imagem atual — enviar nova para substituir</p>
+            </div>
+        <% } %>
+
+        <input type="file" name="imagem" accept="image/*">
+
+        <!-- Botão Salvar -->
+        <button class="btn-primary" style="margin-top:20px;">
+            <i class="fa-solid fa-save"></i>
+            <%= equipamento ? "Salvar Alterações" : "Cadastrar Equipamento" %>
+        </button>
+
+    </form>
+
+</div>
+
+<!-- Botão voltar -->
+<div class="top-actions">
+    <a href="/equipamentos" class="btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Voltar
+    </a>
+</div>
