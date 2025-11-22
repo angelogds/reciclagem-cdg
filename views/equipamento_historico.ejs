@@ -2,73 +2,88 @@
     <i class="fa-solid fa-clock-rotate-left"></i> Histórico — <%= equipamento.nome %>
 </h1>
 
-<div class="card">
-  <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
-    <div style="flex:1">
-      <p><strong>ID:</strong> <%= equipamento.id %></p>
-      <p><strong>Código:</strong> <%= equipamento.codigo || "-" %></p>
-      <p><strong>Local:</strong> <%= equipamento.local || "-" %></p>
+<div class="card equip-header">
+
+    <div class="equip-info">
+        <p><strong>ID:</strong> <%= equipamento.id %></p>
+        <p><strong>Código:</strong> <%= equipamento.codigo || "-" %></p>
+        <p><strong>Local:</strong> <%= equipamento.local || "-" %></p>
     </div>
 
-    <div style="width:160px; text-align:center;">
-      <% if (equipamento.imagem) { %>
-        <img src="/<%= equipamento.imagem %>" class="equip-preview" style="width:140px;height:100px;object-fit:cover;border-radius:8px;">
-      <% } %>
+    <div>
+        <% if (equipamento.imagem) { %>
+            <img src="/<%= equipamento.imagem %>" class="equip-pic">
+        <% } else { %>
+            <div class="no-image-box">Sem imagem</div>
+        <% } %>
     </div>
-  </div>
+
 </div>
 
-<hr>
+<h2 class="section-title">Ordens de Serviço</h2>
 
-<h2 class="section-title"><i class="fa-solid fa-list-check"></i> Ordens de Serviço</h2>
 <div class="card table-card">
-  <table class="table-modern">
-    <thead>
-      <tr><th>ID</th><th>Tipo</th><th>Status</th><th>Abertura</th><th>Fechamento</th><th>Ações</th></tr>
-    </thead>
-    <tbody>
-      <% if (ordens.length === 0) { %>
-        <tr><td colspan="6" class="empty">Nenhuma OS encontrada para este equipamento.</td></tr>
-      <% } %>
-      <% ordens.forEach(o => { %>
-        <tr>
-          <td><%= o.id %></td>
-          <td><%= o.tipo %></td>
-          <td>
-            <% if (o.status === "aberta") { %>
-              <span class="tag green">Aberta</span>
-            <% } else { %>
-              <span class="tag">Fechada</span>
+    <table class="table-modern">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                <th>Aberta em</th>
+                <th>Fechada em</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (ordens.length === 0) { %>
+                <tr><td colspan="6" class="empty">Nenhuma OS encontrada.</td></tr>
             <% } %>
-          </td>
-          <td><%= o.aberta_em %></td>
-          <td><%= o.fechada_em || '-' %></td>
-          <td class="acoes-col">
-            <a class="btn-table-edit" href="/ordens/<%= o.id %>">Ver / Fechar</a>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+
+            <% ordens.forEach(o => { %>
+                <tr>
+                    <td><%= o.id %></td>
+                    <td><%= o.tipo %></td>
+                    <td><%= o.status %></td>
+                    <td><%= o.aberta_em %></td>
+                    <td><%= o.fechada_em || "-" %></td>
+                    <td>
+                        <a href="/ordens/<%= o.id %>" class="tag blue">Ver</a>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
 </div>
 
-<hr>
+<h2 class="section-title">Consumo de Correias</h2>
 
-<h2 class="section-title"><i class="fa-solid fa-gears"></i> Consumo de Correias</h2>
 <div class="card table-card">
-  <table class="table-modern">
-    <thead><tr><th>Correia</th><th>Quantidade</th><th>Data</th></tr></thead>
-    <tbody>
-      <% if (correias.length === 0) { %>
-        <tr><td colspan="3" class="empty">Nenhum consumo registrado.</td></tr>
-      <% } %>
-      <% correias.forEach(c => { %>
-        <tr>
-          <td><%= c.correia %></td>
-          <td><%= c.quantidade %></td>
-          <td><%= c.data %></td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+    <table class="table-modern">
+        <thead>
+            <tr>
+                <th>Correia</th>
+                <th>Quantidade</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (correias.length === 0) { %>
+                <tr><td colspan="3" class="empty">Nenhum consumo registrado.</td></tr>
+            <% } %>
+
+            <% correias.forEach(c => { %>
+                <tr>
+                    <td><%= c.correia %></td>
+                    <td><span class="tag red"><%= c.quantidade %></span></td>
+                    <td><%= c.data %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<div class="top-actions">
+    <a href="/equipamentos/<%= equipamento.id %>/menu" class="btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i> Voltar
+    </a>
 </div>
