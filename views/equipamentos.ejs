@@ -6,8 +6,8 @@
     </a>
 </div>
 
-<div class="card table-card">
-    <table class="table-modern">
+<div class="card">
+    <table class="table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -15,7 +15,7 @@
                 <th>Nome</th>
                 <th>Código</th>
                 <th>Local</th>
-                <th class="center">Ações</th>
+                <th style="text-align:center;">Ações</th>
             </tr>
         </thead>
 
@@ -29,7 +29,6 @@
             <% equipamentos.forEach(e => { %>
                 <tr>
                     <td><%= e.id %></td>
-
                     <td>
                         <% if (e.imagem) { %>
                             <img src="/<%= e.imagem %>" class="thumb">
@@ -37,39 +36,30 @@
                             <span class="no-image">Sem imagem</span>
                         <% } %>
                     </td>
-
                     <td><%= e.nome %></td>
                     <td><%= e.codigo %></td>
                     <td><%= e.local %></td>
+                    <td class="actions">
 
-                    <td class="center">
-                        <div class="acoes-col">
+                        <a href="/equipamentos/<%= e.id %>/editar" class="btn-edit">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
 
-                            <!-- EDITAR -->
-                            <a href="/equipamentos/<%= e.id %>/editar" class="btn-sm btn-edit" title="Editar">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
+                        <a href="/equipamentos/<%= e.id %>/qrcode" class="btn-qr">
+                            <i class="fa-solid fa-qrcode"></i>
+                        </a>
 
-                            <!-- QR CODE -->
-                            <a href="/equipamentos/<%= e.id %>/qrcode" class="btn-sm btn-qr" title="QR Code">
-                                <i class="fa-solid fa-qrcode"></i>
-                            </a>
+                        <a href="/equipamentos/<%= e.id %>/historico" class="btn-history">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </a>
 
-                            <!-- HISTÓRICO -->
-                            <a href="/equipamentos/<%= e.id %>/historico" class="btn-sm btn-history" title="Histórico">
-                                <i class="fa-solid fa-clock-rotate-left"></i>
-                            </a>
+                        <form method="POST" action="/equipamentos/<%= e.id %>/delete" onsubmit="return confirm('Remover equipamento?');">
+                            <button class="btn-delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
 
-                            <!-- EXCLUIR -->
-                            <form method="POST" action="/equipamentos/<%= e.id %>/delete" onsubmit="return confirm('Remover equipamento?');">
-                                <button class="btn-sm btn-delete" title="Excluir">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </form>
-
-                        </div>
                     </td>
-
                 </tr>
             <% }) %>
         </tbody>
