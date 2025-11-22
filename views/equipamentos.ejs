@@ -1,2 +1,79 @@
-429: Too Many Requests
-For more on scraping GitHub and how it may affect your rights, please review our Terms of Service (https://docs.github.com/en/site-policy/github-terms/github-terms-of-service).
+<% layout('layout', { title: "Equipamentos", active: "equipamentos" }) %>
+
+<h1 class="page-title">Equipamentos</h1>
+
+<div class="top-actions">
+    <a href="/equipamentos/novo" class="btn-primary">
+        <i class="fa-solid fa-plus"></i> Novo Equipamento
+    </a>
+</div>
+
+<div class="card table-card">
+    <table class="table-modern">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Imagem</th>
+                <th>Nome</th>
+                <th>Código</th>
+                <th>Local</th>
+                <th class="center">Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% if (equipamentos.length === 0) { %>
+                <tr>
+                    <td colspan="6" class="empty">Nenhum equipamento cadastrado.</td>
+                </tr>
+            <% } %>
+
+            <% equipamentos.forEach(e => { %>
+                <tr>
+                    <td><%= e.id %></td>
+
+                    <td>
+                        <% if (e.imagem) { %>
+                            <img src="/<%= e.imagem %>" class="thumb">
+                        <% } else { %>
+                            <span class="no-image">Sem imagem</span>
+                        <% } %>
+                    </td>
+
+                    <td><%= e.nome %></td>
+                    <td><%= e.codigo %></td>
+                    <td><%= e.local %></td>
+
+                    <td class="center">
+                        <div class="acoes-col">
+
+                            <!-- EDITAR -->
+                            <a href="/equipamentos/<%= e.id %>/editar" class="btn-sm btn-edit" title="Editar">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+
+                            <!-- QR CODE -->
+                            <a href="/equipamentos/<%= e.id %>/qrcode" class="btn-sm btn-qr" title="QR Code">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </a>
+
+                            <!-- HISTÓRICO -->
+                            <a href="/equipamentos/<%= e.id %>/historico" class="btn-sm btn-history" title="Histórico">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </a>
+
+                            <!-- EXCLUIR -->
+                            <form method="POST" action="/equipamentos/<%= e.id %>/delete" onsubmit="return confirm('Remover equipamento?');">
+                                <button class="btn-sm btn-delete" title="Excluir">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+
+                        </div>
+                    </td>
+
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
