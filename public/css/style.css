@@ -203,3 +203,130 @@ body {
     max-width: 600px;
     border-radius: 10px;
 }
+/* ======== CORES DO SISTEMA ======== */
+:root {
+    --verde: #0c5a2d;
+    --verde-claro: #117e3e;
+    --branco: #ffffff;
+    --cinza: #e9ecef;
+}
+
+/* ======== BODY ======== */
+body {
+    margin: 0;
+    background: var(--cinza);
+    font-family: Arial, sans-serif;
+}
+
+/* ======== NAVBAR SUPERIOR ======== */
+.topbar {
+    width: 100%;
+    background: var(--verde);
+    color: var(--branco);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.top-title {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+}
+
+.user-info {
+    font-size: 14px;
+}
+
+/* ======== MENU LATERAL ======== */
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 230px;
+    height: calc(100vh - 60px);
+    background: var(--verde);
+    padding-top: 15px;
+    color: var(--branco);
+    transition: transform 0.3s;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar-title {
+    margin-left: 20px;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 10px;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    gap: 10px;
+    color: var(--branco);
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.sidebar li.active a,
+.sidebar a:hover {
+    background: var(--verde-claro);
+}
+
+/* ======== CONTEÚDO ======== */
+.content {
+    margin-left: 250px;
+    padding: 25px;
+}
+
+@media (max-width: 840px) {
+    .sidebar {
+        transform: translateX(-250px);
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    .content {
+        margin-left: 0;
+        padding: 15px;
+    }
+}
+
+/* ======== CARDS DASHBOARD ======== */
+.cards-container {
+    display: flex;
+    gap: 20px;
+}
+
+.card {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card-number {
+    font-size: 32px;
+    color: var(--verde);
+    font-weight: 700;
+}
