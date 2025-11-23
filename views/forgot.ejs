@@ -1,33 +1,135 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Recuperar Senha</title>
-  <link rel="stylesheet" href="/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Redefinir Senha • Campo do Gado</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Inter", sans-serif;
+            background: url('/img/login-bg.png') no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 40px;
+            width: 420px;
+            border-radius: 16px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+            backdrop-filter: blur(6px);
+        }
+
+        .logo-cdg {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #1b4d2d;
+        }
+
+        .login-box label {
+            font-size: 14px;
+            color: #0b2a16;
+            font-weight: 600;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            border: 1px solid #8bb79c;
+            background: #f9fff9;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #1b4d2d;
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .btn-login:hover {
+            background: #0f331c;
+        }
+
+        .alert-error {
+            background: #ffdddd;
+            padding: 10px;
+            color: #a30000;
+            border-left: 5px solid #ff4d4d;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .alert-info {
+            background: #e8ffe8;
+            padding: 10px;
+            color: #0b2a16;
+            border-left: 5px solid #1b4d2d;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .login-link {
+            display: block;
+            text-align: center;
+            margin-top: 12px;
+            color: #1b4d2d;
+            font-weight: 600;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-<body class="login-body">
 
-<div class="login-container">
+<body>
 
-  <h2 class="login-title">Recuperar Senha</h2>
+<div class="login-box">
 
-  <% if (error) { %>
-    <div class="alert alert-error"><%= error %></div>
-  <% } %>
+    <div class="logo-cdg">
+        Redefinir Senha<br>
+        <span style="font-size:15px; opacity:0.8;">Sistema CDG</span>
+    </div>
 
-  <% if (info) { %>
-    <div class="alert alert-info"><%= info %></div>
-  <% } %>
+    <% if (error) { %>
+        <div class="alert-error"><%= error %></div>
+    <% } %>
 
-  <form class="login-card" method="POST" action="/forgot">
-    <label>E-mail ou Usuário</label>
-    <input type="text" name="usuario" required>
+    <% if (info) { %>
+        <div class="alert-info"><%= info %></div>
+    <% } %>
 
-    <button class="btn-save" style="width:100%">Enviar</button>
-  </form>
+    <form method="POST" action="">
+        <label>Nova Senha</label>
+        <input type="password" name="senha" required>
 
-  <a href="/login" class="login-forgot">Voltar ao login</a>
+        <label>Confirmar Senha</label>
+        <input type="password" name="confirmar" required>
+
+        <button class="btn-login">Salvar Nova Senha</button>
+    </form>
+
+    <a href="/login" class="login-link">Voltar ao login</a>
 
 </div>
 
