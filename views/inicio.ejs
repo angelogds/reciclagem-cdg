@@ -1,37 +1,97 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<h1 class="page-title">
+    <i class="fa-solid fa-chart-line"></i> Dashboard
+</h1>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Campo do Gado — Sistema de Manutenção</title>
+<div style="display: flex; flex-wrap: wrap; gap: 25px;">
 
-    <link rel="stylesheet" href="/css/inicio.css">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-</head>
-
-<body>
-
-    <div class="overlay"></div>
-
-    <div class="container">
-
-        <!-- LOGO -->
-        <img src="/img/logo.png" class="logo">
-
-        <!-- TÍTULO -->
-        <h1 class="title">Campo do Gado</h1>
-        <h2 class="subtitle">Sistema de Manutenção</h2>
-
-        <!-- BOTÃO -->
-        <a href="/login" class="btn-enter">
-            Entrar no Sistema <i class="fa-solid fa-arrow-right"></i>
-        </a>
+    <!-- CARD: Equipamentos cadastrados -->
+    <div style="
+        flex: 1;
+        min-width: 260px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px #00000015;
+    ">
+        <h2 style="font-size: 20px; margin-bottom: 10px; color: #083b1d;">
+            <i class="fa-solid fa-truck"></i> Equipamentos
+        </h2>
+        <p style="font-size: 28px; font-weight: bold; color: #0d542c;">
+            <%= totalEquipamentos %>
+        </p>
     </div>
 
-</body>
+    <!-- CARD: Ordens Abertas -->
+    <div style="
+        flex: 1;
+        min-width: 260px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px #00000015;
+    ">
+        <h2 style="font-size: 20px; margin-bottom: 10px; color: #083b1d;">
+            <i class="fa-solid fa-list-check"></i> Ordens Abertas
+        </h2>
+        <p style="font-size: 28px; font-weight: bold; color: #0d542c;">
+            <%= ordensAbertas %>
+        </p>
+    </div>
 
-</html>
+    <!-- CARD: Correias em Estoque -->
+    <div style="
+        flex: 1;
+        min-width: 260px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px #00000015;
+    ">
+        <h2 style="font-size: 20px; margin-bottom: 10px; color: #083b1d;">
+            <i class="fa-solid fa-gears"></i> Correias em Estoque
+        </h2>
+        <p style="font-size: 28px; font-weight: bold; color: #0d542c;">
+            <%= totalCorreias %>
+        </p>
+    </div>
+
+</div>
+
+<!-- DIVISOR -->
+<div style="height: 35px;"></div>
+
+<!-- ÚLTIMAS ORDENS -->
+<h2 class="page-title" style="font-size: 22px;">
+    <i class="fa-solid fa-clock-rotate-left"></i> Últimas Ordens
+</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Equipamento</th>
+            <th>Status</th>
+            <th>Abertura</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (ultimasOrdens.length === 0) { %>
+            <tr>
+                <td colspan="5">Nenhuma ordem encontrada.</td>
+            </tr>
+        <% } else { %>
+            <% ultimasOrdens.forEach(o => { %>
+                <tr>
+                    <td><%= o.id %></td>
+                    <td><%= o.equipamento_nome %></td>
+                    <td><%= o.status %></td>
+                    <td><%= o.data_abertura %></td>
+                    <td>
+                        <a href="/ordens/<%= o.id %>" class="btn-primary">Ver</a>
+                    </td>
+                </tr>
+            <% }) %>
+        <% } %>
+    </tbody>
+</table>
