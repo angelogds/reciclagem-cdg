@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title><%= typeof title !== "undefined" ? title : "Campo do Gado" %></title>
+    <!-- PREVENÇÃO DO ERRO -->
+    <title><%= typeof title !== 'undefined' ? title : 'Campo do Gado' %></title>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css" />
     <script src="https://kit.fontawesome.com/65d9d7e32a.js" crossorigin="anonymous"></script>
 </head>
 
@@ -19,45 +20,41 @@
 
     <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar">
-
         <div class="logo-area">
-            <img src="/img/logo.png" class="logo">
+            <img src="/img/logo.png" class="logo" />
             <h2>Campo do Gado</h2>
         </div>
 
         <ul class="menu">
-
             <li>
-                <a href="/" class="<%= active==='dashboard' ? 'active' : '' %>">
+                <a href="/" class="<%= active === 'dashboard' ? 'active' : '' %>">
                     <i class="fa-solid fa-chart-line"></i> Dashboard
                 </a>
             </li>
 
             <% if (session.role === 'admin' || session.role === 'funcionario') { %>
-
             <li>
-                <a href="/equipamentos" class="<%= active==='equipamentos' ? 'active' : '' %>">
+                <a href="/equipamentos" class="<%= active === 'equipamentos' ? 'active' : '' %>">
                     <i class="fa-solid fa-truck"></i> Equipamentos
                 </a>
             </li>
 
             <li>
-                <a href="/correias" class="<%= active==='correias' ? 'active' : '' %>">
+                <a href="/correias" class="<%= active === 'correias' ? 'active' : '' %>">
                     <i class="fa-solid fa-gears"></i> Correias / Estoque
                 </a>
             </li>
-
             <% } %>
 
             <li>
-                <a href="/ordens" class="<%= active==='ordens' ? 'active' : '' %>">
+                <a href="/ordens" class="<%= active === 'ordens' ? 'active' : '' %>">
                     <i class="fa-solid fa-list-check"></i> Ordens
                 </a>
             </li>
 
             <% if (session.role === 'admin') { %>
             <li>
-                <a href="/users" class="<%= active==='users' ? 'active' : '' %>">
+                <a href="/users" class="<%= active === 'users' ? 'active' : '' %>">
                     <i class="fa-solid fa-users"></i> Usuários
                 </a>
             </li>
@@ -68,26 +65,24 @@
                     <i class="fa-solid fa-right-from-bracket"></i> Sair
                 </a>
             </li>
-
         </ul>
     </aside>
 
-    <!-- CONTEÚDO PRINCIPAL -->
+    <!-- CONTEÚDO -->
     <main id="mainContent" class="main-content">
         <%- body %>
     </main>
 
-    <script>
-        // MENU HAMBÚRGUER
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const content = document.getElementById('mainContent');
+<script>
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const content = document.getElementById('mainContent');
 
-        menuToggle.onclick = () => {
-            sidebar.classList.toggle('open');
-            content.classList.toggle('menu-open');
-        };
-    </script>
+    menuToggle.onclick = () => {
+        sidebar.classList.toggle('open');
+        content.classList.toggle('menu-open');
+    };
+</script>
 
 </body>
 </html>
