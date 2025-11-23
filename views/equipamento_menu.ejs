@@ -1,59 +1,98 @@
-<h1 class="page-title"><i class="fa-solid fa-truck"></i> <%= equipamento.nome %></h1>
+<h1 class="page-title">
+    <i class="fa-solid fa-truck"></i> <%= equipamento.nome %>
+</h1>
 
-<div class="card">
-  <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
-    <div style="flex:1">
-      <p><strong>Código:</strong> <%= equipamento.codigo || '-' %></p>
-      <p><strong>Local:</strong> <%= equipamento.local || '-' %></p>
-      <p><strong>Cadastro:</strong> <%= equipamento.created_at %></p>
-    </div>
+<!-- CARD PRINCIPAL -->
+<div class="card" style="background:white; padding:20px; border-radius:12px; box-shadow:0 2px 6px #00000015;">
 
-    <div style="width:160px; text-align:center;">
-      <% if (equipamento.imagem) { %>
-        <img src="/<%= equipamento.imagem %>" style="width:140px; height:100px; object-fit:cover; border-radius:8px;">
-      <% } else { %>
-        <div style="width:140px; height:100px; border-radius:8px; background:#f0f6f1; display:flex; align-items:center; justify-content:center; color:#7a8b7a;">
-          Sem imagem
+    <div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+
+        <!-- INFO TEXTO -->
+        <div style="flex:1; min-width:250px;">
+            <p><strong>Código:</strong> <%= equipamento.codigo || '-' %></p>
+            <p><strong>Local:</strong> <%= equipamento.local || '-' %></p>
+            <p><strong>Cadastro:</strong> <%= equipamento.created_at %></p>
         </div>
-      <% } %>
+
+        <!-- IMAGEM -->
+        <div style="width:160px; text-align:center;">
+            <% if (equipamento.imagem) { %>
+                <img src="/<%= equipamento.imagem %>"
+                     style="width:140px; height:100px; object-fit:cover; border-radius:8px; border:1px solid #ddd;">
+            <% } else { %>
+                <div style="
+                    width:140px; height:100px;
+                    border-radius:8px;
+                    background:#f0f6f1;
+                    display:flex; align-items:center; justify-content:center;
+                    color:#7a8b7a; font-size:14px;">
+                    Sem imagem
+                </div>
+            <% } %>
+        </div>
     </div>
-  </div>
 
-  <hr style="margin:14px 0;">
+    <hr style="margin:18px 0;">
 
-  <div class="top-actions" style="justify-content:flex-start;">
-    <a href="/equipamentos/<%= equipamento.id %>/editar" class="btn-primary">
-      <i class="fa-solid fa-pen"></i> Editar
-    </a>
+    <!-- BOTÕES PRINCIPAIS -->
+    <div class="top-actions" style="gap:10px; justify-content:flex-start; flex-wrap:wrap;">
 
-    <a href="/equipamentos/<%= equipamento.id %>/qrcode" class="btn-primary" style="margin-left:8px; background:#0b8a44;">
-      <i class="fa-solid fa-qrcode"></i> QR Code
-    </a>
+        <a href="/equipamentos/<%= equipamento.id %>/editar" class="btn-primary">
+            <i class="fa-solid fa-pen"></i> Editar
+        </a>
 
-    <a href="/equipamentos/<%= equipamento.id %>/correias" class="btn-primary" style="margin-left:8px; background:#1b7f42;">
-      <i class="fa-solid fa-gears"></i> Correias (associar)
-    </a>
+        <a href="/equipamentos/<%= equipamento.id %>/qrcode"
+           class="btn-primary"
+           style="background:#0b8a44;">
+            <i class="fa-solid fa-qrcode"></i> QR Code
+        </a>
 
-    <a href="/equipamentos/<%= equipamento.id %>/historico" class="btn-primary" style="margin-left:8px; background:#0c6b3a;">
-      <i class="fa-solid fa-clock-rotate-left"></i> Histórico
-    </a>
+        <a href="/equipamentos/<%= equipamento.id %>/correias"
+           class="btn-primary"
+           style="background:#1b7f42;">
+            <i class="fa-solid fa-gears"></i> Correias (associar)
+        </a>
 
-    <form method="POST" action="/equipamentos/<%= equipamento.id %>/delete" style="display:inline-block; margin-left:8px;" onsubmit="return confirm('Remover equipamento?');">
-      <button class="btn-delete btn-sm"><i class="fa-solid fa-trash"></i> Excluir</button>
-    </form>
-  </div>
+        <a href="/equipamentos/<%= equipamento.id %>/historico"
+           class="btn-primary"
+           style="background:#0c6b3a;">
+            <i class="fa-solid fa-clock-rotate-left"></i> Histórico
+        </a>
+
+        <form method="POST"
+              action="/equipamentos/<%= equipamento.id %>/delete"
+              onsubmit="return confirm('Remover equipamento?');">
+            <button class="btn-delete">
+                <i class="fa-solid fa-trash"></i> Excluir
+            </button>
+        </form>
+
+    </div>
+
 </div>
 
-<hr>
+<hr style="margin:25px 0;">
 
-<div class="card">
-  <h3>Menu Rápido</h3>
-  <ul style="list-style:none; padding-left:0; margin-top:8px;">
-    <li style="margin:8px 0">
-      <a href="/equipamentos/<%= equipamento.id %>/baixar" class="btn-primary" style="background:#0f6f36;">Baixar correia (consumo)</a>
-    </li>
-    <li style="margin:8px 0">
-      <a href="/ordens/novo?equipamento_id=<%= equipamento.id %>" class="btn-primary">Abrir OS para este equipamento</a>
-    </li>
-  </ul>
+<!-- MENU RÁPIDO -->
+<div class="card" style="background:white; padding:20px; border-radius:12px; box-shadow:0 2px 6px #00000015;">
+
+    <h3 style="margin-bottom:15px; color:#083b1d;">Menu Rápido</h3>
+
+    <ul style="list-style:none; padding:0; margin:0;">
+        <li style="margin-bottom:12px;">
+            <a href="/equipamentos/<%= equipamento.id %>/baixar"
+               class="btn-primary"
+               style="background:#0f6f36;">
+               <i class="fa-solid fa-arrow-down-wide-short"></i> Baixar correia (consumo)
+            </a>
+        </li>
+
+        <li style="margin-bottom:12px;">
+            <a href="/ordens/novo?equipamento_id=<%= equipamento.id %>"
+               class="btn-primary">
+               <i class="fa-solid fa-list-check"></i> Abrir OS para este equipamento
+            </a>
+        </li>
+    </ul>
+
 </div>
