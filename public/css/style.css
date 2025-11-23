@@ -1,199 +1,220 @@
 /* ============================
-   ESTILOS GERAIS
-============================ */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-    background: #f2f6f5;
-    color: #083b1d;
+   style.css — Campo do Gado (OPÇÃO A - SLIDE-IN)
+   - Sidebar totalmente arredondada
+   - Botão redondo com logo (usa caminho local de imagem)
+   - Slide-in da esquerda (desktop empurra conteúdo; mobile sobrepõe)
+   - Limpo, organizado e responsivo
+   ============================ */
+
+/* ---------- RESET & BASE ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html,body {
+  width: 100%;
+  height: 100%;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f3f7f4;
+  color: #083b1d;
 }
 
-/* ============================
-   BOTÃO HAMBÚRGUER
-============================ */
+/* ---------- THEME VARIABLES ---------- */
+:root {
+  --green-900: #0b5e33;
+  --green-800: #1b7f42;
+  --green-700: #0d542c;
+  --muted: #e9f7ef;
+  --card-bg: #ffffff;
+  --shadow: 0 8px 30px rgba(9,34,18,0.06);
+  --radius-lg: 28px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+/* ---------- LAYOUT CONTAINERS ---------- */
+.container { max-width:1200px; margin:0 auto; padding:20px; }
+
+/* ---------- MENU TOGGLE (CIRCULAR BUTTON) ---------- */
 .menu-toggle {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1100;
-    background: #0d542c;
-    border: none;
-    color: white;
-    font-size: 22px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    cursor: pointer;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 3000;
+  width: 64px;
+  height: 64px;
+  padding: 6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  border:none;
+  background: linear-gradient(180deg,var(--green-700),var(--green-800));
+  box-shadow: 0 10px 30px rgba(8,59,31,0.18);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s;
+}
+.menu-toggle:active { transform: scale(.96); }
+.menu-toggle:hover { box-shadow: 0 14px 36px rgba(8,59,31,0.20); }
+
+/* show logo inside button (uses local path you uploaded) */
+.menu-toggle img.menu-logo-icon {
+  width:46px;
+  height:46px;
+  object-fit:cover;
+  border-radius:50%;
+  display:block;
+  /* Fallback background image if you later prefer background-image */
+  /* background-image: url('/mnt/data/A_screenshot_of_a_service_order_management_web_app.png'); */
 }
 
-/* ============================
-   SIDEBAR
-============================ */
+/* ---------- SIDEBAR (ARREDONDADA) ---------- */
+/* CLOSED state should be fully off-screen (no green band visible) */
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: -260px; /* fechado */
-    width: 260px;
-    height: 100vh;
-    background: #0d542c;
-    padding: 25px 20px;
-    color: white;
-    z-index: 1050;
-    transition: left .3s ease;
+  position: fixed;
+  top: 20px;                 /* leave breathing space for rounded effect */
+  left: -340px;              /* <- fully outside viewport */
+  width: 320px;              /* wider for curved look */
+  height: calc(100vh - 40px);
+  background: linear-gradient(180deg,var(--green-900),var(--green-800));
+  color: #fff;
+  padding: 26px 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+  transition: left .36s cubic-bezier(.22,.9,.25,1), opacity .28s ease;
+  z-index: 2500;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  overflow: hidden;
 }
 
+/* OPEN: fully visible and aligned with page edge */
 .sidebar.open {
-    left: 0; /* aberto */
+  left: 20px;    /* shows with same left gap as button */
 }
 
-.sidebar .logo {
-    width: 110px;
-    margin-bottom: 10px;
-}
-
+/* header logo area */
 .sidebar .logo-area {
-    text-align: center;
-    margin-bottom: 25px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.sidebar .logo-area img.logo {
+  width:64px;
+  height:64px;
+  object-fit:contain;
+  border-radius:12px;
+  background: rgba(255,255,255,0.03);
+  padding:6px;
+  border: 2px solid rgba(255,255,255,0.04);
+}
+.sidebar .logo-area h2 {
+  font-size:20px;
+  font-weight:800;
+  color:#fff;
 }
 
-.sidebar h2 {
-    font-size: 20px;
-    margin-top: 8px;
+/* menu list */
+.sidebar .menu {
+  list-style:none;
+  padding:0;
+  margin:10px 0 0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  overflow:auto;
 }
-
-/* MENU */
-.menu {
-    list-style: none;
-    padding: 0;
-    margin-top: 10px;
+.sidebar .menu li a {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:rgba(255,255,255,0.96);
+  padding:12px 14px;
+  border-radius:12px;
+  font-weight:700;
+  transition: background .16s ease, transform .12s;
 }
+.sidebar .menu li a i { width:18px; text-align:center; font-size:16px; }
+.sidebar .menu li a:hover { background: rgba(255,255,255,0.06); transform: translateX(6px); }
+.sidebar .menu li a.active { background: rgba(255,255,255,0.10); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02); }
 
-.menu li {
-    margin-bottom: 12px;
-}
+/* footer actions (logout) */
+.sidebar .footer { margin-top:auto; display:flex; flex-direction:column; gap:10px; }
 
-.menu a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 8px;
-    color: white;
-    text-decoration: none;
-    transition: 0.2s;
-}
-
-.menu a:hover,
-.menu a.active {
-    background: #ffffff22;
-}
-
-/* ============================
-   ÁREA PRINCIPAL
-============================ */
+/* ---------- MAIN CONTENT (slide effect) ---------- */
+/* Default content (menu closed) */
 .main-content {
-    padding: 40px 35px;
-    margin-left: 0;
-    transition: margin-left .3s ease;
+  transition: margin-left .36s cubic-bezier(.22,.9,.25,1), filter .25s ease;
+  padding: 34px;
+  margin-left: 80px; /* leave some left space when menu hidden */
+  min-height: 100vh;
+  background: transparent;
 }
 
-/* quando a sidebar abrir */
+/* When menu opens we shift content right to make room (desktop) */
 .main-content.menu-open {
-    margin-left: 260px;
+  margin-left: 380px; /* leave space to show curved sidebar fully */
 }
 
-/* ============================
-   TÍTULOS & BOTÕES
-============================ */
-.page-title {
-    font-size: 28px;
-    margin-bottom: 25px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* On small screens we want overlay instead of push */
+@media (max-width: 980px) {
+  .main-content.menu-open { margin-left: 0; filter: blur(0px); }
+  .sidebar { left: 12px; top: 12px; width: calc(100% - 24px); height: auto; max-height: calc(100vh - 24px); border-radius: var(--radius-md); }
+  .sidebar.open { transform: translateY(0); left: 12px; }
 }
 
-.btn-primary {
-    background: #0d542c;
-    padding: 10px 18px;
-    border-radius: 8px;
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    transition: .2s;
+/* ---------- CORE UI ---------- */
+.page-title { display:flex; align-items:center; gap:12px; font-size:28px; color:var(--green-900); margin-bottom:18px; font-weight:800; }
+
+/* cards */
+.card {
+  background: var(--card-bg);
+  padding:18px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
 }
 
-.btn-primary:hover {
-    background: #083b1d;
-}
+/* dashboard grid */
+.dashboard-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:18px; margin-bottom:20px; }
+.dash-card h3 { color:#083b1d; margin-bottom:6px; font-size:16px; }
+.dash-number { font-size:28px; color:var(--green-700); font-weight:800; }
 
-/* ============================
-   TABELAS
-============================ */
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
+/* tables */
+.table { width:100%; border-collapse: collapse; background:transparent; }
+.table th { text-align:left; padding:12px 14px; background:var(--muted); color:#083b1d; font-weight:700; border-radius:8px 8px 0 0; }
+.table td { background:var(--card-bg); padding:12px 14px; border-bottom:1px solid #eef6ef; }
 
-.table th {
-    background: #e9f7ef;
-    padding: 14px;
-    text-align: left;
-    font-size: 15px;
-    color: #083b1d;
-}
+/* forms */
+.form-card { background: var(--card-bg); padding:22px; border-radius: var(--radius-md); box-shadow: var(--shadow); max-width:900px; }
+label { display:block; margin-bottom:6px; font-weight:700; color:#0b4b2a; }
+input, select, textarea { width:100%; padding:12px; border-radius:8px; border:1px solid #d7efe0; background:#f7fff8; }
 
-.table td {
-    padding: 12px;
-    background: white;
-    border-bottom: 1px solid #f0f0f0;
-}
+/* buttons */
+.btn-primary { background: linear-gradient(180deg,var(--green-800),var(--green-700)); color:#fff; padding:12px 16px; border-radius:12px; border:none; cursor:pointer; font-weight:700; transition: transform .12s ease, box-shadow .12s ease; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,94,51,0.12); }
+.btn-secondary { background:#f4f8f6; color:#083b1d; padding:10px 14px; border-radius:10px; border:1px solid #e6efe8; }
 
-/* ações */
-.actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-}
+/* action icons */
+.actions { display:flex; gap:8px; align-items:center; justify-content:center; }
+.btn-action { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; border:none; cursor:pointer; }
 
-.actions a,
-.actions button {
-    font-size: 16px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-}
+/* tags */
+.tag { display:inline-block; padding:6px 10px; border-radius:8px; font-weight:700; font-size:13px; }
+.tag.green { background:#d8f3dc; color:#064e3b; }
+.tag.warn { background:#fef3c7; color:#a16207; }
+.tag.red { background:#ffdddd; color:#8b0000; }
 
-.btn-edit { background: #d8f3dc; color: #064e3b; }
-.btn-qr { background: #b7e4c7; color: #064e3b; }
-.btn-history { background: #95d5b2; color: #064e3b; }
-.btn-delete { background: #ffb3b3; color: #8b0000; }
+/* gallery & modal */
+.galeria { display:grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap:12px; }
+.foto-item { background:var(--card-bg); padding:8px; border-radius:10px; box-shadow:var(--shadow); text-align:center; }
+.zoom-modal { display:none; position:fixed; inset:0; background: rgba(0,0,0,0.85); z-index:5000; align-items:center; justify-content:center; }
 
-/* imagens pequenas */
-.thumb {
-    width: 55px;
-    height: 55px;
-    object-fit: cover;
-    border-radius: 6px;
-}
+/* misc */
+.empty { text-align:center; padding:22px; color:#6b6b6b; }
+.thumb { width:70px; height:55px; object-fit:cover; border-radius:8px; border:2px solid #0f5132; }
 
-/* ============================
-   MOBILE
-============================ */
-@media (max-width: 900px) {
-    .main-content.menu-open {
-        margin-left: 0; /* no mobile NÃO empurra tela */
-    }
+/* small helpers */
+.text-muted { color:#6b6b6b; font-size:13px; }
 
-    .sidebar {
-        width: 220px;
-        left: -220px;
-    }
-
-    .sidebar.open {
-        left: 0;
-    }
-}
+/* ---------- END OF FILE ---------- */
