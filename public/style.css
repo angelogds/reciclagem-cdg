@@ -1,349 +1,312 @@
-/* ============================
-   STYLE.CSS — CAMPO DO GADO
-   - Tema: verde/branco (OPÇÃO A)
-   - Sidebar totalmente arredondada
-   - Arquivo gerado: versão limpa e otimizada
-   ============================ */
+/* ===========================
+   RESET & BASE
+=========================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-/* ---------- RESET & BASE ---------- */
-* { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
-  width: 100%;
-  height: 100%;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: #f3f7f4;
-  color: #083b1d;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    font-family: "Inter", sans-serif;
+    background: #f3f7f4;
 }
 
-/* Utility helpers */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-/* ---------- GLOBAL LAYOUT ---------- */
-:root{
-  --green-900: #0b5e33;
-  --green-800: #1b7f42;
-  --green-700: #0d542c;
-  --accent: #0d542c;
-  --muted: #e9f7ef;
-  --card-bg: #ffffff;
-  --shadow: 0 6px 18px rgba(9,34,18,0.06);
-  --radius-lg: 22px; /* big radius for option A */
-  --radius-md: 12px;
-  --radius-sm: 8px;
-}
-
-/* ---------- NAV / SIDEBAR (ARREDONDADA) ---------- */
-/* Sidebar container */
-.sidebar {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  width: 320px;                /* slightly wider to show curve */
-  height: calc(100vh - 40px);
-  background: linear-gradient(180deg, var(--green-900), var(--green-800));
-  color: #ffffff;
-  padding: 26px 20px;
-  border-radius: 28px;         /* big radius for rounded look */
-  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  transform: translateX(0);
-  transition: transform .38s cubic-bezier(.22,.9,.25,1), opacity .25s;
-  z-index: 2000;
-}
-
-/* Closed state: move off-screen leaving rounded edge hint */
-.sidebar.closed {
-  transform: translateX(-280px);
-  opacity: 0.99;
-}
-
-/* Header inside sidebar */
-.sidebar .logo-area {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.sidebar .logo-area img.logo {
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  border-radius: 12px;
-  border: 2px solid rgba(255,255,255,0.06);
-  background: rgba(255,255,255,0.02);
-  padding: 6px;
-}
-
-.sidebar .logo-area h2 {
-  font-size: 20px;
-  line-height: 1;
-  font-weight: 800;
-  color: #fff;
-}
-
-/* Menu list */
-.sidebar .menu {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-  overflow: auto;
-}
-
-/* Each item */
-.sidebar .menu li a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: rgba(255,255,255,0.94);
-  text-decoration: none;
-  padding: 12px 14px;
-  border-radius: 12px;
-  font-weight: 700;
-  transition: background .18s ease, transform .12s ease;
-}
-
-.sidebar .menu li a i { font-size: 16px; width: 18px; text-align: center; }
-
-.sidebar .menu li a:hover {
-  background: rgba(255,255,255,0.06);
-  transform: translateX(4px);
-}
-
-/* Active item */
-.sidebar .menu li a.active {
-  background: rgba(255,255,255,0.12);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-}
-
-/* Footer area (logout, version) */
-.sidebar .footer {
-  margin-top: 14px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-/* ---------- FLOATING LOGO BUTTON (CIRCULAR) ---------- */
+/* ===========================
+   BOTÃO DO MENU (ARREDONDADO)
+=========================== */
 .menu-toggle {
-  position: fixed;
-  top: 26px;
-  left: 26px;
-  z-index: 2500;
-  width: 64px;
-  height: 64px;
-  padding: 6px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius: 50%;
-  border: none;
-  background: linear-gradient(180deg, var(--green-700), var(--green-800));
-  box-shadow: 0 10px 30px rgba(8,59,31,0.18);
-  cursor: pointer;
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-
-.menu-toggle:active { transform: scale(.96); }
-.menu-toggle img.menu-logo-icon {
-  width: 46px;
-  height: 46px;
-  object-fit: contain;
-  border-radius: 50%;
-}
-
-/* small indicator when closed — subtle notch on left */
-.sidebar.closed + .menu-edge {
-  display: block;
-}
-
-/* a small visual edge so the rounded sidebar still hints at closed position */
-.menu-edge {
-  position: fixed;
-  top: 26px;
-  left: 20px;
-  width: 18px;
-  height: 64px;
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
-  background: linear-gradient(180deg, rgba(11,94,51,0.95), rgba(27,127,66,0.95));
-  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
-  z-index: 1900;
-  display: none;
-}
-
-/* ---------- MAIN CONTENT AREA ---------- */
-.main-content {
-  transition: margin-left .35s cubic-bezier(.22,.9,.25,1), filter .25s;
-  padding: 34px;
-  margin-left: 380px; /* leave space for wide curved sidebar */
-  min-height: 100vh;
-}
-
-/* When sidebar is closed we reduce left margin */
-.main-content.shifted {
-  margin-left: 80px; /* show content more to left when menu closed */
-}
-
-/* Small screens - overlay style */
-@media (max-width: 980px) {
-  .sidebar {
     position: fixed;
-    left: 12px;
-    top: 12px;
-    width: calc(100% - 24px);
-    height: auto;
-    max-height: calc(100vh - 24px);
-    border-radius: var(--radius-md);
-    padding: 14px;
-  }
-  .sidebar.closed {
-    transform: translateY(-120%);
-  }
-  .main-content { margin-left: 0; padding: 18px; }
-  .menu-edge { display: none; }
+    top: 15px;
+    left: 15px;
+    z-index: 3000;
+    background: #0d542c;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .3s ease;
 }
 
-/* ---------- PAGE TITLES / HEADERS ---------- */
+.menu-toggle:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+}
+
+.menu-toggle:active {
+    transform: scale(.93);
+}
+
+.menu-logo-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+
+/* ===========================
+   SIDEBAR ARREDONDADA MODERNA
+=========================== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -290px;
+    width: 260px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0c4827, #0a5c32);
+    padding: 25px 18px;
+    color: white;
+    border-radius: 0 20px 20px 0;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.25);
+    z-index: 2500;
+    transition: left .35s ease;
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.logo-area {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-area .logo {
+    width: 120px;
+    margin-bottom: 10px;
+}
+
+.logo-area h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
+
+/* ===========================
+   MENU DA SIDEBAR
+=========================== */
+.menu {
+    list-style: none;
+}
+
+.menu li {
+    margin-bottom: 12px;
+}
+
+.menu li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 10px;
+    border-radius: 12px;
+    color: #e8fff0;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: .25s;
+}
+
+.menu li a:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.menu li a.active {
+    background: rgba(255,255,255,0.22);
+    color: #ffffff;
+}
+
+
+/* ===========================
+   CONTEÚDO PRINCIPAL
+=========================== */
+.main-content {
+    padding: 30px;
+    padding-top: 95px;
+    transition: margin-left .3s ease;
+}
+
+.main-content.menu-open {
+    margin-left: 260px;
+}
+
+/* Mobile: não empurra conteúdo */
+@media (max-width: 900px) {
+    .main-content.menu-open {
+        margin-left: 0;
+    }
+}
+
+
+/* ===========================
+   TITULOS
+=========================== */
 .page-title {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  font-size: 28px;
-  color: var(--green-900);
-  margin-bottom: 18px;
-  font-weight: 800;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #0b2a16;
 }
 
-/* small screens */
-@media (max-width: 600px) {
-  .page-title { font-size: 20px; gap:10px; }
-}
 
-/* ---------- CARDS ---------- */
+/* ===========================
+   CARDS
+=========================== */
 .card {
-  background: var(--card-bg);
-  padding: 18px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow);
+    background: #fff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
 }
 
-/* dashboard cards */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 18px;
-  margin-bottom: 20px;
-}
-
-.dash-card h3 { color: #083b1d; margin-bottom: 6px; font-size: 16px; }
-.dash-number { font-size: 28px; color: var(--green-700); font-weight: 800; }
-
-/* ---------- TABLES ---------- */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  background: transparent;
-}
-
-.table th {
-  text-align: left;
-  background: var(--muted);
-  padding: 12px 14px;
-  color: #083b1d;
-  font-weight: 700;
-  border-top-left-radius: 8px;
-}
-
-.table td {
-  background: var(--card-bg);
-  padding: 12px 14px;
-  border-bottom: 1px solid #eef6ef;
-}
-
-/* responsive tables */
-.table-wrap {
-  overflow-x: auto;
-  border-radius: 12px;
-  background: transparent;
-}
-
-/* ---------- FORMS ---------- */
-.form-card {
-  background: var(--card-bg);
-  padding: 22px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow);
-  max-width: 900px;
-}
-
-label { display:block; margin-bottom:6px; font-weight:700; color: #0b4b2a; }
-input, select, textarea {
-  width:100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #d7efe0;
-  background: #f7fff8;
-  outline: none;
-}
-
-/* ---------- BUTTONS ---------- */
+/* ===========================
+   BOTÕES
+=========================== */
 .btn-primary {
-  background: linear-gradient(180deg,var(--green-800),var(--green-700));
-  color: #fff;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(11,94,51,0.12); }
-
-.btn-secondary {
-  background: #f4f8f6;
-  color: #083b1d;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid #e6efe8;
+    background: #1b7f42;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    transition: .2s;
 }
 
-/* small variants */
-.btn-sm { padding: 8px 10px; font-size: 14px; border-radius: 8px; }
+.btn-primary:hover {
+    background: #155f32;
+}
 
-/* action icons */
-.actions { display:flex; gap:8px; align-items:center; justify-content:center; }
-.btn-action { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; border:none; cursor:pointer; }
-.btn-edit { background:#198754; } .btn-qr { background:#0d6efd; } .btn-history { background:#6c757d; } .btn-delete { background:#dc3545; }
+.btn-delete {
+    background: #c62828;
+    color: #fff;
+    padding: 10px 13px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
 
-/* ---------- TAGS & STATUS ---------- */
-.tag { display:inline-block; padding:6px 10px; border-radius:8px; font-weight:700; font-size:13px; }
-.tag.green { background:#d8f3dc; color:#064e3b; }
-.tag.warn { background:#fef3c7; color:#a16207; }
-.tag.red { background:#ffdddd; color:#8b0000; }
+.btn-delete:hover {
+    background: #b71c1c;
+}
 
-/* ---------- GALLERY & MODAL ---------- */
-.galeria { display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:12px; }
-.foto-item { background: var(--card-bg); padding:8px; border-radius:10px; box-shadow: var(--shadow); text-align:center; }
-.foto-item img { width:100%; border-radius:8px; cursor:pointer; }
-.zoom-modal { display:none; position:fixed; inset:0; background: rgba(0,0,0,0.85); z-index:5000; align-items:center; justify-content:center; }
 
-/* ---------- MISC ---------- */
-.empty { text-align:center; padding:22px; color:#6b6b6b; }
-.thumb { width:70px; height:55px; object-fit:cover; border-radius:8px; border: 2px solid #0f5132; }
+/* ===========================
+   FORMULÁRIOS
+=========================== */
+form input,
+form select,
+form textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #cfe4d6;
+    background: #f5fff7;
+    margin-bottom: 12px;
+}
 
-/* small helpers */
-.text-muted { color:#6b6b6b; font-size:13px; }
+label {
+    font-weight: 600;
+    color: #124d2b;
+    margin-bottom: 4px;
+    display: block;
+}
 
-/* ---------- END ---------- */
+
+/* ===========================
+   TABELA MODERNA
+=========================== */
+.table-modern {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-modern thead {
+    background: #0b3d20;
+    color: #fff;
+}
+
+.table-modern th,
+.table-modern td {
+    padding: 12px;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.table-modern tbody tr:hover {
+    background: #eef9f0;
+}
+
+
+/* ===========================
+   TAGS DE STATUS
+=========================== */
+.tag {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.tag.green { background: #15803d; color:white; }
+.tag.red { background:#b30000; color:white; }
+.tag.yellow { background:#eab308; color:#4a3900; }
+
+
+/* ===========================
+   GALERIA DE FOTOS
+=========================== */
+.galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+}
+
+.foto-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.foto-item img {
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform .2s ease;
+}
+
+.foto-item img:hover {
+    transform: scale(1.05);
+}
+
+
+/* ===========================
+   MODAL DE ZOOM
+=========================== */
+.zoom-modal {
+    display: none;
+    position: fixed;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.85);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.zoom-modal img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 12px;
+}
