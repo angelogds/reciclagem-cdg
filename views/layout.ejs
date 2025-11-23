@@ -9,105 +9,25 @@
     <link rel="stylesheet" href="/css/style.css" />
     <script src="https://kit.fontawesome.com/65d9d7e32a.js" crossorigin="anonymous"></script>
 
-    <style>
-        /* BOTÃO ARREDONDADO */
-        .menu-toggle {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 2000;
-            background: #0d542c;
-            border: none;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            padding: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px #00000033;
-            transition: transform .2s ease, box-shadow .2s ease;
-        }
-
-        .menu-toggle:hover {
-            box-shadow: 0 6px 16px #00000044;
-        }
-
-        .menu-toggle:active {
-            transform: scale(0.92);
-        }
-
-        .menu-logo-icon {
-            width: 42px;
-            height: 42px;
-            object-fit: contain;
-            border-radius: 50%;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -270px;
-            width: 260px;
-            height: 100vh;
-            background: #0d542c;
-            padding: 25px 20px;
-            color: white;
-            z-index: 1500;
-            transition: left .35s ease;
-        }
-
-        .sidebar.open {
-            left: 0;
-        }
-
-        /* LOGO DO MENU */
-        .sidebar .logo {
-            width: 110px;
-            margin-bottom: 10px;
-        }
-
-        .sidebar .logo-area {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        /* CONTEÚDO */
-        .main-content {
-            padding: 40px 35px;
-            margin-left: 0;
-            transition: margin-left .3s ease;
-        }
-
-        .main-content.menu-open {
-            margin-left: 260px;
-        }
-
-        @media (max-width: 900px) {
-            .main-content.menu-open {
-                margin-left: 0;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
-    <!-- BOTÃO COM LOGO ARREDONDADO -->
+    <!-- BOTÃO REDONDO COM ÍCONE -->
     <button id="menuToggle" class="menu-toggle">
-        <img src="/img/logo.png" class="menu-logo-icon">
+        <img src="/img/logo.png" class="menu-logo-icon" />
     </button>
 
-    <!-- SIDEBAR -->
-    <aside id="sidebar" class="sidebar">
+    <!-- SIDEBAR ARREDONDADA -->
+    <aside id="sidebar" class="sidebar rounded-sidebar">
+
         <div class="logo-area">
             <img src="/img/logo.png" class="logo" />
             <h2>Campo do Gado</h2>
         </div>
 
         <ul class="menu">
+
             <li>
                 <a href="/" class="<%= active === 'dashboard' ? 'active' : '' %>">
                     <i class="fa-solid fa-chart-line"></i> Dashboard
@@ -115,6 +35,7 @@
             </li>
 
             <% if (session.role === 'admin' || session.role === 'funcionario') { %>
+
             <li>
                 <a href="/equipamentos" class="<%= active === 'equipamentos' ? 'active' : '' %>">
                     <i class="fa-solid fa-truck"></i> Equipamentos
@@ -126,6 +47,7 @@
                     <i class="fa-solid fa-gears"></i> Correias / Estoque
                 </a>
             </li>
+
             <% } %>
 
             <li>
@@ -135,11 +57,13 @@
             </li>
 
             <% if (session.role === 'admin') { %>
+
             <li>
                 <a href="/users" class="<%= active === 'users' ? 'active' : '' %>">
                     <i class="fa-solid fa-users"></i> Usuários
                 </a>
             </li>
+
             <% } %>
 
             <li>
@@ -147,23 +71,26 @@
                     <i class="fa-solid fa-right-from-bracket"></i> Sair
                 </a>
             </li>
+
         </ul>
+
     </aside>
 
-    <!-- CONTEÚDO -->
+    <!-- ÁREA PRINCIPAL -->
     <main id="mainContent" class="main-content">
         <%- body %>
     </main>
 
+
 <script>
-    const menuToggle = document.getElementById('menuToggle');
+    const btn = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
     const content = document.getElementById('mainContent');
 
-    menuToggle.onclick = () => {
-        sidebar.classList.toggle('open');
-        content.classList.toggle('menu-open');
-    };
+    btn.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+        content.classList.toggle("menu-open");
+    });
 </script>
 
 </body>
