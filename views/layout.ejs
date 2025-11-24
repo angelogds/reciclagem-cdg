@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta-name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title><%= typeof title !== "undefined" ? title : "Campo do Gado" %></title>
 
@@ -19,7 +19,7 @@
 
 <body>
 
-    <!-- BOTÃO MENU -->
+    <!-- BOTÃO DO MENU -->
     <button id="menuToggle" class="menu-toggle smooth">
         <img 
             src="<%= session?.logo ? '/uploads/' + session.logo : '/img/logo_menu_256.png' %>"
@@ -44,7 +44,7 @@
                 <i class="fa-solid fa-chart-line"></i> Dashboard
             </a></li>
 
-            <% if (session?.role === 'admin' || session?.role === 'funcionario') { %>
+            <% if (session && (session.role === 'admin' || session.role === 'funcionario')) { %>
 
             <li><a href="/equipamentos" class="<%= active === 'equipamentos' ? 'active' : '' %>">
                 <i class="fa-solid fa-truck"></i> Equipamentos
@@ -60,7 +60,7 @@
                 <i class="fa-solid fa-list-check"></i> Ordens
             </a></li>
 
-            <% if (session?.role === 'admin') { %>
+            <% if (session && session.role === 'admin') { %>
             <li><a href="/users" class="<%= active === 'users' ? 'active' : '' %>">
                 <i class="fa-solid fa-users"></i> Usuários
             </a></li>
@@ -71,17 +71,14 @@
         </ul>
     </aside>
 
-    <!-- TOPBAR (SEM PESQUISA, TÍTULO CENTRAL, NOME À DIREITA) -->
+    <!-- TOPBAR ÚNICA -->
     <header class="top-bar smooth">
 
-        <div style="flex:1; text-align:center;">
-            <span class="top-title" style="font-size:22px; font-weight:800;">
-                Campo do Gado
-            </span>
+        <div class="top-title" style="margin: 0 auto;">
+            Campo do Gado
         </div>
 
-        <div class="top-bar-right" style="position:absolute; right:20px; top:50%; transform:translateY(-50%);">
-
+        <div class="top-bar-right">
             <% if (session?.usuario) { %>
 
                 <div class="user-box">
@@ -89,17 +86,21 @@
                     <span><%= session.usuario %></span>
                 </div>
 
-                <a href="/logout" class="btn btn-verde-claro" style="margin-left:12px;">
+                <a href="/logout" class="btn btn-verde-claro">
                     <i class="fa-solid fa-right-from-bracket"></i> Sair
                 </a>
 
+            <% } else { %>
+
+                <a href="/login" class="btn btn-verde-claro">
+                    <i class="fa-solid fa-right-to-bracket"></i> Entrar
+                </a>
+
             <% } %>
-
         </div>
-
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
+    <!-- CONTEÚDO -->
     <main id="mainContent" class="main-content smooth">
         <%- body %>
     </main>
