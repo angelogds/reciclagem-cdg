@@ -1,75 +1,87 @@
 <%- include("./partials/cabecalho") %>
 
 <h1 class="page-title">
-    <i class="fa-solid fa-chart-line"></i>
-    Dashboard
+  <i class="fa-solid fa-chart-pie"></i>
+  Dashboard
 </h1>
 
-<!-- GRID – 4 CARDS LADO A LADO -->
+<!-- === GRID DOS CARDS (LAYOUT ANTIGO RESTAURADO) === -->
 <div class="grid-cards">
 
-    <div class="metric-card">
-        <h3>Total de Equipamentos</h3>
-        <div class="metric-value"><%= equipamentosCount || 0 %></div>
-    </div>
+  <div class="metric-card card">
+    <h3>Total de Equipamentos</h3>
+    <p class="metric-value">
+      <%= totais && totais.equipamentos ? totais.equipamentos : 0 %>
+    </p>
+  </div>
 
-    <div class="metric-card">
-        <h3>Ordens Abertas</h3>
-        <div class="metric-value"><%= ordensAbertas || 0 %></div>
-    </div>
+  <div class="metric-card card">
+    <h3>Ordens Abertas</h3>
+    <p class="metric-value">
+      <%= totais && totais.abertas ? totais.abertas : 0 %>
+    </p>
+  </div>
 
-    <div class="metric-card">
-        <h3>Correias em Estoque (Itens)</h3>
-        <div class="metric-value"><%= correiasCount || 0 %></div>
-    </div>
+  <div class="metric-card card">
+    <h3>Ordens Fechadas</h3>
+    <p class="metric-value">
+      <%= totais && totais.fechadas ? totais.fechadas : 0 %>
+    </p>
+  </div>
 
-    <div class="metric-card">
-        <h3>Técnicos Ativos</h3>
-        <div class="metric-value"><%= tecnicosCount || 0 %></div>
-    </div>
+  <div class="metric-card card">
+    <h3>Total de Correias em Estoque</h3>
+    <p class="metric-value">
+      <%= typeof correiasTop !== 'undefined' ? Object.values(correiasTop).reduce((a,b)=>a+b,0) : 0 %>
+    </p>
+  </div>
 
 </div>
 
-<!-- GRÁFICO 1 -->
+<!-- === GRÁFICO 1 === -->
 <div class="card chart-card">
-    <h2>Ordens por Tipo</h2>
-    <canvas id="chartOrdensTipo"></canvas>
+  <h2>Ordens por Tipo</h2>
+  <canvas id="chartOrdensTipo" width="600" height="260"></canvas>
 </div>
 
-<!-- GRÁFICO 2 -->
+<!-- === GRÁFICO 2 === -->
 <div class="card chart-card">
-    <h2>Top 10 Correias — Estoque</h2>
-    <canvas id="chartCorreias"></canvas>
+  <h2>Top 10 Correias — Estoque</h2>
+  <canvas id="chartCorreias" width="600" height="260"></canvas>
 </div>
 
+<!-- === BOTÕES === -->
 <div class="relatorio-actions">
-    <a href="/relatorios/gerar-pdf-dashboard" class="btn btn-verde-escuro">
-        <i class="fa-solid fa-file-pdf"></i> Exportar PDF do Dashboard
-    </a>
+  <a href="/relatorios/gerar-pdf-dashboard" class="btn btn-verde-escuro">
+    <i class="fa-solid fa-file-pdf"></i> Exportar PDF do Dashboard
+  </a>
 
-    <a href="/relatorios" class="btn btn-cinza-escuro">Ver relatórios</a>
+  <a href="/relatorios" class="btn btn-cinza-escuro">
+    <i class="fa-solid fa-folder"></i> Ver relatórios
+  </a>
 </div>
 
 <%- include("./partials/rodape") %>
 
 <script>
-  window.REL_ORDENS = <%- JSON.stringify(ordensPorTipo || {}) %>;
+  window.REL_ORDENS = <%- JSON.stringify(tipos || {}) %>;
   window.REL_CORREIAS = <%- JSON.stringify(correiasTop || {}) %>;
 
   (function(){
     if (typeof Chart === 'undefined') return;
 
     try {
+      const ordensData = window.REL_ORDENS;
+      const labels1 = ordensData.map(o => o.tipo);
+      const values1 = ordensData.map(o => o.total);
 
-      /* === GRÁFICO 1 === */
       const ctx1 = document.getElementById('chartOrdensTipo').getContext('2d');
-
       new Chart(ctx1, {
         type: 'pie',
         data: {
-          labels: Object.keys(window.REL_ORDENS),
+          labels: labels1,
           datasets: [{
-            data: Object.values(window.REL_ORDENS),
+            data: values1,
             borderWidth: 0
           }]
         },
@@ -79,16 +91,19 @@
         }
       });
 
-      /* === GRÁFICO 2 === */
-      const ctx2 = document.getElementById('chartCorreias').getContext('2d');
+      const correiasData = window.REL_CORREIAS;
+      const labels2 = Object.keys(correiasData);
+      const values2 = Object.values(correiasData);
 
+      const ctx2 = document.getElementById('chartCorreias').getContext('2d');
       new Chart(ctx2, {
         type: 'bar',
         data: {
-          labels: Object.keys(window.REL_CORREIAS),
+          labels: labels2,
           datasets: [{
             label: 'Quantidade',
-            data: Object.values(window.REL_CORREIAS),
+            data: values2,
+            borderWidth: 0
           }]
         },
         options: {
@@ -99,8 +114,7 @@
       });
 
     } catch (e) {
-      console.warn("Erro gráfico:", e);
+      console.warn('Erro no dashboard:', e);
     }
-
   })();
 </script>
