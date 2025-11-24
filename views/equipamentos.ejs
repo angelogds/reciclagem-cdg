@@ -21,7 +21,7 @@
                 <th>Nome</th>
                 <th>Modelo</th>
                 <th>Localização</th>
-                <th style="width:200px; text-align:center;">Ações</th>
+                <th style="width: 240px; text-align:center;">Ações</th>
             </tr>
         </thead>
 
@@ -36,40 +36,46 @@
             <tr>
                 <td><%= eq.id %></td>
 
+                <!-- FOTO DO EQUIPAMENTO -->
                 <td>
-                    <% if (eq.foto) { %>
-                        <img src="/uploads/<%= eq.foto %>" class="thumb">
+                    <% if (eq.imagem) { %>
+                        <img src="/<%= eq.imagem %>" class="thumb">
                     <% } else { %>
                         <img src="/img/placeholder.png" class="thumb">
                     <% } %>
                 </td>
 
                 <td><%= eq.nome %></td>
-                <td><%= eq.modelo || '-' %></td>
-                <td><%= eq.localizacao || '-' %></td>
+                <td><%= eq.codigo || '-' %></td>
+                <td><%= eq.local || '-' %></td>
 
                 <td class="actions">
 
+                    <!-- EDITAR -->
                     <a href="/equipamentos/<%= eq.id %>/editar" class="action-btn btn-edit">
                         <i class="fa-solid fa-pen"></i>
                         <span class="btn-label">Editar</span>
                     </a>
 
-                    <a href="/equipamentos/<%= eq.id %>/qr" class="action-btn btn-qr">
+                    <!-- QR CODE (rota corrigida!!) -->
+                    <a href="/equipamentos/<%= eq.id %>/qrcode" class="action-btn btn-qr">
                         <i class="fa-solid fa-qrcode"></i>
-                        <span class="btn-label-dark">QR</span>
+                        <span class="btn-label">QR</span>
                     </a>
 
+                    <!-- HISTÓRICO -->
                     <a href="/equipamentos/<%= eq.id %>/historico" class="action-btn btn-hist">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                         <span class="btn-label">Hist.</span>
                     </a>
 
+                    <!-- CORREIAS -->
                     <a href="/equipamentos/<%= eq.id %>/correias" class="action-btn btn-corr">
                         <i class="fa-solid fa-gears"></i>
                         <span class="btn-label-dark">Correias</span>
                     </a>
 
+                    <!-- EXCLUIR -->
                     <form action="/equipamentos/<%= eq.id %>/delete" method="POST"
                           onsubmit="return confirm('Excluir equipamento?');">
                         <button class="action-btn btn-del">
