@@ -1,1 +1,14 @@
-<footer><p>Rodapé</p></footer>
+<!-- partials/rodape.ejs -->
+<footer class="card" style="text-align:center; margin-top:24px; font-size:13px; color:#666;">
+  <div>
+    <strong>Campo do Gado</strong> — Sistema de Manutenção
+  </div>
+
+  <div style="margin-top:6px;">
+    Versão <%= typeof appVersion !== 'undefined' ? appVersion : '1.0.0' %> • Banco: <%= dbName || 'SQLite' %>
+  </div>
+
+  <div style="margin-top:8px; font-size:12px; color:#999;">
+    © <%= new Date().getFullYear() %> — Desenvolvido por Angelo
+  </div>
+</footer>
