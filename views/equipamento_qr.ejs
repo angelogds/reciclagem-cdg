@@ -2,34 +2,30 @@
 
 <h1 class="page-title">
     <i class="fa-solid fa-qrcode"></i>
-    QR Code do Equipamento
+    QR Code — <%= equipamento.nome %>
 </h1>
 
-<div class="card" style="text-align:center; padding:40px;">
+<div class="card" style="text-align:center; padding:30px;">
 
-    <h2 style="margin-bottom:20px; color:var(--green-900); font-weight:800;">
-        <%= equipamento.nome %>
-    </h2>
-
-    <!-- QR code -->
     <div style="margin-bottom:25px;">
-        <% if (qrCode) { %>
-            <img src="<%= qrCode %>" 
+        <% if (qr) { %>
+            <img src="<%= qr %>" 
                  alt="QR Code" 
                  style="width:240px; height:240px; border-radius:16px; box-shadow:0 4px 18px rgba(0,0,0,0.25);">
         <% } else { %>
-            <p class="empty">QR Code não encontrado.</p>
+            <p>QR Code não disponível.</p>
         <% } %>
     </div>
 
-    <button onclick="window.print()" class="btn btn-verde-escuro" style="margin-bottom:16px;">
-        <i class="fa-solid fa-print"></i> Imprimir
-    </button>
+    <p style="font-size:16px; color:#0d4d2c;">
+        <strong>URL do equipamento:</strong><br>
+        <span style="word-break:break-all;"><%= url %></span>
+    </p>
+
+    <div style="margin-top:20px;">
+        <a href="/equipamentos" class="btn btn-cinza-escuro">← Voltar</a>
+    </div>
 
 </div>
-
-<a href="/equipamentos/<%= equipamento.id %>" class="btn btn-cinza-escuro">
-    ← Voltar
-</a>
 
 <%- include("./partials/rodape") %>
