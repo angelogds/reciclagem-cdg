@@ -1,0 +1,82 @@
+<%- include("./partials/cabecalho") %>
+
+<h1 class="page-title">
+    <i class="fa-solid fa-chart-pie"></i>
+    Dashboard de Relatórios
+</h1>
+
+<div class="grid-cards">
+
+    <div class="card metric-card">
+        <h3>Total de Equipamentos</h3>
+        <p class="metric-value"><%= (equipamentosCount || 0) %></p>
+    </div>
+
+    <div class="card metric-card">
+        <h3>Ordens Abertas</h3>
+        <p class="metric-value"><%= (ordensAbertas || 0) %></p>
+    </div>
+
+    <div class="card metric-card">
+        <h3>Correias em Estoque (itens)</h3>
+        <p class="metric-value"><%= (correiasCount || 0) %></p>
+    </div>
+
+    <div class="card metric-card">
+        <h3>Técnicos Ativos</h3>
+        <p class="metric-value"><%= (tecnicosCount || 0) %></p>
+    </div>
+</div>
+
+<div class="card chart-card">
+    <h2>Ordens por Tipo</h2>
+    <!-- placeholder para gráfico (o gráfico pode ser gerado com chart.js no front) -->
+    <canvas id="chartOrdensTipo" width="600" height="260"></canvas>
+</div>
+
+<div class="card chart-card">
+    <h2>Stock de Correias — Top 10</h2>
+    <canvas id="chartCorreias" width="600" height="260"></canvas>
+</div>
+
+<div class="relatorio-actions">
+    <a href="/relatorios/gerar-pdf-dashboard" class="btn btn-verde-escuro">
+        <i class="fa-solid fa-file-pdf"></i> Exportar PDF do Dashboard
+    </a>
+
+    <a href="/" class="btn btn-cinza-escuro">← Voltar</a>
+</div>
+
+<%- include("./partials/rodape") %>
+
+<script>
+/* Exemplo: se você incluir Chart.js no layout, o servidor pode passar os dados:
+   window.REL_ORDENS = <%- JSON.stringify(ordensPorTipo || {}) %>;
+   window.REL_CORREIAS = <%- JSON.stringify(correiasTop || {}) %>;
+   Abaixo deixo um exemplo condicional — ative se tiver Chart.js no layout.
+*/
+if (typeof Chart !== 'undefined') {
+    try {
+        const ordensData = window.REL_ORDENS || {};
+        const ctx1 = document.getElementById('chartOrdensTipo').getContext('2d');
+        new Chart(ctx1, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(ordensData),
+                datasets: [{ data: Object.values(ordensData) }]
+            }
+        });
+
+        const correiasData = window.REL_CORREIAS || {};
+        const ctx2 = document.getElementById('chartCorreias').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(correiasData),
+                datasets: [{ data: Object.values(correiasData) }]
+            },
+            options: { indexAxis: 'y' }
+        });
+    } catch(e) { console.warn('Erro ao inicializar gráficos', e) }
+}
+</script>
