@@ -3,68 +3,124 @@
     <%= equipamento ? "Editar Equipamento" : "Novo Equipamento" %>
 </h1>
 
-<div class="card" style="
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 2px 6px #00000015;
-    max-width:650px;
-">
-    <form method="POST"
-          action="<%= equipamento ? '/equipamentos/' + equipamento.id : '/equipamentos' %>"
-          enctype="multipart/form-data">
+<div class="form-card">
 
-        <!-- Nome -->
-        <label style="font-weight:600;">Nome do Equipamento</label>
-        <input type="text" name="nome" required
-               value="<%= equipamento ? equipamento.nome : '' %>"
-               style="width:100%; padding:12px; border:1px solid #d9d9d9; border-radius:8px; margin-bottom:18px;">
+    <!-- ERRO (caso exista) -->
+    <% if (error) { %>
+        <div class="alert-error"><%= error %></div>
+    <% } %>
 
-        <!-- Código -->
-        <label style="font-weight:600;">Código / Tag</label>
-        <input type="text" name="codigo"
-               value="<%= equipamento ? equipamento.codigo : '' %>"
-               style="width:100%; padding:12px; border:1px solid #d9d9d9; border-radius:8px; margin-bottom:18px;">
+    <form 
+        action="<%= equipamento ? '/equipamentos/' + equipamento.id : '/equipamentos' %>" 
+        method="POST" 
+        enctype="multipart/form-data"
+    >
 
-        <!-- Local -->
-        <label style="font-weight:600;">Local</label>
-        <input type="text" name="local"
-               value="<%= equipamento ? equipamento.local : '' %>"
-               style="width:100%; padding:12px; border:1px solid #d9d9d9; border-radius:8px; margin-bottom:18px;">
+        <div class="form-grid">
+
+            <!-- Nome -->
+            <div>
+                <label>Nome do Equipamento</label>
+                <input 
+                    type="text"
+                    name="nome"
+                    required
+                    value="<%= equipamento ? equipamento.nome : '' %>"
+                >
+            </div>
+
+            <!-- Código -->
+            <div>
+                <label>Código</label>
+                <input 
+                    type="text"
+                    name="codigo"
+                    required
+                    value="<%= equipamento ? equipamento.codigo : '' %>"
+                >
+            </div>
+
+            <!-- Local -->
+            <div>
+                <label>Local</label>
+                <input 
+                    type="text"
+                    name="local"
+                    value="<%= equipamento ? equipamento.local : '' %>"
+                >
+            </div>
+
+            <!-- Imagem -->
+            <div>
+                <label>Imagem (opcional)</label>
+                <input type="file" name="imagem" accept="image/*">
+            </div>
+
+        </div>
 
         <!-- Descrição -->
-        <label style="font-weight:600;">Descrição</label>
-        <textarea name="descricao" rows="4"
-                  style="width:100%; padding:12px; border:1px solid #d9d9d9; border-radius:8px; margin-bottom:18px;"><%= equipamento ? equipamento.descricao : '' %></textarea>
+        <div style="margin-top:12px;">
+            <label>Descrição</label>
+            <textarea 
+                name="descricao" 
+                rows="4"
+            ><%= equipamento ? equipamento.descricao : '' %></textarea>
+        </div>
 
-        <!-- Imagem -->
-        <label style="font-weight:600;">Imagem do Equipamento</label>
-
+        <!-- Miniatura da imagem -->
         <% if (equipamento && equipamento.imagem) { %>
-            <div style="margin-bottom:15px;">
-                <img src="/<%= equipamento.imagem %>" alt="Imagem atual"
-                     style="width:150px; height:150px; object-fit:cover; border-radius:8px; border:1px solid #ddd;">
-                <p style="font-size:13px; opacity:0.7; margin-top:5px;">
-                    Imagem atual — envie outra para substituir
-                </p>
+            <div style="margin-top:14px;">
+                <label>Imagem atual:</label><br>
+                <img 
+                    src="/<%= equipamento.imagem %>" 
+                    class="thumb" 
+                    style="margin-top:6px;"
+                >
             </div>
         <% } %>
 
-        <input type="file" name="imagem" accept="image/*"
-               style="margin-bottom:20px;">
-
-        <!-- Botão Salvar -->
-        <button class="btn-primary" style="margin-top:10px;">
-            <i class="fa-solid fa-save"></i>
+        <!-- BOTÃO SALVAR -->
+        <button class="btn-primary" style="margin-top:22px;">
+            <i class="fa-solid fa-floppy-disk"></i>
             <%= equipamento ? "Salvar Alterações" : "Cadastrar Equipamento" %>
         </button>
 
     </form>
-</div>
 
-<!-- Botão voltar -->
-<div style="margin-top:20px;">
-    <a href="/equipamentos" class="btn-primary" style="background:#999;">
-        <i class="fa-solid fa-arrow-left"></i> Voltar
-    </a>
+    <!-- AÇÕES (Voltar / QR / Histórico / Correias) -->
+    <% if (equipamento) { %>
+        <div class="actions" style="margin-top:28px;">
+
+            <a href="/equipamentos/<%= equipamento.id %>/qrcode" class="btn-qr btn-stack">
+                <i class="fa-solid fa-qrcode"></i>
+                <span class="btn-label">QR Code</span>
+            </a>
+
+            <a href="/equipamentos/<%= equipamento.id %>/historico" class="btn-history btn-stack">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span class="btn-label">Histórico</span>
+            </a>
+
+            <a href="/equipamentos/<%= equipamento.id %>/correias" class="btn-correias btn-stack">
+                <i class="fa-solid fa-gears"></i>
+                <span class="btn-label">Correias</span>
+            </a>
+
+            <a href="/equipamentos" class="btn-edit btn-stack">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span class="btn-label">Voltar</span>
+            </a>
+
+        </div>
+    <% } else { %>
+
+        <div class="actions" style="margin-top:28px;">
+            <a href="/equipamentos" class="btn-edit btn-stack">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span class="btn-label">Voltar</span>
+            </a>
+        </div>
+
+    <% } %>
+
 </div>
