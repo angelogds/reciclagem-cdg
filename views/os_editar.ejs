@@ -1,0 +1,65 @@
+<h1 class="page-title">
+    <i class="fa-solid fa-pen-to-square"></i>
+    Editar Ordem de Serviço #<%= os.id %>
+</h1>
+
+<div class="card form-card">
+
+    <% if (error) { %>
+        <div class="alert-error"><%= error %></div>
+    <% } %>
+
+    <form method="POST" action="/os/<%= os.id %>/editar">
+
+        <div class="form-grid">
+
+            <div>
+                <label>Equipamento</label>
+                <input type="text" value="<%= equipamento.nome %>" disabled class="input-disabled">
+            </div>
+
+            <div>
+                <label>Tipo</label>
+                <select name="tipo" required>
+                    <option value="Mecânica"   <%= os.tipo === 'Mecânica' ? 'selected' : '' %> >Mecânica</option>
+                    <option value="Elétrica"   <%= os.tipo === 'Elétrica' ? 'selected' : '' %> >Elétrica</option>
+                    <option value="Preventiva" <%= os.tipo === 'Preventiva' ? 'selected' : '' %> >Preventiva</option>
+                    <option value="Corretiva"  <%= os.tipo === 'Corretiva' ? 'selected' : '' %> >Corretiva</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Status</label>
+                <select name="status" required>
+                    <option value="aberta"   <%= os.status === 'aberta' ? 'selected' : '' %> >Aberta</option>
+                    <option value="fechada"  <%= os.status === 'fechada' ? 'selected' : '' %> >Fechada</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Abertura</label>
+                <input type="text" value="<%= os.aberta_em %>" disabled class="input-disabled">
+            </div>
+
+            <% if (os.fechada_em) { %>
+            <div>
+                <label>Fechada em</label>
+                <input type="text" value="<%= os.fechada_em %>" disabled class="input-disabled">
+            </div>
+            <% } %>
+        </div>
+
+        <label>Descrição</label>
+        <textarea name="descricao" rows="4" required><%= os.descricao %></textarea>
+
+        <button class="btn-primary" style="width:100%; margin-top:15px;">
+            <i class="fa-solid fa-save"></i> Salvar Alterações
+        </button>
+    </form>
+</div>
+
+<div style="margin-top:16px;">
+    <a href="/os/<%= os.id %>" class="btn-secondary">
+        ← Cancelar
+    </a>
+</div>
