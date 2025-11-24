@@ -3,33 +3,19 @@
     Relatório de Consumo de Correias
 </h1>
 
-<!-- FILTRO + BOTÃO PDF -->
-<div style="display:flex; gap:18px; align-items:flex-end; flex-wrap:wrap; margin-bottom:22px;">
+<!-- FILTRO -->
+<div class="card form-card" style="max-width: 380px; margin-bottom: 20px;">
+    <form method="GET">
+        <label>Selecione o mês</label>
+        <input type="month" name="mes" value="<%= mes %>" required>
 
-    <!-- CARD DO FILTRO -->
-    <div class="card form-card" style="max-width: 360px; flex:1;">
-        <form method="GET">
-            <label>Selecione o mês</label>
-            <input type="month" name="mes" value="<%= mes %>" required>
-
-            <button class="btn-primary" style="width:100%; margin-top:12px;">
-                <i class="fa-solid fa-filter"></i> Filtrar
-            </button>
-        </form>
-    </div>
-
-    <!-- BOTÃO PDF -->
-    <a href="/correias/relatorio/pdf?mes=<%= mes %>"
-       class="btn-pdf"
-       style="text-decoration:none;"
-       target="_blank">
-        <i class="fa-solid fa-file-pdf"></i>
-        <span class="btn-label">PDF</span>
-    </a>
-
+        <button class="btn-primary" style="width:100%; margin-top:12px;">
+            <i class="fa-solid fa-filter"></i> Filtrar
+        </button>
+    </form>
 </div>
 
-<!-- TABELA -->
+<!-- RESULTADOS -->
 <div class="card" style="overflow-x:auto;">
     <table class="table-modern">
         <thead>
@@ -64,9 +50,19 @@
     </table>
 </div>
 
-<!-- VOLTAR -->
-<div style="margin-top:18px;">
+<!-- BOTÕES -->
+<div style="margin-top:18px; display:flex; gap:12px;">
+
+    <!-- VOLTAR -->
     <a href="/correias" class="btn-secondary">
         ← Voltar
     </a>
+
+    <!-- GERAR PDF -->
+    <a href="/correias/relatorio/pdf?mes=<%= mes %>" 
+       class="btn-primary" 
+       style="display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-file-pdf"></i> PDF
+    </a>
+
 </div>
