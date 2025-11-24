@@ -1,65 +1,67 @@
+<%- include("./partials/cabecalho") %>
+
 <h1 class="page-title">
-    <i class="fa-solid fa-user-pen"></i> Editar Usuário
+    <i class="fa-solid fa-pen"></i>
+    Editar Equipamento
 </h1>
 
-<div class="card" style="
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 2px 6px #00000015;
-    max-width:650px;
-">
+<div class="card form-card">
 
     <% if (error) { %>
-        <div style="
-            background:#ffdddd;
-            padding:12px;
-            border-left:5px solid #ff4d4d;
-            border-radius:8px;
-            color:#8b0000;
-            margin-bottom:18px;
-        ">
-            <%= error %>
-        </div>
+        <div class="alert-error"><%= error %></div>
     <% } %>
 
-    <form method="POST" action="/users/<%= user.id %>/edit">
+    <form action="/equipamentos/<%= equipamento.id %>/editar" method="POST" enctype="multipart/form-data" class="formulario">
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-
-            <!-- Usuário (desabilitado) -->
-            <div>
-                <label style="font-weight:600;">Usuário (login)</label>
-                <input type="text"
-                       value="<%= user.usuario %>"
-                       disabled
-                       style="width:100%; padding:12px; border-radius:8px; background:#eaeaea; border:1px solid #d9d9d9;">
-            </div>
-
-            <!-- Nome -->
-            <div>
-                <label style="font-weight:600;">Nome Completo</label>
-                <input name="nome"
-                       value="<%= user.nome %>"
-                       required
-                       style="width:100%; padding:12px; border-radius:8px; border:1px solid #d9d9d9;">
-            </div>
-
-            <!-- Nível -->
-            <div>
-                <label style="font-weight:600;">Nível de Acesso</label>
-                <select name="role" required
-                        style="width:100%; padding:12px; border-radius:8px; border:1px solid #d9d9d9;">
-                    <option value="admin"       <%= user.role === 'admin' ? 'selected' : '' %>>Administrador</option>
-                    <option value="funcionario" <%= user.role === 'funcionario' ? 'selected' : '' %>>Funcionário</option>
-                    <option value="operador"    <%= user.role === 'operador' ? 'selected' : '' %>>Operador</option>
-                </select>
-            </div>
-
+        <div class="grupo">
+            <label>Nome</label>
+            <input type="text" name="nome" required value="<%= equipamento.nome %>">
         </div>
 
-        <button class="btn-primary" style="margin-top:25px;">
+        <div class="grupo">
+            <label>Modelo</label>
+            <input type="text" name="modelo" value="<%= equipamento.modelo %>">
+        </div>
+
+        <div class="grupo">
+            <label>Localização</label>
+            <input type="text" name="localizacao" value="<%= equipamento.localizacao %>">
+        </div>
+
+        <div class="grupo">
+            <label>Código</label>
+            <input type="text" name="codigo" value="<%= equipamento.codigo %>">
+        </div>
+
+        <div class="grupo">
+            <label>Descrição</label>
+            <textarea name="descricao" rows="4"><%= equipamento.descricao %></textarea>
+        </div>
+
+        <div class="grupo">
+            <label>Foto atual</label><br>
+            <% if (equipamento.foto) { %>
+                <img src="/uploads/<%= equipamento.foto %>" class="thumb" style="margin-top:6px;">
+            <% } else { %>
+                <span class="small">Sem foto cadastrada</span>
+            <% } %>
+        </div>
+
+        <div class="grupo">
+            <label>Nova foto (opcional)</label>
+            <input type="file" name="foto" accept="image/*">
+        </div>
+
+        <button class="btn btn-verde-claro btn-full" type="submit">
             <i class="fa-solid fa-save"></i> Salvar Alterações
         </button>
+
     </form>
+
 </div>
+
+<a href="/equipamentos" class="btn btn-cinza-escuro">
+    ← Voltar
+</a>
+
+<%- include("./partials/rodape") %>
