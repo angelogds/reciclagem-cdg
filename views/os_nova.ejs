@@ -11,7 +11,8 @@
         <div class="alert-error"><%= error %></div>
     <% } %>
 
-    <form method="POST" action="/os/nova" class="formulario">
+    <!-- ROTA CORRETA: /ordens  -->
+    <form method="POST" action="/ordens" enctype="multipart/form-data" class="formulario">
 
         <div class="grupo">
             <label>Equipamento</label>
@@ -38,14 +39,20 @@
             <textarea name="descricao" rows="4" required></textarea>
         </div>
 
-        <button class="btn btn-verde-claro btn-full" style="margin-top:8px;">
+        <div class="grupo">
+            <label>Fotos de Abertura (opcional)</label>
+            <!-- 🔥 O Multer ESPERA name="fotos" -->
+            <input type="file" name="fotos" accept="image/*" multiple>
+        </div>
+
+        <button class="btn btn-verde-claro btn-full" style="margin-top:12px;">
             <i class="fa-solid fa-floppy-disk"></i> Abrir OS
         </button>
     </form>
 
 </div>
 
-<div class="voltar-box">
+<div class="voltar-box" style="margin-top:10px;">
     <a href="/ordens" class="btn btn-cinza-escuro">
         ← Voltar
     </a>
