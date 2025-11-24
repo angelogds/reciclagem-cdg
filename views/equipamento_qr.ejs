@@ -1,49 +1,77 @@
 <h1 class="page-title">
-    <i class="fa-solid fa-qrcode"></i> QR Code do Equipamento
+    <i class="fa-solid fa-qrcode"></i>
+    QR Code do Equipamento
 </h1>
 
-<div class="card" style="text-align:center;">
+<div class="card" style="text-align:center; padding:30px;">
 
-    <h2 style="color:#0b5e33; font-weight:800; margin-bottom:12px;">
+    <h2 style="color:#0b5e33; margin-bottom:10px; font-size:22px; font-weight:800;">
         <%= equipamento.nome %>
     </h2>
 
-    <img src="<%= qr %>" 
-         alt="QR Code" 
-         style="width:260px; height:260px; margin:20px auto; display:block;">
+    <!-- QR CODE -->
+    <img 
+        src="<%= qr %>" 
+        alt="QR Code" 
+        style="width:260px; height:260px; margin:20px auto; display:block;"
+    >
 
-    <p style="margin-top:10px; font-size:14px; opacity:0.8;">
-        Link destino:
-    </p>
+    <!-- LINK DO QR -->
+    <div style="margin-top:10px;">
+        <label style="font-weight:700; color:#0b5e33;">Link do equipamento:</label>
+        <input 
+            type="text" 
+            value="<%= url %>" 
+            readonly
+            style="margin-top:6px; text-align:center; padding:10px; width:100%; max-width:420px; border-radius:10px; border:1px solid #cfe4d6; background:#f7fff8;"
+        >
 
-    <div style="
-        background:#f7fff8;
-        padding:10px;
-        border-radius:10px;
-        margin-bottom:25px;
-        word-break: break-all;
-        border:1px solid #d1e7dd;
-    ">
-        <%= url %>
+        <button 
+            class="btn-primary"
+            onclick="copiarLink()"
+            style="margin-top:10px; width:200px;"
+        >
+            <i class="fa-solid fa-copy"></i> Copiar Link
+        </button>
     </div>
 
-    <div class="actions" style="margin-top:20px;">
+    <!-- AÇÕES -->
+    <div class="actions" style="margin-top:35px;">
 
-        <a href="/equipamentos/<%= equipamento.id %>" class="btn-edit btn-stack">
-            <i class="fa-solid fa-eye"></i>
-            <span class="btn-label">Ver</span>
+        <a href="/equipamentos/<%= equipamento.id %>/historico" 
+           class="btn-history btn-stack">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span class="btn-label">Histórico</span>
         </a>
 
-        <a href="/equipamentos" class="btn-qr btn-stack">
+        <a href="/equipamentos/<%= equipamento.id %>/correias" 
+           class="btn-correias btn-stack">
+            <i class="fa-solid fa-gears"></i>
+            <span class="btn-label">Correias</span>
+        </a>
+
+        <a href="/equipamentos/<%= equipamento.id %>/editar" 
+           class="btn-edit btn-stack">
+            <i class="fa-solid fa-pen"></i>
+            <span class="btn-label">Editar</span>
+        </a>
+
+        <a href="/equipamentos" 
+           class="btn-delete btn-stack"
+           style="background:#6c757d;">
             <i class="fa-solid fa-arrow-left"></i>
             <span class="btn-label">Voltar</span>
         </a>
-
-        <a href="/equipamentos/<%= equipamento.id %>/menu" class="btn-history btn-stack">
-            <i class="fa-solid fa-bars"></i>
-            <span class="btn-label">Menu</span>
-        </a>
-
     </div>
 
 </div>
+
+<script>
+function copiarLink() {
+    const input = document.querySelector("input[readonly]");
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value);
+    alert("Link copiado!");
+}
+</script>
