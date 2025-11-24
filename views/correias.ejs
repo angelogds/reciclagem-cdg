@@ -21,7 +21,7 @@
                 <th>Modelo</th>
                 <th>Medida</th>
                 <th style="width: 80px;">Qtd</th>
-                <th style="text-align:center; width: 150px;">Ações</th>
+                <th style="text-align:center; width: 200px;">Ações</th>
             </tr>
         </thead>
 
@@ -39,20 +39,28 @@
                     <td><%= c.nome %></td>
                     <td><%= c.modelo || '-' %></td>
                     <td><%= c.medida || '-' %></td>
+
                     <td>
-                        <span class="tag verde-escuro"><%= c.quantidade %></span>
+                        <span class="tag green" style="font-size:14px;">
+                            <%= c.quantidade %>
+                        </span>
                     </td>
 
                     <td class="actions">
 
-                        <a href="/correias/<%= c.id %>/editar" class="action-btn btn-edit" title="Editar">
+                        <!-- EDITAR -->
+                        <a href="/correias/<%= c.id %>/editar" 
+                           class="action-btn btn-edit" 
+                           title="Editar">
                             <i class="fa-solid fa-pen"></i>
                             <span class="btn-label">Editar</span>
                         </a>
 
+                        <!-- EXCLUIR -->
                         <form method="POST"
                               action="/correias/<%= c.id %>/delete"
-                              onsubmit="return confirm('Excluir correia?');" style="display:inline-block;">
+                              onsubmit="return confirm('Excluir correia?');"
+                              style="display:inline-block;">
                             <button class="action-btn btn-del" title="Excluir">
                                 <i class="fa-solid fa-trash"></i>
                                 <span class="btn-label">Excluir</span>
@@ -64,18 +72,19 @@
                 <% }) %>
 
             <% } %>
+
         </tbody>
     </table>
 
 </div>
 
-<div class="relatorio-actions" style="margin-top:14px;">
+<div class="relatorio-actions" style="margin-top:18px; display:flex; gap:12px;">
     <a href="/correias/relatorio" class="btn btn-verde-escuro">
         <i class="fa-solid fa-file-lines"></i> Ver Relatório
     </a>
 
     <a href="/correias/relatorio/pdf" target="_blank" class="btn btn-verde-escuro">
-       <i class="fa-solid fa-file-pdf"></i> Baixar PDF
+        <i class="fa-solid fa-file-pdf"></i> Baixar PDF
     </a>
 </div>
 
