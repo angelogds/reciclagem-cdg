@@ -1,125 +1,35 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- login.ejs -->
+<%- include("./partials/cabecalho") %>
 
-    <title>Login • Campo do Gado</title>
+<div class="login-box card" style="margin:48px auto;">
+  <h2 style="color:var(--green-900); text-align:center; margin-bottom:14px;">
+    <i class="fa-solid fa-lock"></i> Entrar no Sistema
+  </h2>
 
-    <link rel="stylesheet" href="/css/style.css">
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Inter", sans-serif;
-            background: url('/img/login-bg.png') no-repeat center center;
-            background-size: cover;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .login-box {
-            background: rgba(255, 255, 255, 0.92);
-            padding: 40px;
-            width: 380px;
-            border-radius: 16px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
-            backdrop-filter: blur(6px);
-        }
-
-        .logo-cdg {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 26px;
-            font-weight: 700;
-            color: #1b4d2d;
-        }
-
-        .login-box label {
-            font-size: 14px;
-            color: #0b2a16;
-            font-weight: 600;
-        }
-
-        .login-box input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            margin-bottom: 18px;
-            border-radius: 8px;
-            border: 1px solid #8bb79c;
-            background: #f9fff9;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: #1b4d2d;
-            color: white;
-            border: none;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .btn-login:hover {
-            background: #0f331c;
-        }
-
-        .error-box {
-            background: #ffdddd;
-            padding: 10px;
-            color: #a30000;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border-left: 5px solid #ff4d4d;
-        }
-
-        .forgot-link {
-            display: block;
-            text-align: center;
-            margin-top: 12px;
-            color: #1b4d2d;
-            font-weight: 600;
-        }
-
-        .forgot-link:hover {
-            text-decoration: underline;
-        }
-
-    </style>
-
-</head>
-
-<body>
-
-    <div class="login-box">
-
-        <div class="logo-cdg">
-            🔧 Sistema CDG<br>
-            <span style="font-size:15px; opacity:0.8;">Reciclagem • Manutenção</span>
-        </div>
-
-        <% if (error) { %>
-            <div class="error-box"><%= error %></div>
-        <% } %>
-
-        <form method="POST" action="/login">
-            <label>Usuário</label>
-            <input type="text" name="usuario" required>
-
-            <label>Senha</label>
-            <input type="password" name="senha" required>
-
-            <button class="btn-login">Entrar</button>
-        </form>
-
-        <a href="/forgot" class="forgot-link">Esqueci minha senha</a>
+  <form action="/login" method="POST" style="display:flex; flex-direction:column; gap:12px;">
+    <div>
+      <label for="username">Usuário</label>
+      <input id="username" name="username" type="text" required placeholder="Digite seu usuário">
     </div>
 
-</body>
-</html>
+    <div>
+      <label for="password">Senha</label>
+      <input id="password" name="password" type="password" required placeholder="Senha">
+    </div>
+
+    <button class="btn btn-verde-claro btn-full" type="submit">
+      <i class="fa-solid fa-right-to-bracket"></i> Entrar
+    </button>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+      <a href="/forgot" class="small">Esqueci minha senha</a>
+      <a href="/register" class="small">Criar conta</a>
+    </div>
+  </form>
+</div>
+
+<%- include("./partials/rodape") %>
