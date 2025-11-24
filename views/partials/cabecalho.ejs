@@ -1,3 +1,58 @@
-<!-- Cabeçalho removido.
-O header oficial agora está somente no layout.ejs.
-Este arquivo existe apenas para compatibilidade com includes antigos. -->
+<!-- partials/cabecalho.ejs -->
+<header class="topbar-clean">
+    <div class="topbar-center">
+        <h1>Campo do Gado</h1>
+    </div>
+
+    <div class="topbar-user">
+        <% if (session && session.usuario) { %>
+            <span class="user-name"><%= session.usuario %></span>
+
+            <a href="/logout" class="btn btn-verde-claro" style="padding:6px 16px;">
+                <i class="fa-solid fa-right-from-bracket"></i> Sair
+            </a>
+        <% } else { %>
+            <a href="/login" class="btn btn-verde-claro" style="padding:6px 16px;">
+                <i class="fa-solid fa-right-to-bracket"></i> Entrar
+            </a>
+        <% } %>
+    </div>
+</header>
+
+<style>
+.topbar-clean {
+    width: 100%;
+    background: #ffffff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 14px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.topbar-center h1 {
+    margin: 0;
+    font-size: 20px;
+    color: #064e2e;
+    font-weight: 800;
+}
+
+.topbar-user {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-name {
+    padding: 6px 14px;
+    background: #e7f7ec;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #064e2e;
+}
+</style>
