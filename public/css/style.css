@@ -1,312 +1,144 @@
-/* ===========================
-   RESET & BASE
-=========================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* =========================================================
+   style.css - Campo do Gado (UNIFICADO)
+   - Botões padronizados para todas as views
+   - Sidebar arredondada + botão circular
+   - Mobile: menu oculto, slide-in
+   - Tabelas, cards, formulários e galerias otimizados
+   ========================================================= */
+
+/* RESET / BASE */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;width:100%;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:#f3f7f4;color:#083b1d;-webkit-font-smoothing:antialiased}
+
+/* VARIÁVEIS */
+:root{
+  --g-900:#0b5e33; --g-800:#1b7f42; --g-700:#0d542c;
+  --muted:#e9f7ef; --card:#ffffff; --shadow:0 8px 30px rgba(9,34,18,0.06);
+  --radius-lg:22px; --radius-md:12px; --radius-sm:8px;
+  --accent:#0d542c;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    font-family: "Inter", sans-serif;
-    background: #f3f7f4;
+/* Utility */
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.hidden{display:none !important}
+.text-muted{color:#6b6b6b;font-size:13px}
+
+/* ============ MENU TOGGLE (BOTÃO REDONDO) ============ */
+.menu-toggle{
+  position:fixed; top:18px; left:18px; z-index:4000;
+  width:64px;height:64px;border-radius:50%;padding:6px;border:none;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,var(--g-700),var(--g-800));
+  box-shadow:0 10px 30px rgba(8,59,31,0.18); cursor:pointer;
+  transition:transform .12s ease,box-shadow .12s ease,opacity .12s;
+}
+.menu-toggle:active{transform:scale(.96)}
+.menu-logo-icon{width:46px;height:46px;object-fit:contain;border-radius:50%}
+
+/* ============ SIDEBAR (ARREDONDADA) ============ */
+/* fechado: totalmente fora da tela (sem faixa verde visível) */
+.sidebar{
+  position:fixed; top:20px; left:-360px; /* fora da tela */
+  width:320px; height:calc(100vh - 40px);
+  background:linear-gradient(180deg,var(--g-900),var(--g-800));
+  color:#fff;padding:28px 20px;border-radius:var(--radius-lg);box-shadow:0 20px 40px rgba(0,0,0,0.18);
+  transition:left .36s cubic-bezier(.22,.9,.25,1);
+  z-index:3000; display:flex;flex-direction:column;gap:18px;overflow:auto;
+}
+.sidebar.open{left:20px} /* mesma distância do botão */
+
+/* header/logo */
+.logo-area{display:flex;align-items:center;gap:12px}
+.logo-area img.logo{width:64px;height:64px;object-fit:contain;border-radius:12px;background:rgba(255,255,255,0.03);padding:6px}
+.logo-area h2{font-size:18px;font-weight:800;color:#fff;margin:0}
+
+/* menu */
+.menu{list-style:none;padding:0;margin-top:6px;display:flex;flex-direction:column;gap:8px}
+.menu a{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,0.96);text-decoration:none;padding:12px 14px;border-radius:12px;font-weight:700;transition:background .16s,transform .12s}
+.menu a i{width:18px;text-align:center}
+.menu a:hover{background:rgba(255,255,255,0.06);transform:translateX(6px)}
+.menu a.active{background:rgba(255,255,255,0.10)}
+
+/* footer actions inside sidebar */
+.sidebar .footer{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+
+/* ============ MAIN CONTENT ============ */
+.main-content{
+  padding:34px;margin-left:80px; /* default when menu hidden leave small gap */
+  transition:margin-left .36s cubic-bezier(.22,.9,.25,1),filter .2s ease;
+  min-height:100vh;
+}
+.main-content.menu-open{margin-left:380px} /* space for curved sidebar */
+
+/* mobile: menu overlays, don't push content */
+@media(max-width:980px){
+  .main-content.menu-open{margin-left:0}
+  .sidebar{left:12px;top:12px;width:calc(100% - 24px);height:auto;max-height:calc(100vh - 24px)}
+  .sidebar.open{left:12px}
 }
 
-/* ===========================
-   BOTÃO DO MENU (ARREDONDADO)
-=========================== */
-.menu-toggle {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 3000;
-    background: #0d542c;
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-    cursor: pointer;
-    transition: transform .2s ease, box-shadow .3s ease;
-}
+/* ============ PAGE TYPOGRAPHY ============ */
+.page-title{display:flex;align-items:center;gap:12px;font-size:28px;color:var(--g-900);font-weight:800;margin-bottom:18px}
 
-.menu-toggle:hover {
-    box-shadow: 0 6px 16px rgba(0,0,0,0.45);
-}
+/* ============ CARDS ============ */
+.card{background:var(--card);padding:18px;border-radius:var(--radius-md);box-shadow:var(--shadow);margin-bottom:18px}
 
-.menu-toggle:active {
-    transform: scale(.93);
-}
+/* dashboard small cards */
+.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:18px}
+.dash-card h3{font-size:14px;color:#083b1d;margin-bottom:8px}
+.dash-number{font-size:28px;font-weight:800;color:var(--g-700)}
 
-.menu-logo-icon {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-    border-radius: 50%;
-}
+/* ============ TABLES ============ */
+.table-modern{width:100%;border-collapse:collapse}
+.table-modern thead{background:var(--muted);color:#083b1d}
+.table-modern th,.table-modern td{padding:12px;border-bottom:1px solid #eef6ef}
+.table-modern tbody tr:hover{background:#f2f7f3}
 
+/* mini helpers */
+.empty{text-align:center;padding:20px;color:#6b6b6b}
 
-/* ===========================
-   SIDEBAR ARREDONDADA MODERNA
-=========================== */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -290px;
-    width: 260px;
-    height: 100vh;
-    background: linear-gradient(180deg, #0c4827, #0a5c32);
-    padding: 25px 18px;
-    color: white;
-    border-radius: 0 20px 20px 0;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.25);
-    z-index: 2500;
-    transition: left .35s ease;
-}
+/* ============ FORMS ============ */
+.form-card{background:var(--card);padding:22px;border-radius:var(--radius-md);box-shadow:var(--shadow);max-width:100%}
+.form-grid{display:grid;gap:16px}
+@media(min-width:700px){.form-grid{grid-template-columns:repeat(2,1fr)}}
+label{display:block;margin-bottom:6px;font-weight:700;color:#0b4b2a}
+input,select,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #d7efe0;background:#f7fff8}
 
-.sidebar.open {
-    left: 0;
-}
+/* ============ BUTTONS (PADRÃO UNIFICADO) ============ */
+/* Use these classes in all views to standardize behaviour */
+.btn {display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+.btn-primary{background:linear-gradient(180deg,var(--g-800),var(--g-700));color:#fff}
+.btn-secondary{background:#f4f8f6;color:#083b1d;border:1px solid #e6efe8}
+.btn-danger{background:#d32f2f;color:#fff}
+.btn-ghost{background:transparent;border:1px solid rgba(11,94,51,0.08);color:var(--g-700)}
 
-.logo-area {
-    text-align: center;
-    margin-bottom: 30px;
-}
+.btn-sm{padding:8px 10px;font-size:14px;border-radius:8px}
 
-.logo-area .logo {
-    width: 120px;
-    margin-bottom: 10px;
-}
+/* action icon buttons (circular small) */
+.btn-action{width:36px;height:36px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:#fff;border:none;cursor:pointer}
+.btn-edit{background:#198754}.btn-qr{background:#0d6efd}.btn-history{background:#6c757d}.btn-delete{background:#dc3545}
 
-.logo-area h2 {
-    font-size: 20px;
-    font-weight: 700;
-    margin-top: 5px;
-}
+/* table action fallback */
+.actions{display:flex;gap:8px;align-items:center}
 
+/* ============ THUMB / IMAGENS ============ */
+/* Equipamentos: small thumb in lists / table */
+.thumb{width:140px;height:100px;object-fit:cover;border-radius:8px;border:2px solid #0f5132}
 
-/* ===========================
-   MENU DA SIDEBAR
-=========================== */
-.menu {
-    list-style: none;
-}
+/* image preview in equip page */
+.equip-preview{width:120px;height:120px;object-fit:cover;border-radius:10px;border:2px solid #2f5e44}
 
-.menu li {
-    margin-bottom: 12px;
-}
+/* ============ TAGS ============ */
+.tag{display:inline-block;padding:6px 10px;border-radius:8px;font-weight:700}
+.tag.green{background:#d8f3dc;color:#064e3b}.tag.warn{background:#fef3c7;color:#a16207}.tag.red{background:#ffdddd;color:#8b0000}
 
-.menu li a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 10px;
-    border-radius: 12px;
-    color: #e8fff0;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 500;
-    transition: .25s;
-}
+/* ============ GALLERY & MODAL ============ */
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.foto-item{background:var(--card);padding:8px;border-radius:10px;box-shadow:var(--shadow)}
+.foto-item img{width:100%;border-radius:8px;cursor:pointer;transition:transform .12s}
+.foto-item img:hover{transform:scale(1.04)}
+.zoom-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);align-items:center;justify-content:center;z-index:9999}
 
-.menu li a:hover {
-    background: rgba(255,255,255,0.15);
-}
-
-.menu li a.active {
-    background: rgba(255,255,255,0.22);
-    color: #ffffff;
-}
-
-
-/* ===========================
-   CONTEÚDO PRINCIPAL
-=========================== */
-.main-content {
-    padding: 30px;
-    padding-top: 95px;
-    transition: margin-left .3s ease;
-}
-
-.main-content.menu-open {
-    margin-left: 260px;
-}
-
-/* Mobile: não empurra conteúdo */
-@media (max-width: 900px) {
-    .main-content.menu-open {
-        margin-left: 0;
-    }
-}
-
-
-/* ===========================
-   TITULOS
-=========================== */
-.page-title {
-    font-size: 26px;
-    font-weight: 700;
-    margin-bottom: 18px;
-    color: #0b2a16;
-}
-
-
-/* ===========================
-   CARDS
-=========================== */
-.card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    margin-bottom: 20px;
-}
-
-/* ===========================
-   BOTÕES
-=========================== */
-.btn-primary {
-    background: #1b7f42;
-    color: white;
-    padding: 12px 18px;
-    border-radius: 10px;
-    border: none;
-    font-size: 15px;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.btn-primary:hover {
-    background: #155f32;
-}
-
-.btn-delete {
-    background: #c62828;
-    color: #fff;
-    padding: 10px 13px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-delete:hover {
-    background: #b71c1c;
-}
-
-
-/* ===========================
-   FORMULÁRIOS
-=========================== */
-form input,
-form select,
-form textarea {
-    width: 100%;
-    padding: 12px;
-    font-size: 15px;
-    border-radius: 8px;
-    border: 1px solid #cfe4d6;
-    background: #f5fff7;
-    margin-bottom: 12px;
-}
-
-label {
-    font-weight: 600;
-    color: #124d2b;
-    margin-bottom: 4px;
-    display: block;
-}
-
-
-/* ===========================
-   TABELA MODERNA
-=========================== */
-.table-modern {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table-modern thead {
-    background: #0b3d20;
-    color: #fff;
-}
-
-.table-modern th,
-.table-modern td {
-    padding: 12px;
-    border-bottom: 1px solid #e7e7e7;
-}
-
-.table-modern tbody tr:hover {
-    background: #eef9f0;
-}
-
-
-/* ===========================
-   TAGS DE STATUS
-=========================== */
-.tag {
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-}
-
-.tag.green { background: #15803d; color:white; }
-.tag.red { background:#b30000; color:white; }
-.tag.yellow { background:#eab308; color:#4a3900; }
-
-
-/* ===========================
-   GALERIA DE FOTOS
-=========================== */
-.galeria {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 12px;
-}
-
-.foto-item {
-    background: #fff;
-    border-radius: 10px;
-    padding: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.foto-item img {
-    width: 100%;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform .2s ease;
-}
-
-.foto-item img:hover {
-    transform: scale(1.05);
-}
-
-
-/* ===========================
-   MODAL DE ZOOM
-=========================== */
-.zoom-modal {
-    display: none;
-    position: fixed;
-    left:0;
-    top:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.85);
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.zoom-modal img {
-    max-width: 90%;
-    max-height: 90%;
-    border-radius: 12px;
-}
+/* ============ MISC ============ */
+.alert-error{background:#ffdddd;color:#a30000;padding:10px;border-radius:8px;margin-bottom:12px}
+.btn-download{background:#b42323;color:#fff;padding:8px 12px;border-radius:10px;border:none}
