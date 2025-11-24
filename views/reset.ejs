@@ -1,120 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <title>Redefinir Senha | Campo do Gado</title>
+    <title>Redefinir Senha | Campo do Gado</title>
 
-  <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Inter", sans-serif;
-      background: url('/img/login-bg.png') no-repeat center center;
-      background-size: cover;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .reset-box {
-      background: rgba(255, 255, 255, 0.92);
-      padding: 40px;
-      width: 380px;
-      border-radius: 16px;
-      box-shadow: 0 6px 25px rgba(0,0,0,0.25);
-      backdrop-filter: blur(6px);
-    }
-
-    .reset-title {
-      text-align: center;
-      margin-bottom: 25px;
-      font-size: 26px;
-      font-weight: 700;
-      color: #1b4d2d;
-    }
-
-    .reset-box label {
-      font-size: 14px;
-      color: #0b2a16;
-      font-weight: 600;
-    }
-
-    .reset-box input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 6px;
-      margin-bottom: 18px;
-      border-radius: 8px;
-      border: 1px solid #8bb79c;
-      background: #f9fff9;
-    }
-
-    .btn-reset {
-      width: 100%;
-      padding: 12px;
-      background: #1b4d2d;
-      color: white;
-      border: none;
-      font-size: 16px;
-      font-weight: 700;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .btn-reset:hover {
-      background: #0f331c;
-    }
-
-    .alert-error {
-      background: #ffdddd;
-      padding: 10px;
-      color: #a30000;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      border-left: 5px solid #ff4d4d;
-      font-size: 14px;
-    }
-
-    .reset-back {
-      display: block;
-      text-align: center;
-      margin-top: 12px;
-      color: #1b4d2d;
-      font-weight: 600;
-    }
-
-    .reset-back:hover {
-      text-decoration: underline;
-    }
-  </style>
+    <style>
+        /* mantive estilo original premium */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Inter", sans-serif;
+            background: url('/img/login-bg.png') no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 
 <body>
-
 <div class="reset-box">
 
-  <h2 class="reset-title">Nova Senha</h2>
+    <h2 class="reset-title">Nova Senha</h2>
 
-  <% if (error) { %>
-    <div class="alert-error"><%= error %></div>
-  <% } %>
+    <% if (error) { %>
+        <div class="alert-error"><%= error %></div>
+    <% } %>
 
-  <form method="POST" action="/reset/<%= token %>">
+    <form method="POST" action="/reset/<%= token %>">
+        <label>Nova Senha</label>
+        <input type="password" name="senha" required>
+        <button class="btn-reset">Salvar</button>
+    </form>
 
-    <label>Nova Senha</label>
-    <input type="password" name="senha" required>
-
-    <button class="btn-reset">Salvar</button>
-  </form>
-
-  <a href="/login" class="reset-back">Voltar ao login</a>
+    <a href="/login" class="reset-back">Voltar ao login</a>
 
 </div>
-
 </body>
 </html>
