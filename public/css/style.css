@@ -1,416 +1,236 @@
+/* ============================================================
+   style.css — Campo do Gado (FINAL)
+   - Unificado, organizado, responsivo
+   - Botões padronizados, tabela, cards, forms, gallery
+   - Sidebar arredondada + botão redondo com logo
+   ============================================================ */
+
+/* ---------- CONFIG: ajuste o caminho do logo se necessário ---------- */
+/* Atual: arquivo local no ambiente do ChatGPT (mude quando publicar) */
+:root{
+  --logo-url: url('/mnt/data/A_logo_for_"Campo_do_Campo_do_Gado"_is_enclosed_within_a_ci.png');
+  /* Quando mover para public/img use:
+     --logo-url: url('/img/logo.png');
+  */
+  --g-900: #0b5e33;
+  --g-800: #1b7f42;
+  --g-700: #0d542c;
+  --muted: #e9f7ef;
+  --card: #ffffff;
+  --shadow: 0 10px 30px rgba(9,34,18,0.06);
+  --radius-lg: 22px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
 /* ===========================
    RESET & BASE
 =========================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:#f3f7f4;color:#083b1d;-webkit-font-smoothing:antialiased}
+
+/* ---------- UTILITÁRIAS ---------- */
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.hidden{display:none!important}
+.text-muted{color:#6b6b6b;font-size:13px}
+
+/* ===========================
+   MENU TOGGLE (BOTÃO REDONDO)
+=========================== */
+.menu-toggle{
+  position:fixed;
+  top:18px;
+  left:18px;
+  z-index:4000;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  padding:6px;
+  border:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg,var(--g-700),var(--g-800));
+  box-shadow:0 12px 36px rgba(8,59,31,0.18);
+  cursor:pointer;
+  transition:transform .12s ease,box-shadow .12s ease,opacity .12s;
+  overflow:hidden;
 }
 
-html, body {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-    font-family: "Inter", sans-serif;
-    background: #f3f7f4;
+/* fallback: se não usar <img>, o botão pega background */
+.menu-toggle::before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  background-image: var(--logo-url);
+  background-size: cover;
+  background-position:center;
+  border-radius:50%;
+  opacity:0.99;
+  pointer-events:none;
+}
+
+.menu-toggle img.menu-logo-icon{
+  width:46px;height:46px;object-fit:contain;border-radius:50%;display:block;
+}
+
+/* efeitos */
+.menu-toggle:active{transform:scale(.96)}
+.menu-toggle:hover{box-shadow:0 16px 44px rgba(8,59,31,0.22)}
+
+/* ===========================
+   SIDEBAR (ARREDONDADA) - CLOSED FULLY OFFSCREEN
+=========================== */
+.sidebar{
+  position:fixed;
+  top:20px;
+  left:-360px; /* 100% outside when closed -> no green stripe */
+  width:320px;
+  height:calc(100vh - 40px);
+  background:linear-gradient(180deg,var(--g-900),var(--g-800));
+  color:#fff;
+  padding:26px 20px;
+  border-radius:var(--radius-lg);
+  box-shadow:0 20px 40px rgba(0,0,0,0.18);
+  transition:left .36s cubic-bezier(.22,.9,.25,1),opacity .25s;
+  z-index:3000;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  overflow:auto;
+}
+
+/* open state */
+.sidebar.open{ left:20px; }
+
+/* small screens: overlay/fullwidth panel */
+@media(max-width:980px){
+  .sidebar{ left:12px; top:12px; width:calc(100% - 24px); height:auto; max-height:calc(100vh - 24px); border-radius:var(--radius-md) }
+  .sidebar.open{ left:12px; }
+}
+
+/* header area */
+.logo-area{display:flex;align-items:center;gap:12px}
+.logo-area img.logo{width:64px;height:64px;object-fit:contain;border-radius:12px;padding:6px;background:rgba(255,255,255,0.03)}
+.logo-area h2{font-size:18px;font-weight:800;color:#fff;margin:0}
+
+/* menu list */
+.menu{list-style:none;padding:0;margin-top:6px;display:flex;flex-direction:column;gap:8px}
+.menu a{display:flex;align-items:center;gap:12px;text-decoration:none;color:rgba(255,255,255,0.96);padding:12px 14px;border-radius:12px;font-weight:700;transition:background .16s ease, transform .12s;}
+.menu a i{width:18px;text-align:center}
+.menu a:hover{background:rgba(255,255,255,0.06);transform:translateX(6px)}
+.menu a.active{background:rgba(255,255,255,0.10)}
+
+/* footer area inside sidebar (logout etc) */
+.sidebar .footer{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+
+/* ===========================
+   MAIN CONTENT (push on desktop, overlay on mobile)
+=========================== */
+.main-content{
+  padding:34px;
+  margin-left:80px; /* small gap when menu hidden so content not flush */
+  transition:margin-left .36s cubic-bezier(.22,.9,.25,1),filter .2s ease;
+  min-height:100vh;
+}
+.main-content.menu-open{ margin-left:380px } /* leave room for curved panel */
+
+@media(max-width:980px){
+  .main-content.menu-open{ margin-left:0; }
 }
 
 /* ===========================
-   BOTÃO REDONDO MENU
+   TYPOGRAPHY & TITLES
 =========================== */
-.menu-toggle {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 2000;
-    background: #0d542c;
-    border: none;
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    padding: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px #00000033;
-    transition: transform .2s ease, box-shadow .2s ease;
-}
-
-.menu-toggle:hover {
-    box-shadow: 0 6px 16px #00000044;
-}
-
-.menu-toggle:active {
-    transform: scale(0.92);
-}
-
-.menu-logo-icon {
-    width: 44px;
-    height: 44px;
-    object-fit: contain;
-    border-radius: 50%;
-}
+.page-title{display:flex;align-items:center;gap:12px;font-size:28px;color:var(--g-900);font-weight:800;margin-bottom:18px}
 
 /* ===========================
-   SIDEBAR ARREDONDADA
+   CARDS, PANELS
 =========================== */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -270px;
-    width: 260px;
-    height: 100vh;
-    background: #0d542c;
-    color: white;
-    z-index: 1500;
-    padding: 25px 18px;
-    border-radius: 0 20px 20px 0;
-    transition: left .33s ease;
-    box-shadow: 0 0 15px #00000025;
-}
-
-.sidebar.open {
-    left: 0;
-}
-
-/* NÃO FIXA NO CELULAR */
-@media (max-width: 900px) {
-    .sidebar {
-        left: -270px !important;
-    }
-    .sidebar.open {
-        left: 0 !important;
-    }
-}
+.card{ background:var(--card); padding:18px; border-radius:var(--radius-md); box-shadow:var(--shadow); margin-bottom:18px }
 
 /* ===========================
-   SIDEBAR — LOGO
+   TABLES (modern)
 =========================== */
-.logo-area {
-    text-align: center;
-    margin-bottom: 28px;
-}
-
-.logo-area .logo {
-    width: 110px;
-    margin-bottom: 8px;
-}
+.table-modern{width:100%;border-collapse:collapse}
+.table-modern thead{background:var(--muted);color:#083b1d}
+.table-modern th, .table-modern td{padding:12px;border-bottom:1px solid #eef6ef}
+.table-modern tbody tr:hover{background:#f2f7f3}
 
 /* ===========================
-   MENU DO SIDEBAR
+   FORMS & INPUTS
 =========================== */
-.menu {
-    list-style: none;
-}
-
-.menu li {
-    margin: 12px 0;
-}
-
-.menu a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: #e8fff0;
-    padding: 12px 14px;
-    background: none;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 500;
-    border-radius: 10px;
-    transition: 0.2s;
-}
-
-.menu a:hover {
-    background: #0f6b3a;
-}
-
-.menu a.active {
-    background: #0a4727;
-    color: #fff;
-    font-weight: 700;
-}
+.form-card{background:var(--card);padding:22px;border-radius:var(--radius-md);box-shadow:var(--shadow);max-width:100%}
+.form-grid{display:grid;gap:16px}
+@media(min-width:700px){.form-grid{grid-template-columns:repeat(2,1fr)}}
+label{display:block;margin-bottom:6px;font-weight:700;color:#0b4b2a}
+input,select,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #d7efe0;background:#f7fff8;margin-bottom:12px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--g-800)}
 
 /* ===========================
-   CONTEÚDO
+   BUTTONS (UNIFICADOS)
 =========================== */
-.main-content {
-    padding: 40px 32px;
-    transition: margin-left .3s ease;
-}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+.btn-primary{background:linear-gradient(180deg,var(--g-800),var(--g-700));color:#fff}
+.btn-secondary{background:#f4f8f6;color:#083b1d;border:1px solid #e6efe8}
+.btn-danger{background:#d32f2f;color:#fff}
+.btn-ghost{background:transparent;border:1px solid rgba(11,94,51,0.08);color:var(--g-700)}
+.btn-sm{padding:8px 10px;font-size:14px;border-radius:8px}
 
-.main-content.menu-open {
-    margin-left: 260px;
-}
-
-@media (max-width: 900px) {
-    .main-content.menu-open {
-        margin-left: 0;
-    }
-}
+/* action icon buttons (square/circular-ish) */
+.btn-action{width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;color:#fff;border:none;cursor:pointer}
+.btn-edit{background:#198754}.btn-edit:hover{background:#146837}
+.btn-qr{background:#0d6efd}.btn-qr:hover{background:#0a55c5}
+.btn-history{background:#6c757d}.btn-history:hover{background:#565e63}
+.btn-correia{background:#198754}.btn-correia:hover{background:#146c43}
+.btn-delete{background:#dc3545}.btn-delete:hover{background:#b32830}
+.btn-action i{font-size:16px}
 
 /* ===========================
-   TÍTULOS
+   THUMBS / IMAGENS
 =========================== */
-.page-title {
-    font-size: 26px;
-    color: #0b2a16;
-    margin-bottom: 18px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+.thumb{width:140px;height:100px;object-fit:cover;border-radius:8px;border:2px solid #0f5132}
+.equip-preview{width:120px;height:120px;object-fit:cover;border-radius:10px;border:2px solid #2f5e44}
+.equip-info{display:flex;align-items:center;gap:20px}
+
+/* small variant */
+@media(max-width:600px){ .thumb{width:70px;height:55px} .equip-preview{width:100%;height:auto} .page-title{font-size:22px} }
 
 /* ===========================
-   CARDS
+   GALLERY & MODAL
 =========================== */
-.card {
-    background: #fff;
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 5px 16px rgba(0,0,0,0.07);
-    margin-bottom: 18px;
-}
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.foto-item{background:var(--card);padding:8px;border-radius:10px;box-shadow:var(--shadow);text-align:center}
+.foto-item img{width:100%;border-radius:8px;cursor:pointer;transition:transform .12s}
+.foto-item img:hover{transform:scale(1.04)}
+.zoom-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);align-items:center;justify-content:center;z-index:9999}
 
 /* ===========================
-   FORMS
+   TAGS, ALERTS, EMPTY
 =========================== */
-.form-card {
-    background: #fff;
-    padding: 24px;
-    border-radius: 14px;
-    box-shadow: 0 5px 16px rgba(0,0,0,0.08);
-}
-
-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #124d2b;
-}
-
-input, select, textarea {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 8px;
-    border: 1px solid #cde7d5;
-    background: #f6fff9;
-    margin-top: 4px;
-    margin-bottom: 15px;
-}
-
-input:focus, select:focus, textarea:focus {
-    outline: 2px solid #1b7f42;
-}
-
-.input-disabled {
-    background: #e8e8e8;
-}
+.tag{display:inline-block;padding:6px 10px;border-radius:8px;font-weight:700}
+.tag.green{background:#d8f3dc;color:#064e3b}
+.tag.warn{background:#fef3c7;color:#a16207}
+.tag.red{background:#ffdddd;color:#8b0000}
+.alert-error{background:#ffdddd;color:#a30000;padding:10px;border-radius:8px;margin-bottom:12px}
+.empty{text-align:center;padding:20px;color:#6b6b6b}
 
 /* ===========================
-   BOTÕES
+   HELPERS / ACTIONS (tabela de equipamentos)
 =========================== */
-.btn-primary,
-.btn-save,
-.btn-add {
-    background: #1b7f42;
-    padding: 12px 18px;
-    border-radius: 10px;
-    color: white;
-    font-size: 15px;
-    border: none;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.btn-primary:hover,
-.btn-add:hover,
-.btn-save:hover {
-    background: #155f32;
-}
-
-.btn-delete {
-    background: #d03535;
-    padding: 10px 14px;
-    border-radius: 8px;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-delete:hover {
-    background: #b82828;
-}
-
-/* BOTÕES DA TABELA */
-.btn-table-edit {
-    background: #198754;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 6px;
-}
-
-.btn-table-del {
-    background: #b71c1c;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 6px;
-}
+.actions{display:flex;gap:8px;align-items:center;justify-content:center}
+.action-label{font-size:13px;color:#444}
 
 /* ===========================
-   TABELAS
+   FINAL TOUCH / OVERRIDES (botões específicos para views)
 =========================== */
-.table-modern {
-    width: 100%;
-    border-collapse: collapse;
-}
+/* table buttons (row-level) */
+.btn-table-edit{background:#198754;color:#fff;padding:8px 12px;border-radius:6px}
+.btn-table-del{background:#b71c1c;color:#fff;padding:8px 12px;border-radius:6px}
 
-.table-modern thead {
-    background: #0b3d20;
-    color: white;
-}
-
-.table-modern th, .table-modern td {
-    padding: 14px;
-    border-bottom: 1px solid #e8e8e8;
-}
-
-.table-modern tbody tr:hover {
-    background: #f2f7f3;
-}
+/* small friendly link-like buttons */
+.link-like{background:transparent;border:none;color:var(--g-700);font-weight:700;cursor:pointer}
 
 /* ===========================
-   EQUIPAMENTOS — MINI IMAGEM
+   END OF FILE
 =========================== */
-.thumb {
-    width: 75px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid #0f5132;
-}
-
-/* DETALHES DO EQUIPAMENTO */
-.equip-preview {
-    width: 150px;
-    height: 130px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 2px solid #2f5e44;
-}
-
-.equip-info {
-    display: flex;
-    gap: 22px;
-    align-items: flex-start;
-}
-
-/* ===========================
-   GALERIA (OS)
-=========================== */
-.galeria {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 12px;
-}
-
-.foto-item {
-    background: #fff;
-    border-radius: 10px;
-    padding: 8px;
-    box-shadow: 0 4px 12px rgba(20,50,30,0.12);
-    text-align: center;
-}
-
-.foto-item img {
-    width: 100%;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform .2s;
-}
-
-.foto-item img:hover {
-    transform: scale(1.05);
-}
-
-.foto-legenda {
-    margin-top: 4px;
-    color: #124d2b;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.btn-delete-foto {
-    margin-top: 6px;
-    background: #c62828;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 6px;
-    border: none;
-}
-
-/* ===========================
-   TAGS
-=========================== */
-.tag {
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: white;
-}
-
-.tag.green {
-    background: #1b7f42;
-}
-
-.tag.yellow {
-    background: #eab308;
-    color: #4a3900;
-}
-
-/* ===========================
-   VAZIO
-=========================== */
-.empty {
-    text-align: center;
-    padding: 20px;
-    font-size: 14px;
-    color: #777;
-}
-
-/* ===========================
-   ALERTAS
-=========================== */
-.alert-error {
-    background: #ffdddd;
-    color: #a30000;
-    padding: 10px;
-    border-radius: 8px;
-    border-left: 5px solid #ff4d4d;
-}
-
-/* ===========================
-   MOBILE AJUSTES
-=========================== */
-@media (max-width: 600px) {
-    .equip-info {
-        flex-direction: column;
-    }
-
-    .page-title {
-        font-size: 22px;
-    }
-
-    .thumb {
-        width: 60px;
-        height: 48px;
-    }
-
-    .equip-preview {
-        width: 100%;
-        height: auto;
-    }
-}
-
