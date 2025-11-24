@@ -1,29 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title><%= typeof title !== 'undefined' ? title : 'Campo do Gado' %></title>
+    <title><%= typeof title !== "undefined" ? title : "Campo do Gado" %></title>
 
-    <link rel="stylesheet" href="/css/style.css" />
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- CSS somente para impressão -->
+    <link rel="stylesheet" href="/css/style-print.css" media="print">
+
+    <!-- FontAwesome -->
     <script src="https://kit.fontawesome.com/65d9d7e32a.js" crossorigin="anonymous"></script>
+
+    <!-- Chart.js (opcional, só usa se dashboard precisar) -->
+    <% if (typeof chartjs !== "undefined" && chartjs === true) { %>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <% } %>
 
 </head>
 
 <body>
 
-    <!-- BOTÃO REDONDO COM ÍCONE -->
-    <button id="menuToggle" class="menu-toggle">
-        <img src="/uploads/A_logo_for_\"Campo_do_Gado\"_is_enclosed_within_a_ci.png" 
-             class="menu-logo-icon" />
+    <!--------------------------
+        BOTÃO FLUTUANTE MENU
+    --------------------------->
+    <button id="menuToggle" class="menu-toggle smooth">
+        <img 
+            src="<%= session.logo ? '/uploads/' + session.logo : '/uploads/default_logo.png' %>"
+            class="menu-logo-icon"
+            onerror="this.src='/img/logo_menu_256.png'">
     </button>
 
-    <!-- SIDEBAR ARREDONDADA -->
-    <aside id="sidebar" class="sidebar rounded-sidebar">
+    <!--------------------------
+            SIDEBAR PREMIUM
+    --------------------------->
+    <aside id="sidebar" class="sidebar rounded-sidebar smooth">
 
         <div class="logo-area">
-            <img src="/uploads/A_logo_for_\"Campo_do_Gado\"_is_enclosed_within_a_ci.png" class="logo" />
+            <img 
+                src="<%= session.logo ? '/uploads/' + session.logo : '/uploads/default_logo.png' %>" 
+                class="logo"
+                onerror="this.src='/img/logo_menu_256.png'">
             <h2>Campo do Gado</h2>
         </div>
 
@@ -58,13 +79,11 @@
             </li>
 
             <% if (session.role === 'admin') { %>
-
             <li>
                 <a href="/users" class="<%= active === 'users' ? 'active' : '' %>">
                     <i class="fa-solid fa-users"></i> Usuários
                 </a>
             </li>
-
             <% } %>
 
             <li>
@@ -77,22 +96,27 @@
 
     </aside>
 
-    <!-- ÁREA PRINCIPAL -->
-    <main id="mainContent" class="main-content">
+    <!--------------------------
+        ÁREA PRINCIPAL
+    --------------------------->
+    <main id="mainContent" class="main-content smooth">
         <%- body %>
     </main>
 
+    <!--------------------------
+            SCRIPT MENU
+    --------------------------->
+    <script>
+        const btn = document.getElementById("menuToggle");
+        const sidebar = document.getElementById("sidebar");
+        const content = document.getElementById("mainContent");
 
-<script>
-    const btn = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const content = document.getElementById('mainContent');
-
-    btn.addEventListener("click", () => {
-        sidebar.classList.toggle("open");
-        content.classList.toggle("menu-open");
-    });
-</script>
+        btn.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+            content.classList.toggle("menu-open");
+        });
+    </script>
 
 </body>
+
 </html>
