@@ -1,6 +1,7 @@
 // server.js — Sistema de Manutenção completo
 // Requer: express, express-ejs-layouts, express-session, ejs, sqlite3, multer, pdfkit, bcrypt, nodemailer, uuid, qrcode
-
+const puppeteer = require("puppeteer");
+const ejs = require("ejs");
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
