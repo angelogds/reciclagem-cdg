@@ -7,49 +7,30 @@
 
 <div class="card form-card">
 
-    <h2 style="color:var(--green-900); margin-bottom:12px;">
-        OS #<%= os.id %> — <%= os.equipamento_nome %>
+    <h2 style="color:var(--green-900); margin-bottom:10px;">
+        OS #<%= ordem.id %> — <%= ordem.equipamento_nome %>
     </h2>
 
-    <p><strong>Tipo:</strong> <%= os.tipo %></p>
-    <p><strong>Descrição:</strong> <%= os.descricao %></p>
+    <p><strong>Descrição:</strong> <%= ordem.descricao %></p>
 
-    <div style="margin:14px 0;">
-      <strong>Status atual:</strong>
-      <% if (os.status === 'Fechada') { %>
-        <span class="tag verde-escuro">Fechada</span>
-      <% } else if (os.status === 'Em Andamento') { %>
-        <span class="tag cinza-escuro">Em Andamento</span>
-      <% } else { %>
-        <span class="tag cinza-claro">Aberta</span>
-      <% } %>
-    </div>
-
-    <% if (os.status !== "Fechada") { %>
-
-    <form action="/ordens/<%= os.id %>/fechar" method="POST" class="formulario">
+    <form method="POST" action="/ordens/<%= ordem.id %>/fechar" enctype="multipart/form-data" class="formulario">
 
         <div class="grupo">
-            <label>Observação de fechamento</label>
-            <textarea name="obs_fechamento" rows="4" required></textarea>
+            <label>Resultado / Serviço Realizado</label>
+            <textarea name="resultado" rows="4" required></textarea>
         </div>
 
         <div class="grupo">
-            <label>Data de fechamento</label>
-            <input type="date" name="data_fechamento" required>
+            <label>Fotos de Fechamento (opcional)</label>
+            <!-- 🔥 CORRETO PARA MULTER -->
+            <input type="file" name="fotos" accept="image/*" multiple>
         </div>
 
         <button class="btn btn-verde-claro btn-full">
-            <i class="fa-solid fa-lock"></i>
-            Fechar OS
+            <i class="fa-solid fa-check"></i> Fechar OS
         </button>
-    </form>
 
-    <% } else { %>
-        <div class="alert-error">
-            Esta OS já foi fechada.
-        </div>
-    <% } %>
+    </form>
 
 </div>
 
