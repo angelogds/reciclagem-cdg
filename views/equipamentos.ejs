@@ -1,102 +1,95 @@
+<%- include("./partials/cabecalho") %>
+
 <h1 class="page-title">
-    <i class="fa-solid fa-truck"></i> Equipamentos
+    <i class="fa-solid fa-truck"></i>
+    Equipamentos
 </h1>
 
-<div style="margin-bottom: 25px;">
-    <a href="/equipamentos/novo" class="btn-primary">
+<div class="top-actions">
+    <a href="/equipamentos/novo" class="btn btn-verde-claro">
         <i class="fa-solid fa-plus"></i> Novo Equipamento
     </a>
 </div>
 
-<div class="card" style="
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px #00000015;
-">
-    <table class="table">
+<div class="card tabela-card">
+
+    <table class="tabela">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Imagem</th>
+                <th>Foto</th>
                 <th>Nome</th>
-                <th>Código</th>
-                <th>Local</th>
-                <th style="text-align:center;">Ações</th>
+                <th>Modelo</th>
+                <th>Localização</th>
+                <th style="width:200px; text-align:center;">Ações</th>
             </tr>
         </thead>
 
         <tbody>
             <% if (equipamentos.length === 0) { %>
                 <tr>
-                    <td colspan="6" style="text-align:center; padding:18px; opacity:0.7;">
-                        Nenhum equipamento cadastrado.
-                    </td>
+                    <td colspan="6" class="empty">Nenhum equipamento cadastrado.</td>
                 </tr>
             <% } %>
 
-            <% equipamentos.forEach(e => { %>
-                <tr>
-                    <td><%= e.id %></td>
+            <% equipamentos.forEach(eq => { %>
+            <tr>
+                <td><%= eq.id %></td>
 
-                    <td>
-                        <% if (e.imagem) { %>
-                            <img src="/<%= e.imagem %>" class="thumb">
-                        <% } else { %>
-                            <span style="opacity:0.6;">Sem imagem</span>
-                        <% } %>
-                    </td>
+                <td>
+                    <% if (eq.foto) { %>
+                        <img src="/uploads/<%= eq.foto %>" class="thumb">
+                    <% } else { %>
+                        <img src="/img/placeholder.png" class="thumb">
+                    <% } %>
+                </td>
 
-                    <td><%= e.nome %></td>
-                    <td><%= e.codigo %></td>
-                    <td><%= e.local %></td>
+                <td><%= eq.nome %></td>
+                <td><%= eq.modelo || '-' %></td>
+                <td><%= eq.localizacao || '-' %></td>
 
-                    <td>
-                        <div class="actions">
+                <td class="actions">
 
-                            <a href="/equipamentos/<%= e.id %>/editar"
-                               class="btn-edit"
-                               title="Editar">
-                                <i class="fa-solid fa-pen"></i>
-                                <span class="btn-label">Editar</span>
-                            </a>
+                    <a href="/equipamentos/<%= eq.id %>/editar" class="action-btn btn-edit">
+                        <i class="fa-solid fa-pen"></i>
+                        <span class="btn-label">Editar</span>
+                    </a>
 
-                            <a href="/equipamentos/<%= e.id %>/qrcode"
-                               class="btn-qr"
-                               title="QR Code">
-                                <i class="fa-solid fa-qrcode"></i>
-                                <span class="btn-label">QR Code</span>
-                            </a>
+                    <a href="/equipamentos/<%= eq.id %>/qr" class="action-btn btn-qr">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span class="btn-label-dark">QR</span>
+                    </a>
 
-                            <a href="/equipamentos/<%= e.id %>/historico"
-                               class="btn-history"
-                               title="Histórico">
-                                <i class="fa-solid fa-clock-rotate-left"></i>
-                                <span class="btn-label">Histórico</span>
-                            </a>
+                    <a href="/equipamentos/<%= eq.id %>/historico" class="action-btn btn-hist">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span class="btn-label">Hist.</span>
+                    </a>
 
-                            <a href="/equipamentos/<%= e.id %>/correias"
-                               class="btn-history"
-                               style="background:#b7e4c7;"
-                               title="Correias">
-                                <i class="fa-solid fa-gears"></i>
-                                <span class="btn-label">Correias</span>
-                            </a>
+                    <a href="/equipamentos/<%= eq.id %>/correias" class="action-btn btn-corr">
+                        <i class="fa-solid fa-gears"></i>
+                        <span class="btn-label-dark">Correias</span>
+                    </a>
 
-                            <form method="POST"
-                                  action="/equipamentos/<%= e.id %>/delete"
-                                  onsubmit="return confirm('Remover equipamento?');"
-                                  style="display:inline;">
-                                <button class="btn-delete" title="Excluir">
-                                    <i class="fa-solid fa-trash"></i>
-                                    <span class="btn-label">Excluir</span>
-                                </button>
-                            </form>
+                    <form action="/equipamentos/<%= eq.id %>/delete" method="POST"
+                          onsubmit="return confirm('Excluir equipamento?');">
+                        <button class="action-btn btn-del">
+                            <i class="fa-solid fa-trash"></i>
+                            <span class="btn-label">Excluir</span>
+                        </button>
+                    </form>
 
-                        </div>
-                    </td>
-                </tr>
+                </td>
+            </tr>
             <% }) %>
         </tbody>
     </table>
+
 </div>
+
+<div class="relatorio-actions">
+    <a href="/equipamentos/relatorio/pdf" class="btn btn-verde-escuro" target="_blank">
+        <i class="fa-solid fa-file-pdf"></i> PDF Completo
+    </a>
+</div>
+
+<%- include("./partials/rodape") %>
