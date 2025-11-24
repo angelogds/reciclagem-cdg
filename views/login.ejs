@@ -13,76 +13,95 @@
             margin: 0;
             padding: 0;
             font-family: "Inter", sans-serif;
-            background: url('/img/login-bg.png') no-repeat center center;
+            background: url('/img/login-bg.png') no-repeat center center fixed;
             background-size: cover;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .login-box {
-            background: rgba(255, 255, 255, 0.92);
-            padding: 40px;
+        .login-container {
+            background: rgba(255, 255, 255, 0.90);
             width: 380px;
-            border-radius: 16px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+            padding: 40px 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.25);
             backdrop-filter: blur(6px);
         }
 
-        .logo-cdg {
+        .logo-area {
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 26px;
-            font-weight: 700;
-            color: #1b4d2d;
+            margin-bottom: 22px;
         }
 
-        .login-box label {
+        .logo-area img {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .logo-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0b4b2a;
+        }
+
+        .logo-sub {
+            font-size: 13px;
+            color: #0b4b2a;
+            opacity: 0.7;
+        }
+
+        .login-container label {
             font-size: 14px;
-            color: #0b2a16;
             font-weight: 600;
+            color: #0b2a16;
+            margin-bottom: 4px;
+            display: block;
         }
 
-        .login-box input {
+        .login-container input {
             width: 100%;
             padding: 12px;
-            margin-top: 6px;
             margin-bottom: 18px;
             border-radius: 8px;
-            border: 1px solid #8bb79c;
-            background: #f9fff9;
+            border: 1px solid #9bcab0;
+            background: #f8fff9;
+            font-size: 15px;
         }
 
         .btn-login {
             width: 100%;
             padding: 12px;
-            background: #1b4d2d;
+            background: #1b7f42;
             color: white;
             border: none;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 700;
-            border-radius: 10px;
             cursor: pointer;
+            transition: 0.18s;
         }
 
         .btn-login:hover {
-            background: #0f331c;
+            background: #0b5e33;
         }
 
         .error-box {
             background: #ffdddd;
             padding: 10px;
-            color: #a30000;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border-left: 5px solid #ff4d4d;
+            color: #b10000;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            border-left: 6px solid #ff4d4d;
         }
 
         .forgot-link {
-            display: block;
             text-align: center;
-            margin-top: 12px;
+            margin-top: 15px;
+            display: block;
             color: #1b4d2d;
             font-weight: 600;
         }
@@ -92,16 +111,16 @@
         }
 
     </style>
-
 </head>
 
 <body>
 
-    <div class="login-box">
+    <div class="login-container">
 
-        <div class="logo-cdg">
-            🔧 Sistema CDG<br>
-            <span style="font-size:15px; opacity:0.8;">Reciclagem • Manutenção</span>
+        <div class="logo-area">
+            <img src="/img/logo_menu_256.png" alt="Logo Campo do Gado">
+            <div class="logo-title">Campo do Gado</div>
+            <div class="logo-sub">Sistema de Manutenção</div>
         </div>
 
         <% if (error) { %>
@@ -109,16 +128,19 @@
         <% } %>
 
         <form method="POST" action="/login">
-            <label>Usuário</label>
-            <input type="text" name="usuario" required value="<%= typeof usuario !== 'undefined' ? usuario : '' %>">
+            <label for="usuario">Usuário</label>
+            <input id="usuario" name="usuario"
+                   required
+                   value="<%= typeof usuario !== 'undefined' ? usuario : '' %>">
 
-            <label>Senha</label>
-            <input type="password" name="senha" required>
+            <label for="senha">Senha</label>
+            <input id="senha" name="senha" type="password" required>
 
             <button class="btn-login">Entrar</button>
         </form>
 
         <a href="/forgot" class="forgot-link">Esqueci minha senha</a>
+
     </div>
 
 </body>
