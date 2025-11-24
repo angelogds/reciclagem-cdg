@@ -1,338 +1,218 @@
 /* =========================================================
-   RESET / BASE
-=========================================================*/
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+   style.css — Campo do Gado (VERDE PREMIUM)
+   Unificado, responsivo, com todos os botões e views
+   ========================================================= */
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    font-family: "Inter", sans-serif;
-    background: #f3f7f4;
-}
-
-/* =========================================================
-   BOTÃO REDONDO (MENU)
-=========================================================*/
-.menu-toggle {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 2000;
-    background: #0d542c;
-    border: none;
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    padding: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px #00000033;
-    transition: transform .2s ease, box-shadow .2s ease;
-}
-
-.menu-toggle:hover {
-    box-shadow: 0 6px 18px #00000044;
-}
-
-.menu-toggle img {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
+/* ---------- CONFIG & LOGO ---------- */
+:root{
+  --logo-url: url('/mnt/data/A_logo_for_"Campo_do_Gado"_is_enclosed_within_a_ci.png');
+  --bg: #f3f7f4;
+  --green-900: #0b5e33;
+  --green-800: #1b7f42;
+  --green-700: #0d542c;
+  --muted: #e9f7ef;
+  --card: #ffffff;
+  --shadow: 0 8px 28px rgba(9,34,18,0.06);
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --accent: #155f32;
 }
 
 /* =========================================================
-   SIDEBAR
-=========================================================*/
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -260px;
-    width: 250px;
-    height: 100vh;
-    background: #0d542c;
-    padding: 30px 20px;
-    color: white;
-    border-radius: 0 20px 20px 0;
-    z-index: 1500;
-    transition: left .35s ease;
+   RESET & BASE
+   ========================================================= */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100%;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:var(--bg);color:#083b1d;-webkit-font-smoothing:antialiased}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+
+/* =========================================================
+   FLOATING MENU BUTTON (ROUNDED)
+   ========================================================= */
+.menu-toggle{
+  position:fixed; top:18px; left:18px; z-index:4000;
+  width:64px; height:64px; border-radius:50%;
+  padding:6px; border:none; cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,var(--green-700),var(--green-800));
+  box-shadow:0 12px 36px rgba(8,59,31,0.18);
+  transition:transform .12s ease,box-shadow .12s ease,opacity .12s;
+  overflow:hidden;
+}
+.menu-toggle:hover{box-shadow:0 18px 46px rgba(8,59,31,0.22)}
+.menu-toggle:active{transform:scale(.96)}
+.menu-toggle::before{
+  content:"";
+  position:absolute; inset:8px;
+  background-image: var(--logo-url);
+  background-size: cover;
+  background-position:center;
+  border-radius:50%;
+  pointer-events:none;
+}
+.menu-logo-icon{width:46px;height:46px;object-fit:contain;border-radius:50%;display:none}
+
+/* =========================================================
+   SIDEBAR (ARREDONDADA)
+   - default closed off-screen (left:-320px)
+   - .open -> visible
+   ========================================================= */
+.sidebar{
+  position:fixed; top:20px; left:-340px;
+  width:320px; height:calc(100vh - 40px);
+  background:linear-gradient(180deg,var(--green-900),var(--green-800));
+  color:#fff; padding:26px 20px;
+  border-radius:var(--radius-lg);
+  box-shadow:0 20px 40px rgba(0,0,0,0.16);
+  transition:left .36s cubic-bezier(.22,.9,.25,1),opacity .25s;
+  z-index:3000; display:flex;flex-direction:column;gap:16px;overflow:auto;
+}
+.sidebar.open{ left:20px; }
+@media(max-width:980px){
+  .sidebar{ left:12px; width:calc(100% - 24px); height:auto; max-height:calc(100vh - 24px); border-radius:var(--radius-md) }
+  .sidebar.open{ left:12px; }
 }
 
-.sidebar.open {
-    left: 0;
-}
+/* logo area */
+.logo-area{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.logo-area img.logo{width:64px;height:64px;object-fit:contain;border-radius:12px;background:rgba(255,255,255,0.03);padding:6px}
+.logo-area h2{font-size:18px;margin:0;font-weight:800}
 
-.logo-area {
-    text-align: center;
-    margin-bottom: 25px;
-}
+/* menu list */
+.menu{list-style:none;padding:0;margin-top:6px;display:flex;flex-direction:column;gap:8px}
+.menu a{display:flex;align-items:center;gap:12px;text-decoration:none;color:rgba(255,255,255,0.96);padding:10px 12px;border-radius:12px;font-weight:700;transition:0.16s}
+.menu a i{width:18px;text-align:center}
+.menu a:hover{background:rgba(255,255,255,0.06);transform:translateX(6px)}
+.menu a.active{background:rgba(255,255,255,0.10);font-weight:800}
 
-.logo-area .logo {
-    width: 120px;
-    margin-bottom: 10px;
-}
+/* footer (logout) */
+.sidebar .footer{margin-top:auto;display:flex;flex-direction:column;gap:10px}
 
-.sidebar ul {
-    list-style: none;
+/* =========================================================
+   MAIN CONTENT AREA
+   ========================================================= */
+.main-content{
+  padding:34px; margin-left:80px;
+  transition:margin-left .36s cubic-bezier(.22,.9,.25,1),filter .2s ease;
+  min-height:100vh;
 }
+.main-content.menu-open{ margin-left:420px } /* room for open sidebar */
+@media(max-width:980px){ .main-content.menu-open{ margin-left:0 } }
 
-.sidebar ul li {
-    margin-bottom: 15px;
-}
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+.page-title{display:flex;align-items:center;gap:12px;font-size:28px;color:var(--green-900);font-weight:800;margin-bottom:18px}
 
-.sidebar ul li a {
-    color: #e9fff0;
-    text-decoration: none;
-    display: block;
-    background: #0e6a39;
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-weight: 600;
-    transition: .2s;
-}
+/* small */
+@media(max-width:600px){ .page-title{font-size:22px} .menu-toggle{left:12px;top:12px} }
 
-.sidebar ul li a:hover,
-.sidebar ul li a.active {
-    background: #0a4727;
-    color: #fff;
+/* =========================================================
+   CARDS
+   ========================================================= */
+.card{background:var(--card);padding:18px;border-radius:var(--radius-md);box-shadow:var(--shadow);margin-bottom:18px}
+.card h3{font-size:16px;color:#245a32}
+
+/* =========================================================
+   TABLE (modern)
+   ========================================================= */
+.table-modern{width:100%;border-collapse:collapse}
+.table-modern thead{background:var(--muted);color:#083b1d}
+.table-modern th,.table-modern td{padding:12px;border-bottom:1px solid #eef6ef;text-align:left}
+.table-modern tbody tr:hover{background:#f2f7f3}
+.table-modern img.thumb{width:80px;height:65px;object-fit:cover;border-radius:8px;border:2px solid #0f5132}
+
+/* mobile table scroll */
+@media(max-width:700px){
+  .table-modern{display:block;overflow-x:auto;white-space:nowrap}
 }
 
 /* =========================================================
-   ÁREA PRINCIPAL
-=========================================================*/
-.main-content {
-    padding: 40px 35px;
-    margin-left: 0;
-    transition: .3s;
-}
+   FORMS
+   ========================================================= */
+.form-card{background:var(--card);padding:22px;border-radius:14px;box-shadow:var(--shadow);max-width:100%}
+.form-grid{display:grid;gap:16px}
+@media(min-width:700px){ .form-grid{grid-template-columns:repeat(2,1fr)} }
+label{display:block;margin-bottom:6px;font-weight:700;color:#0b4b2a}
+input,select,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #d7efe0;background:#f7fff8;margin-bottom:12px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--green-800)}
 
-.main-content.menu-open {
-    margin-left: 250px;
-}
+/* =========================================================
+   BUTTONS (global)
+   ========================================================= */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+.btn-primary{background:linear-gradient(180deg,var(--green-800),var(--green-700));color:#fff;padding:12px 18px}
+.btn-primary:hover{background:var(--accent)}
+.btn-secondary{background:#f4f8f6;color:#083b1d;border:1px solid #e6efe8}
 
-@media (max-width: 900px) {
-    .main-content.menu-open {
-        margin-left: 0;
-    }
+/* small shaped */
+.btn-sm{padding:8px 10px;border-radius:8px;font-size:14px}
+
+/* =========================================================
+   ACTION BUTTONS (ICON + LABEL BELOW) - style "A"
+   - supports older classes (.btn-edit, .btn-qr, .btn-history, .btn-delete)
+   - supports "stacked" variant with <span class="btn-label"> under icon
+   ========================================================= */
+.actions{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+
+/* circular icon-only (legacy) */
+.btn-action{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;border:none;cursor:pointer;transition:transform .12s,opacity .12s}
+.btn-action i{font-size:16px}
+.btn-action:hover{transform:translateY(-3px);opacity:.92}
+
+/* labelled square buttons (used in table) */
+.btn-edit{background:#198754;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;border:none;cursor:pointer}
+.btn-qr{background:#0d6efd;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;border:none}
+.btn-history{background:#6c757d;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;border:none}
+.btn-correias{background:#b7e4c7;color:#083b1d;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:none}
+.btn-delete{background:#d62828;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;border:none}
+.btn-edit:hover{background:#146837}
+.btn-qr:hover{background:#0a58ca}
+.btn-history:hover{background:#565e63}
+.btn-correias:hover{background:#95d5b2}
+.btn-delete:hover{background:#b32830}
+
+/* stacked variant: icon + text below (use inside .actions with <span class="btn-label">) */
+.btn-stack{width:72px;height:72px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;border:none;color:#fff;background:linear-gradient(180deg,var(--green-800),var(--green-700));transition:.12s}
+.btn-stack i{font-size:20px}
+.btn-stack span{display:block;margin-top:4px;font-size:12px;font-weight:700;color:#fff}
+
+/* small responsiveness */
+@media(max-width:600px){
+  .btn-edit,.btn-qr,.btn-history,.btn-delete,.btn-correias{width:38px;height:38px}
+  .table-modern th,.table-modern td{padding:10px}
 }
 
 /* =========================================================
-   TITULOS
-=========================================================*/
-.page-title {
-    font-size: 26px;
-    font-weight: 700;
-    color: #0b2a16;
-    margin-bottom: 18px;
-}
+   TAGS & ALERTS
+   ========================================================= */
+.tag{display:inline-block;padding:6px 10px;border-radius:8px;font-weight:700}
+.tag.green{background:#d8f3dc;color:#064e3b}
+.tag.warn{background:#fef3c7;color:#a16207}
+.alert-error{padding:10px;border-radius:8px;background:#ffdddd;color:#a30000;margin-bottom:12px}
 
 /* =========================================================
-   BOTÕES PADRÃO
-=========================================================*/
-.btn-primary {
-    background: #1b7f42;
-    color: white;
-    padding: 10px 18px;
-    border-radius: 10px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 14px;
-    transition: .2s;
-}
-
-.btn-primary:hover {
-    background: #155f32;
-}
-
-.btn-danger {
-    background: #c62828;
-    padding: 10px 18px;
-    border-radius: 10px;
-    color: white;
-    border: none;
-}
-
-.btn-danger:hover {
-    background: #b71c1c;
-}
+   GALLERY & MODAL
+   ========================================================= */
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;margin-top:12px}
+.foto-item{background:var(--card);border-radius:10px;padding:8px;box-shadow:var(--shadow);text-align:center}
+.foto-item img{width:100%;border-radius:8px;cursor:pointer;transition:transform .12s}
+.foto-item img:hover{transform:scale(1.04)}
+.zoom-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);align-items:center;justify-content:center;z-index:9999}
+.zoom-modal img{max-width:92%;max-height:92%;border-radius:10px}
 
 /* =========================================================
-   TABELA MODERNA
-=========================================================*/
-.table-modern {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table-modern thead {
-    background: #0b3d20;
-    color: white;
-}
-
-.table-modern th,
-.table-modern td {
-    padding: 14px;
-    border-bottom: 1px solid #e7e7e7;
-}
-
-.table-modern tbody tr:hover {
-    background: #effaf1;
-}
-
-/* Coluna vazia */
-.empty {
-    text-align: center;
-    padding: 20px;
-    font-size: 14px;
-    color: #777;
-}
+   UTILIDADES
+   ========================================================= */
+.center{text-align:center}
+.no-image{font-size:12px;color:#777}
+.empty{text-align:center;padding:20px;color:#777}
 
 /* =========================================================
-   BOTÕES DE AÇÃO (Equipamentos / OS / etc.)
-=========================================================*/
-.actions {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    align-items: center;
-}
+   FINAL TOUCH & OVERRIDES
+   ========================================================= */
+.table-modern th:first-child{width:48px}
+.table-modern td.actions-col{width:160px;text-align:center}
+.thumb.small{width:64px;height:48px}
 
-.btn-action {
-    width: 42px;
-    height: 42px;
-    background: #155f32;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    color: white;
-    border: none;
-    transition: .2s;
-}
-
-.btn-action:hover {
-    opacity: .8;
-}
-
-.btn-label {
-    font-size: 11px;
-    color: #0b2a16;
-    margin-top: 4px;
-    text-align: center;
-}
-
-/* =========================================================
-   IMAGENS DE EQUIPAMENTO
-=========================================================*/
-.thumb {
-    width: 85px;
-    height: 65px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid #0f5132;
-}
-
-/* =========================================================
-   FORMULÁRIOS
-=========================================================*/
-.form-card {
-    background: white;
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0 5px 20px #00000010;
-}
-
-form input,
-form select,
-form textarea {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #d6e8dd;
-    background: #f7fff9;
-    margin-bottom: 12px;
-}
-
-/* =========================================================
-   TAGS DE STATUS
-=========================================================*/
-.tag {
-    padding: 5px 8px;
-    border-radius: 8px;
-    color: white;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.tag.green {
-    background: #15803d;
-}
-
-.tag.yellow {
-    background: #eab308;
-    color: #473800;
-}
-
-/* =========================================================
-   GALERIA (OS)
-=========================================================*/
-.galeria {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-}
-
-.foto-item {
-    background: white;
-    border-radius: 10px;
-    padding: 8px;
-    text-align: center;
-    box-shadow: 0 4px 12px #00000020;
-}
-
-.foto-item img {
-    width: 100%;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: .2s;
-}
-.foto-item img:hover {
-    transform: scale(1.05);
-}
-
-.btn-delete-foto {
-    background: #c62828;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: none;
-    margin-top: 6px;
-}
-
-/* =========================================================
-   LOGIN (mantido)
-=========================================================*/
-.login-box {
-    background: rgba(255,255,255,0.92);
-    padding: 40px;
-    width: 380px;
-    border-radius: 16px;
-    box-shadow: 0 6px 25px #00000025;
-}
-
-.error-box {
-    background: #ffdddd;
-    padding: 10px;
-    color: #a30000;
-    margin-bottom: 14px;
-    border-radius: 8px;
-}
+/* end of file */
