@@ -1,41 +1,119 @@
 <%- include("./partials/cabecalho") %>
 
 <h1 class="page-title">
-    <i class="fa-solid fa-lock"></i>
-    Fechar Ordem de Serviço
+    <i class="fa-solid fa-file-circle-check"></i>
+    Ordem de Serviço #<%= ordem.id %>
 </h1>
 
-<div class="card form-card">
+<div class="card" style="padding:25px;">
 
-    <h2 style="color:var(--green-900); margin-bottom:10px;">
-        OS #<%= ordem.id %> — <%= ordem.equipamento_nome %>
+    <!-- INFORMAÇÕES PRINCIPAIS -->
+    <h2 style="font-size:20px; font-weight:800; color:#0d3d25; margin-bottom:10px;">
+        <%= ordem.equipamento_nome %>  
+        <% if (ordem.equipamento_codigo) { %>
+            <small style="color:#0d3d25;">(Código: <%= ordem.equipamento_codigo %>)</small>
+        <% } %>
     </h2>
 
-    <p><strong>Descrição:</strong> <%= ordem.descricao %></p>
+    <p><strong>Solicitante:</strong> <%= ordem.solicitante %></p>
+    <p><strong>Tipo:</strong> <%= ordem.tipo %></p>
+    <p><strong>Abertura:</strong> <%= ordem.aberta_em %></p>
 
-    <form method="POST" action="/ordens/<%= ordem.id %>/fechar" enctype="multipart/form-data" class="formulario">
+    <% if (ordem.status === 'fechada') { %>
+        <p><strong>Fechamento:</strong> <%= ordem.fechada_em %></p>
+    <% } %>
 
-        <div class="grupo">
-            <label>Resultado / Serviço Realizado</label>
-            <textarea name="resultado" rows="4" required></textarea>
-        </div>
-
-        <div class="grupo">
-            <label>Fotos de Fechamento (opcional)</label>
-            <!-- 🔥 CORRETO PARA MULTER -->
-            <input type="file" name="fotos" accept="image/*" multiple>
-        </div>
-
-        <button class="btn btn-verde-claro btn-full">
-            <i class="fa-solid fa-check"></i> Fechar OS
-        </button>
-
-    </form>
+    <div style="margin-top:12px;">
+        <strong>Descrição:</strong>
+        <p style="margin-top:4px;"><%= ordem.descricao %></p>
+    </div>
 
 </div>
 
-<a href="/ordens" class="btn btn-cinza-escuro">
-    ← Voltar
-</a>
+
+
+<!-- FOTOS DA OS -->
+<div class="card" style="padding:20px;">
+
+    <h2 style="color:#0d3d25; margin-bottom:10px;">
+        <i class="fa-solid fa-camera"></i> Fotos da OS
+    </h2>
+
+    <% if (fotos.length === 0) { %>
+
+        <p class="empty">Nenhuma foto enviada.</p>
+
+    <% } else { %>
+
+        <div style="display:flex; flex-wrap:wrap; gap:20px;">
+            <% fotos.forEach(f => { %>
+
+                <div style="text-align:center;">
+                    <img src="/<%= f.caminho %>" 
+                         style="width:180px; height:160px; object-fit:cover; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.18);">
+
+                    <p style="margin-top:4px; font-size:13px;">
+                        <%= f.tipo === 'abertura' ? "Abertura" : "Fechamento" %>
+                    </p>
+
+                    <% if (session.role === 'admin' || session.role === 'funcionario') { %>
+                        <form action="/os_fotos/<%= f.id %>/delete" 
+                              method="POST" 
+                              onsubmit="return confirm('Remover esta foto?');">
+                            <button class="btn btn-del" style="width:100%; margin-top:8px;">
+                                <i class="fa-solid fa-trash"></i> Excluir
+                            </button>
+                        </form>
+                    <% } %>
+                </div>
+
+            <% }) %>
+        </div>
+
+    <% } %>
+
+</div>
+
+
+
+<!-- FECHAR OS (se ainda estiver aberta) -->
+<% if (ordem.status === 'aberta') { %>
+
+    <div class="card" style="padding:25px; margin-bottom:15px;">
+
+        <h2 style="color:#0d3d25; margin-bottom:15px;">
+            <i class="fa-solid fa-lock"></i> Fechar Ordem de Serviço
+        </h2>
+
+        <form action="/ordens/<%= ordem.id %>/fechar" 
+              method="POST" 
+              enctype="multipart/form-data"
+              class="formulario">
+
+            <div class="grupo">
+                <label>Resultado / Serviço Realizado</label>
+                <textarea name="resultado" rows="4" required></textarea>
+            </div>
+
+            <div class="grupo">
+                <label>Fotos de Fechamento (opcional)</label>
+                <!-- 🔥 CORRETO PARA MULTER -->
+                <input type="file" name="fotos" accept="image/*" multiple>
+            </div>
+
+            <button class="btn btn-verde-claro btn-full" style="margin-top:12px;">
+                <i class="fa-solid fa-check"></i> Fechar OS
+            </button>
+
+        </form>
+
+    </div>
+
+<% } %>
+
+
+
+<!-- VOLTAR -->
+<a href="/ordens" class="btn btn-cinza-escuro">← Voltar</a>
 
 <%- include("./partials/rodape") %>
