@@ -1,44 +1,80 @@
 <h1 class="page-title">
-    <i class="fa-solid fa-bars"></i> Menu do Equipamento
+    <i class="fa-solid fa-bars"></i>
+    Menu do Equipamento
 </h1>
 
-<div class="card">
+<div class="card" style="padding:25px; text-align:center;">
 
-    <h2 style="color:#0b5e33; font-weight:800; margin-bottom:16px;">
-        <%= equipamento.nome %>
-    </h2>
-
+    <!-- INFO DO EQUIPAMENTO -->
+    <h2 style="color:#124d2b; margin-bottom:5px;"><%= equipamento.nome %></h2>
     <p style="opacity:0.7; margin-bottom:25px;">
-        Acesse as principais funções deste equipamento.
+        Código: <strong><%= equipamento.codigo %></strong> |
+        Local: <strong><%= equipamento.local %></strong>
     </p>
 
-    <div class="actions">
+    <!-- FOTO DO EQUIPAMENTO -->
+    <% if (equipamento.imagem) { %>
+        <img src="/<%= equipamento.imagem %>"
+             style="width:180px; height:140px; object-fit:cover; border-radius:12px; border:2px solid #0f5132; margin-bottom:25px;">
+    <% } %>
 
-        <a href="/equipamentos/<%= equipamento.id %>/historico" class="btn-history btn-stack">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            <span class="btn-label">Histórico</span>
-        </a>
 
-        <a href="/equipamentos/<%= equipamento.id %>/baixar" class="btn-edit btn-stack">
-            <i class="fa-solid fa-arrow-down"></i>
-            <span class="btn-label">Baixar</span>
-        </a>
+    <!-- MENU DE AÇÕES -->
+    <div style="display:flex; gap:18px; flex-wrap:wrap; justify-content:center;">
 
-        <a href="/equipamentos/<%= equipamento.id %>/correias" class="btn-correias btn-stack">
-            <i class="fa-solid fa-gears"></i>
-            <span class="btn-label">Correias</span>
-        </a>
 
-        <a href="/equipamentos/<%= equipamento.id %>/qrcode" class="btn-qr btn-stack">
-            <i class="fa-solid fa-qrcode"></i>
-            <span class="btn-label">QR Code</span>
-        </a>
-
-        <a href="/equipamentos" class="btn-delete btn-stack">
+        <!-- Voltar -->
+        <a href="/equipamentos/<%= equipamento.id %>"
+           class="btn-history btn-stack"
+           style="background:#6c757d; width:105px; height:105px;">
             <i class="fa-solid fa-arrow-left"></i>
             <span class="btn-label">Voltar</span>
         </a>
 
-    </div>
 
+        <!-- Editar -->
+        <a href="/equipamentos/<%= equipamento.id %>/editar"
+           class="btn-edit btn-stack"
+           style="width:105px; height:105px;">
+            <i class="fa-solid fa-pen"></i>
+            <span class="btn-label">Editar</span>
+        </a>
+
+
+        <!-- QR CODE -->
+        <a href="/equipamentos/<%= equipamento.id %>/qrcode"
+           class="btn-qr btn-stack"
+           style="width:105px; height:105px;">
+            <i class="fa-solid fa-qrcode"></i>
+            <span class="btn-label">QR Code</span>
+        </a>
+
+
+        <!-- Correias -->
+        <a href="/equipamentos/<%= equipamento.id %>/correias"
+           class="btn-correias btn-stack"
+           style="width:105px; height:105px; background:#b7e4c7;">
+            <i class="fa-solid fa-gears" style="color:#054a29;"></i>
+            <span class="btn-label" style="color:#054a29;">Correias</span>
+        </a>
+
+
+        <!-- Histórico -->
+        <a href="/equipamentos/<%= equipamento.id %>/historico"
+           class="btn-history btn-stack"
+           style="width:105px; height:105px;">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span class="btn-label">Histórico</span>
+        </a>
+
+
+        <!-- Baixar Correia -->
+        <a href="/equipamentos/<%= equipamento.id %>/baixar"
+           class="btn-stack"
+           style="width:105px; height:105px; background:#eab308; color:#4a3900;">
+            <i class="fa-solid fa-arrow-down"></i>
+            <span class="btn-label" style="color:#4a3900;">Baixa</span>
+        </a>
+
+    </div>
 </div>
