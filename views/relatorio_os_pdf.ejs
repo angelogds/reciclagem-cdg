@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Relatório de Ordens de Serviço</title>
+<style>
+    body { font-family: Arial, sans-serif; font-size:12px; margin:20px; color:#222; }
+    h1 { text-align:center; color:#0D6B33; font-size:16px; margin-bottom:6px; }
+    .sub { text-align:center; font-size:11px; color:#555; margin-bottom:12px; }
+    table { width:100%; border-collapse:collapse; font-size:11px; }
+    th { background:#0D6B33; color:#fff; padding:7px; border:1px solid #ccc; }
+    td { padding:6px; border:1px solid #ddd; vertical-align:top; }
+    .center { text-align:center; }
+    .footer { margin-top:18px; text-align:center; font-size:10px; color:#777; }
+    .small { font-size:10px; color:#444; }
+</style>
+</head>
+<body>
+
+<% if (logo) { %>
+    <div style="text-align:center; margin-bottom:8px;">
+        <img src="<%= logo %>" style="width:75px;">
+    </div>
+<% } %>
+
+<h1>Relatório de Ordens de Serviço</h1>
+<div class="sub">Gerado em <%= dataGeracao %> — Total: <%= ordens.length %></div>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width:40px;">ID</th>
+            <th>Equipamento</th>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th style="width:120px;">Abertura / Fechamento</th>
+            <th style="width:90px;">Técnico</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (ordens.length === 0) { %>
+            <tr><td colspan="7" class="center">Nenhuma ordem encontrada.</td></tr>
+        <% } %>
+
+        <% ordens.forEach(o => { %>
+            <tr>
+                <td class="center"><%= o.id %></td>
+                <td><%= o.equipamento_nome || ('#' + (o.equipamento_id || '-')) %></td>
+                <td><%= o.tipo || '-' %></td>
+                <td><%= o.descricao ? (o.descricao.length > 160 ? o.descricao.substring(0,160)+'…' : o.descricao) : '-' %></td>
+                <td class="center"><%= o.status || 'Aberta' %></td>
+                <td class="small">
+                    <div><strong>Abertura:</strong> <%= o.data_abertura || '-' %></div>
+                    <div><strong>Fechamento:</strong> <%= o.data_fechamento || '-' %></div>
+                </td>
+                <td class="center"><%= o.tecnico || '-' %></td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<div class="footer">Campo do Gado — Sistema de Manutenção</div>
+</body>
+</html>
