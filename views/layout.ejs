@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta-name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title><%= typeof title !== "undefined" ? title : "Campo do Gado" %></title>
 
@@ -35,7 +35,7 @@
                 src="<%= session?.logo ? '/uploads/' + session.logo : '/img/logo_menu_256.png' %>"
                 class="logo"
                 onerror="this.src='/img/logo_menu_256.png'">
-            <h2>Reciclagem Campo do Gado</h2>
+            <h2>Campo do Gado</h2>
         </div>
 
         <ul class="menu">
@@ -44,7 +44,7 @@
                 <i class="fa-solid fa-chart-line"></i> Dashboard
             </a></li>
 
-            <% if (session && (session.role === 'admin' || session.role === 'funcionario')) { %>
+            <% if (session?.role === 'admin' || session?.role === 'funcionario') { %>
 
             <li><a href="/equipamentos" class="<%= active === 'equipamentos' ? 'active' : '' %>">
                 <i class="fa-solid fa-truck"></i> Equipamentos
@@ -60,7 +60,7 @@
                 <i class="fa-solid fa-list-check"></i> Ordens
             </a></li>
 
-            <% if (session && session.role === 'admin') { %>
+            <% if (session?.role === 'admin') { %>
             <li><a href="/users" class="<%= active === 'users' ? 'active' : '' %>">
                 <i class="fa-solid fa-users"></i> Usuários
             </a></li>
@@ -71,37 +71,26 @@
         </ul>
     </aside>
 
-    <!-- TOPBAR ÚNICA (CORRETA) -->
+    <!-- TOPBAR (SEM PESQUISA, TÍTULO CENTRAL, NOME À DIREITA) -->
     <header class="top-bar smooth">
 
-        <div class="top-bar-left">
-            <span class="top-title">Campo do Gado</span>
+        <div style="flex:1; text-align:center;">
+            <span class="top-title" style="font-size:22px; font-weight:800;">
+                Campo do Gado
+            </span>
         </div>
 
-        <div class="top-bar-right">
+        <div class="top-bar-right" style="position:absolute; right:20px; top:50%; transform:translateY(-50%);">
 
             <% if (session?.usuario) { %>
-
-                <div class="search-box">
-                    <input type="text" placeholder="Pesquisar..." />
-                    <button class="search-btn">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                </div>
 
                 <div class="user-box">
                     <i class="fa-solid fa-user"></i>
                     <span><%= session.usuario %></span>
                 </div>
 
-                <a href="/logout" class="btn btn-verde-claro">
+                <a href="/logout" class="btn btn-verde-claro" style="margin-left:12px;">
                     <i class="fa-solid fa-right-from-bracket"></i> Sair
-                </a>
-
-            <% } else { %>
-
-                <a href="/login" class="btn btn-verde-claro">
-                    <i class="fa-solid fa-right-to-bracket"></i> Entrar
                 </a>
 
             <% } %>
