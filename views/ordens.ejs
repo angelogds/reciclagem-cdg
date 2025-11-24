@@ -1,84 +1,71 @@
+<%- include("./partials/cabecalho") %>
+
 <h1 class="page-title">
-    <i class="fa-solid fa-clipboard-list"></i>
+    <i class="fa-solid fa-list-check"></i>
     Ordens de Serviço
 </h1>
 
-<div style="margin-bottom: 20px;">
-    <a href="/os/nova" class="btn-primary">
-        <i class="fa-solid fa-plus"></i> Abrir Nova OS
+<div class="top-actions">
+    <a href="/os/nova" class="btn btn-verde-claro">
+        <i class="fa-solid fa-plus"></i> Nova OS
     </a>
 </div>
 
-<div class="card" style="overflow-x:auto;">
-    <table class="table-modern">
+<div class="card tabela-card">
+
+    <table class="tabela">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Equipamento</th>
                 <th>Tipo</th>
-                <th>Solicitante</th>
+                <th>Descrição</th>
                 <th>Status</th>
-                <th>Data</th>
-                <th style="text-align:center;">Ações</th>
+                <th style="width:160px;text-align:center;">Ações</th>
             </tr>
         </thead>
 
         <tbody>
 
             <% if (ordens.length === 0) { %>
-            <tr>
-                <td colspan="7" class="empty">Nenhuma OS encontrada.</td>
-            </tr>
+                <tr>
+                    <td colspan="6" class="empty">Nenhuma OS cadastrada.</td>
+                </tr>
             <% } %>
 
             <% ordens.forEach(o => { %>
             <tr>
                 <td><%= o.id %></td>
-                <td><%= o.equipamento %></td>
+                <td><%= o.equipamento_nome %></td>
                 <td><%= o.tipo %></td>
-                <td><%= o.solicitante %></td>
+                <td><%= o.descricao.substring(0, 50) %>...</td>
 
                 <td>
-                    <% if (o.status === 'Aberta') { %>
-                        <span class="tag green">Aberta</span>
+                    <% if (o.status === "Fechada") { %>
+                        <span class="tag verde-escuro">Fechada</span>
+                    <% } else if (o.status === "Em Andamento") { %>
+                        <span class="tag cinza-escuro">Em Andamento</span>
                     <% } else { %>
-                        <span class="tag warn">Fechada</span>
+                        <span class="tag cinza-claro">Aberta</span>
                     <% } %>
                 </td>
 
-                <td><%= o.aberta_em %></td>
-
                 <td class="actions">
 
-                    <!-- Editar -->
-                    <a href="/os/<%= o.id %>/editar" class="btn-action btn-edit">
+                    <a href="/os/<%= o.id %>" class="action-btn btn-qr">
+                        <i class="fa-solid fa-eye"></i>
+                        <span class="btn-label-dark">Ver</span>
+                    </a>
+
+                    <a href="/os/<%= o.id %>/editar" class="action-btn btn-edit">
                         <i class="fa-solid fa-pen"></i>
                         <span class="btn-label">Editar</span>
                     </a>
 
-                    <!-- Ver -->
-                    <a href="/os/<%= o.id %>" class="btn-action btn-view" style="background:#0b5e33;">
-                        <i class="fa-solid fa-eye"></i>
-                        <span class="btn-label">Ver</span>
+                    <a href="/os/<%= o.id %>/finalizar" class="action-btn btn-corr">
+                        <i class="fa-solid fa-check"></i>
+                        <span class="btn-label-dark">Finalizar</span>
                     </a>
-
-                    <!-- Fechar -->
-                    <% if (o.status === 'Aberta') { %>
-                    <a href="/os/<%= o.id %>/fechar" class="btn-action" style="background:#0d6efd;">
-                        <i class="fa-solid fa-lock"></i>
-                        <span class="btn-label">Fechar</span>
-                    </a>
-                    <% } %>
-
-                    <!-- Excluir -->
-                    <form method="POST" action="/os/<%= o.id %>/delete" 
-                          onsubmit="return confirm('Excluir esta OS?');"
-                          style="display:inline;">
-                        <button class="btn-action btn-delete">
-                            <i class="fa-solid fa-trash"></i>
-                            <span class="btn-label">Excluir</span>
-                        </button>
-                    </form>
 
                 </td>
             </tr>
@@ -86,4 +73,15 @@
 
         </tbody>
     </table>
+
 </div>
+
+<div class="relatorio-actions">
+    <a href="/os/relatorio/pdf" target="_blank" class="btn btn-verde-escuro">
+        <i class="fa-solid fa-file-pdf"></i> PDF Completo
+    </a>
+
+    <a href="/" class="btn btn-cinza-escuro">← Voltar</a>
+</div>
+
+<%- include("./partials/rodape") %>
