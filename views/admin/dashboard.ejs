@@ -1,225 +1,106 @@
-<style>
-  /* Estilos locais rápidos — pode mover para public/css/style.css depois */
-  .cards-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin-bottom: 18px;
-  }
-  @media (max-width: 900px) {
-    .cards-container { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 560px) {
-    .cards-container { grid-template-columns: 1fr; }
-  }
+<!-- dashboard.ejs -->
+<%- include("./partials/cabecalho") %>
 
-  .card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 18px;
-    box-shadow: 0 6px 18px rgba(9,34,18,0.06);
-    border-left: 6px solid #2e8b57; /* accent green */
-  }
-  .card h3 { font-size:13px; color:#2f5e44; margin-bottom:8px; }
-  .card-number { font-size:28px; font-weight:700; color:#0b2a16; }
+<h1 class="page-title">
+  <i class="fa-solid fa-chart-pie"></i>
+  Dashboard
+</h1>
 
-  .charts-row {
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:20px;
-    margin:18px 0 28px;
-  }
-  @media (max-width:900px){
-    .charts-row { grid-template-columns: 1fr; }
-  }
-  canvas { background: #fff; border-radius:10px; padding:12px; box-shadow: 0 6px 16px rgba(9,34,18,0.04); }
-
-  .table { width:100%; border-collapse: collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow: 0 6px 18px rgba(9,34,18,0.04); }
-  .table th, .table td { padding:10px 12px; text-align:left; border-bottom:1px solid #eee; font-size:14px; color:#15331f; }
-  .status-open { background:#eaf7ee; color:#226b3a; padding:6px 10px; border-radius:18px; font-weight:600; }
-  .status-closed { background:#fff5f5; color:#8b2b2b; padding:6px 10px; border-radius:18px; font-weight:600; }
-
-  .kpi { display:flex; gap:8px; align-items:center; }
-  .kpi .label { font-size:12px; color:#567a63; }
-  .kpi .value { font-size:20px; font-weight:700; color:#0b2a16; }
-
-  /* fotos-grid small helper (se usar) */
-  .fotos-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(110px,1fr)); gap:10px; margin-top:12px; }
-  .foto-item img { width:100%; border-radius:6px; display:block; }
-</style>
-
-<h1 class="page-title">Dashboard</h1>
-
-<div class="cards-container">
-  <div class="card">
-    <div class="kpi">
-      <div>
-        <h3>Total de Equipamentos</h3>
-        <p class="card-number" id="kpi-equipamentos"><%= (totais && totais.equipamentos) ? totais.equipamentos : 0 %></p>
-      </div>
-    </div>
+<div class="grid-cards">
+  <div class="metric-card card">
+    <h3>Total de Equipamentos</h3>
+    <p class="metric-value"><%= typeof equipamentosCount !== 'undefined' ? equipamentosCount : 0 %></p>
   </div>
 
-  <div class="card">
-    <div class="kpi">
-      <div>
-        <h3>OS Abertas</h3>
-        <p class="card-number" id="kpi-abertas"><%= (totais && totais.abertas) ? totais.abertas : 0 %></p>
-      </div>
-    </div>
+  <div class="metric-card card">
+    <h3>Ordens Abertas</h3>
+    <p class="metric-value"><%= typeof ordensAbertas !== 'undefined' ? ordensAbertas : 0 %></p>
   </div>
 
-  <div class="card">
-    <div class="kpi">
-      <div>
-        <h3>OS Fechadas</h3>
-        <p class="card-number" id="kpi-fechadas"><%= (totais && totais.fechadas) ? totais.fechadas : 0 %></p>
-      </div>
-    </div>
+  <div class="metric-card card">
+    <h3>Correias em Estoque (itens)</h3>
+    <p class="metric-value"><%= typeof correiasCount !== 'undefined' ? correiasCount : 0 %></p>
+  </div>
+
+  <div class="metric-card card">
+    <h3>Técnicos Ativos</h3>
+    <p class="metric-value"><%= typeof tecnicosCount !== 'undefined' ? tecnicosCount : 0 %></p>
   </div>
 </div>
 
-<hr style="margin:16px 0; border:none; height:1px; background:#e6efe6;">
-
-<div class="charts-row">
-  <div>
-    <h2 style="margin:0 0 8px;">Ordens por Tipo</h2>
-    <canvas id="graficoTipos" height="260"></canvas>
-  </div>
-
-  <div>
-    <h2 style="margin:0 0 8px;">OS por Mês</h2>
-    <canvas id="graficoMeses" height="260"></canvas>
-  </div>
+<div class="card chart-card">
+  <h2>Ordens por Tipo</h2>
+  <canvas id="chartOrdensTipo" width="600" height="260"></canvas>
 </div>
 
-<hr style="margin:18px 0; border:none; height:1px; background:#e6efe6;">
+<div class="card chart-card">
+  <h2>Top 10 Correias — Estoque</h2>
+  <canvas id="chartCorreias" width="600" height="260"></canvas>
+</div>
 
-<h2 style="margin-bottom:12px;">Últimas Ordens de Serviço</h2>
+<div class="relatorio-actions">
+  <a href="/relatorios/gerar-pdf-dashboard" class="btn btn-verde-escuro">
+    <i class="fa-solid fa-file-pdf"></i> Exportar PDF do Dashboard
+  </a>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Equipamento</th>
-      <th>Tipo</th>
-      <th>Status</th>
-      <th>Data</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% if (Array.isArray(ultimas) && ultimas.length) { %>
-      <% ultimas.forEach(item => { %>
-        <tr>
-          <td><%= item.id %></td>
-          <td><%= item.equipamento_nome || '-' %></td>
-          <td><%= item.tipo || '-' %></td>
-          <td>
-            <% if (item.status === 'aberta') { %>
-              <span class="status-open">Aberta</span>
-            <% } else { %>
-              <span class="status-closed">Fechada</span>
-            <% } %>
-          </td>
-          <td><%= item.aberta_em %></td>
-        </tr>
-      <% }) %>
-    <% } else { %>
-      <tr><td colspan="5" style="padding:14px; text-align:center; color:#556b59;">Nenhuma ordem encontrada.</td></tr>
-    <% } %>
-  </tbody>
-</table>
+  <a href="/relatorios" class="btn btn-cinza-escuro">Ver relatórios</a>
+</div>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<%- include("./partials/rodape") %>
 
 <script>
-  // Segurança: garantir variáveis vindas do servidor existirem
-  const tiposData = <%- JSON.stringify(tipos || []) %>;
-  const porMes = <%- JSON.stringify(typeof porMes !== 'undefined' ? porMes : []) %>;
+  // dados passados pelo servidor (são opcionais)
+  window.REL_ORDENS = <%- JSON.stringify(ordensPorTipo || {}) %>;
+  window.REL_CORREIAS = <%- JSON.stringify(correiasTop || {}) %>;
 
-  // Animated counter helper
-  function animateCounter(elId, endValue, duration = 900) {
-    const el = document.getElementById(elId);
-    if (!el) return;
-    const start = 0;
-    const range = endValue - start;
-    if (range === 0) { el.textContent = String(endValue); return; }
-    let startTime = null;
-    function step(timestamp) {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      const val = Math.floor(progress * range + start);
-      el.textContent = String(val);
-      if (progress < 1) window.requestAnimationFrame(step);
-      else el.textContent = String(endValue);
-    }
-    window.requestAnimationFrame(step);
-  }
+  // desenhar gráficos somente se Chart estiver disponível
+  (function(){
+    if (typeof Chart === 'undefined') return;
 
-  // Start counters (small delay for polished load)
-  document.addEventListener('DOMContentLoaded', () => {
-    animateCounter('kpi-equipamentos', Number(<%= (totais && totais.equipamentos) ? totais.equipamentos : 0 %>));
-    animateCounter('kpi-abertas', Number(<%= (totais && totais.abertas) ? totais.abertas : 0 %>));
-    animateCounter('kpi-fechadas', Number(<%= (totais && totais.fechadas) ? totais.fechadas : 0 %>));
+    try {
+      const ordensData = window.REL_ORDENS || {};
+      const labels1 = Object.keys(ordensData);
+      const values1 = Object.values(ordensData);
 
-    // ---------- GRAFICO TIPOS (pizza) ----------
-    const tiposLabels = tiposData.map(t => t.tipo || t.modelo || '—');
-    const tiposValores = tiposData.map(t => Number(t.total || 0));
-
-    // fallback palette (verde gradient)
-    const palette = [
-      '#2e8b57','#3aa06b','#6fc08a','#9fd8b0','#dff3e8',
-      '#a7d39b','#4da96b','#2c7a4a'
-    ];
-
-    const ctxTipos = document.getElementById('graficoTipos').getContext('2d');
-    new Chart(ctxTipos, {
-      type: 'pie',
-      data: {
-        labels: tiposLabels,
-        datasets: [{
-          data: tiposValores,
-          backgroundColor: palette,
-          borderColor: '#fff',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom' }
-        }
-      }
-    });
-
-    // ---------- GRAFICO POR MES (barra) ----------
-    // porMes: [{ mes: '2025-01', total: 5 }, ...]
-    const mesesLabels = porMes.map(m => m.mes);
-    const mesesValores = porMes.map(m => Number(m.total || 0));
-
-    const ctxMeses = document.getElementById('graficoMeses').getContext('2d');
-    new Chart(ctxMeses, {
-      type: 'bar',
-      data: {
-        labels: mesesLabels,
-        datasets: [{
-          label: 'OS por mês',
-          data: mesesValores,
-          backgroundColor: 'rgba(46,139,87,0.85)'
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: { ticks: { maxRotation: 0, minRotation: 0 } },
-          y: { beginAtZero: true, precision: 0 }
+      const ctx1 = document.getElementById('chartOrdensTipo').getContext('2d');
+      new Chart(ctx1, {
+        type: 'pie',
+        data: {
+          labels: labels1,
+          datasets: [{
+            data: values1,
+            borderWidth: 0
+          }]
         },
-        plugins: {
-          legend: { display: false }
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } }
         }
-      }
-    });
+      });
 
-  }); // DOMContentLoaded
+      const correiasData = window.REL_CORREIAS || {};
+      const labels2 = Object.keys(correiasData);
+      const values2 = Object.values(correiasData);
+
+      const ctx2 = document.getElementById('chartCorreias').getContext('2d');
+      new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: labels2,
+          datasets: [{
+            label: 'Quantidade',
+            data: values2,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: { legend: { display: false } }
+        }
+      });
+    } catch (e) {
+      console.warn('Erro ao inicializar gráficos do dashboard', e);
+    }
+  })();
 </script>
