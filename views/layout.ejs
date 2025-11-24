@@ -19,7 +19,7 @@
 
 <body>
 
-    <!-- BOTÃO MENU -->
+    <!-- BOTÃO DO MENU -->
     <button id="menuToggle" class="menu-toggle smooth">
         <img 
             src="<%= session && session.logo ? '/uploads/' + session.logo : '/img/logo_menu_256.png' %>"
@@ -27,7 +27,7 @@
             onerror="this.src='/img/logo_menu_256.png'">
     </button>
 
-    <!-- SIDEBAR ORIGINAL -->
+    <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar smooth">
 
         <div class="logo-area">
@@ -81,7 +81,40 @@
         </ul>
     </aside>
 
-    <!-- CONTEÚDO PRINCIPAL -->
+    <!-- TOPO ORIGINAL (SEM DUPLICAÇÃO) -->
+    <header class="top-bar smooth">
+
+        <span class="top-title">Campo do Gado</span>
+
+        <div style="display:flex; align-items:center; gap:16px;">
+
+            <% if (session && session.usuario) { %>
+
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquisar...">
+                    <button class="search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+
+                <div class="user-box">
+                    <i class="fa-solid fa-user"></i>
+                    <span><%= session.usuario %></span>
+                </div>
+
+                <a href="/logout" class="btn btn-verde-claro">Sair</a>
+
+            <% } else { %>
+
+                <a href="/login" class="btn btn-verde-claro">Entrar</a>
+
+            <% } %>
+
+        </div>
+
+    </header>
+
+    <!-- CONTEÚDO -->
     <main id="mainContent" class="main-content smooth">
         <%- body %>
     </main>
