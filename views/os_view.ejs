@@ -1,0 +1,80 @@
+<h1 class="page-title">
+    <i class="fa-solid fa-file-lines"></i>
+    Ordem de Serviço #<%= os.id %>
+</h1>
+
+<div class="card">
+
+    <h3 style="margin-bottom:14px;">Informações da OS</h3>
+
+    <p><strong>Equipamento:</strong> <%= equipamento.nome %></p>
+    <p><strong>Tipo de OS:</strong> <%= os.tipo %></p>
+
+    <p>
+        <strong>Status:</strong>
+        <% if (os.status === 'fechada') { %>
+            <span class="tag green">Finalizada</span>
+        <% } else { %>
+            <span class="tag warn">Aberta</span>
+        <% } %>
+    </p>
+
+    <p><strong>Aberta em:</strong> <%= os.aberta_em %></p>
+
+    <% if (os.fechada_em) { %>
+    <p><strong>Fechada em:</strong> <%= os.fechada_em %></p>
+    <% } %>
+
+    <hr style="margin:20px 0; opacity:0.3;">
+
+    <h3 style="margin-bottom:12px;">Descrição do Problema</h3>
+    <p style="white-space:pre-wrap; line-height:1.6;">
+        <%= os.descricao %>
+    </p>
+
+</div>
+
+<!-- BOTÕES DE AÇÃO -->
+<div class="card" style="text-align:center; margin-top:20px;">
+
+    <div class="actions">
+
+        <!-- EDITAR -->
+        <a href="/os/<%= os.id %>/editar" class="btn-action btn-edit">
+            <i class="fa-solid fa-pen"></i>
+            <span class="btn-label">Editar</span>
+        </a>
+
+        <!-- FINALIZAR -->
+        <% if (os.status !== 'fechada') { %>
+        <a href="/os/<%= os.id %>/finalizar" class="btn-action btn-history">
+            <i class="fa-solid fa-lock"></i>
+            <span class="btn-label">Finalizar</span>
+        </a>
+        <% } %>
+
+        <!-- PDF -->
+        <a href="/os/<%= os.id %>/pdf" class="btn-action btn-qr">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span class="btn-label">PDF</span>
+        </a>
+
+        <!-- DELETAR -->
+        <form action="/os/<%= os.id %>/delete" method="POST"
+              onsubmit="return confirm('Excluir esta OS?');"
+              style="display:inline;">
+            <button class="btn-action btn-delete">
+                <i class="fa-solid fa-trash"></i>
+                <span class="btn-label">Excluir</span>
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+<div style="margin-top:18px;">
+    <a href="/ordens" class="btn-secondary">
+        ← Voltar
+    </a>
+</div>
