@@ -1,52 +1,104 @@
-<%- include("./partials/cabecalho") %>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Consumo de Correias</title>
 
-<h1 class="page-title">
-    <i class="fa-solid fa-chart-column"></i>
-    Relatório de Consumo de Correias
-</h1>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 25px;
+            color: #0d3d25;
+        }
 
-<div class="card">
+        h1 {
+            text-align: center;
+            color: #0b5e33;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
 
-    <div class="info-relatorio" style="margin-bottom:18px;">
-        <p><strong>Gerado em:</strong> <%= new Date().toLocaleString("pt-BR") %></p>
-        <p><strong>Mês consultado:</strong> <%= mes %></p>
-        <p><strong>Total de itens:</strong> <%= rel.length %></p>
+        h2 {
+            font-size: 18px;
+            margin-top: 25px;
+            margin-bottom: 8px;
+            color: #0b5e33;
+        }
+
+        .info {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: #e9f7ef;
+            padding: 10px;
+            border: 1px solid #cce3d5;
+            font-weight: bold;
+            color: #0d3d25;
+        }
+
+        td {
+            padding: 10px;
+            border: 1px solid #e1eee6;
+        }
+
+        tr:nth-child(even) td {
+            background: #f5faf7;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 18px;
+            color: #777;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Relatório de Consumo de Correias</h1>
+
+    <div class="info">
+        <strong>Mês:</strong> <%= mes %><br>
+        <strong>Gerado em:</strong> <%= new Date().toLocaleString("pt-BR") %>
     </div>
 
-    <table class="tabela">
-        <thead>
-            <tr>
-                <th>Equipamento</th>
-                <th>Correia</th>
-                <th>Quantidade</th>
-            </tr>
-        </thead>
+    <% if (!rel || rel.length === 0) { %>
 
-        <tbody>
-            <% if (!rel || rel.length === 0) { %>
+        <p class="empty">Nenhum consumo registrado neste mês.</p>
+
+    <% } else { %>
+
+        <table>
+            <thead>
                 <tr>
-                    <td colspan="3" class="empty">Nenhum consumo registrado neste período.</td>
+                    <th>Equipamento</th>
+                    <th>Correia</th>
+                    <th>Quantidade Consumida</th>
                 </tr>
-            <% } else { %>
+            </thead>
+
+            <tbody>
                 <% rel.forEach(r => { %>
-                <tr>
-                    <td><%= r.equipamento %></td>
-                    <td><%= r.correia %></td>
-                    <td><%= r.total %></td>
-                </tr>
+                    <tr>
+                        <td><%= r.equipamento || "-" %></td>
+                        <td><%= r.correia %></td>
+                        <td><%= r.total %></td>
+                    </tr>
                 <% }) %>
-            <% } %>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-</div>
+    <% } %>
 
-<div class="relatorio-actions" style="margin-top:12px;">
-    <a href="/correias/relatorio/pdf?mes=<%= mes %>" target="_blank" class="btn btn-verde-escuro">
-        <i class="fa-solid fa-file-pdf"></i> Baixar PDF
-    </a>
-
-    <a href="/correias" class="btn btn-cinza-escuro">← Voltar</a>
-</div>
-
-<%- include("./partials/rodape") %>
+</body>
+</html>
