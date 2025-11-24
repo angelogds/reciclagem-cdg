@@ -1,68 +1,59 @@
+<%- include("../partials/cabecalho") %>
+
 <h1 class="page-title">
     <i class="fa-solid fa-gears"></i>
-    <%= correia ? "Editar Correia" : "Cadastrar Correia" %>
+    Cadastrar Correia
 </h1>
 
 <div class="card form-card">
 
     <% if (error) { %>
-        <div class="alert-error"><%= error %></div>
+        <div class="alert alert-error"><%= error %></div>
     <% } %>
 
-    <form method="POST"
-          action="<%= correia ? '/correias/' + correia.id + '/editar' : '/correias/novo' %>">
+    <form action="/correias/novo" method="POST" class="formulario">
 
         <div class="form-grid">
 
             <!-- Nome -->
-            <div>
+            <div class="grupo">
                 <label>Nome da Correia</label>
-                <input type="text"
-                       name="nome"
-                       required
-                       value="<%= correia ? correia.nome : '' %>">
+                <input type="text" name="nome" required>
             </div>
 
             <!-- Modelo -->
-            <div>
+            <div class="grupo">
                 <label>Modelo</label>
-                <input type="text"
-                       name="modelo"
-                       value="<%= correia ? correia.modelo : '' %>">
+                <input type="text" name="modelo">
             </div>
 
             <!-- Medida -->
-            <div>
+            <div class="grupo">
                 <label>Medida</label>
-                <input type="text"
-                       name="medida"
-                       value="<%= correia ? correia.medida : '' %>">
+                <input type="text" name="medida">
             </div>
 
             <!-- Quantidade -->
-            <div>
-                <label>Quantidade em estoque</label>
-                <input type="number"
-                       name="quantidade"
-                       min="0"
-                       value="<%= correia ? correia.quantidade : 0 %>">
+            <div class="grupo">
+                <label>Quantidade em Estoque</label>
+                <input type="number" name="quantidade" min="0" value="0">
             </div>
 
         </div> <!-- /form-grid -->
 
-        <br>
-
-        <button class="btn-primary" style="width:100%; font-size:16px;">
-            <i class="fa-solid fa-save"></i>
-            <%= correia ? "Salvar Alterações" : "Cadastrar Correia" %>
+        <button class="btn btn-verde-claro btn-full">
+            <i class="fa-solid fa-floppy-disk"></i>
+            Cadastrar Correia
         </button>
 
     </form>
 
 </div>
 
-<div style="margin-top:15px;">
-    <a href="/correias" class="btn-secondary" style="padding:12px 18px; display:inline-block;">
+<div class="voltar-box">
+    <a href="/correias" class="btn btn-cinza-escuro">
         ← Voltar
     </a>
 </div>
+
+<%- include("../partial
