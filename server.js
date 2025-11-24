@@ -1077,6 +1077,7 @@ app.get('/', authRequired, async (req, res) => {
     res.render('dashboard', {
       active: 'dashboard',
       totais: {
+      chartjs: true,
         equipamentos: totalEquip?.c || 0,
         abertas: totalAbertas?.c || 0,
         fechadas: totalFechadas?.c || 0
