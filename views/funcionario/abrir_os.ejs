@@ -1,37 +1,45 @@
-<h1 class="page-title"><i class="fa-solid fa-plus"></i> Abrir Ordem de Serviço</h1>
+<%- include("./partials/cabecalho") %>
 
-<div class="card">
-  <form method="POST" action="/ordens" enctype="multipart/form-data" class="form-card">
+<h1 class="page-title">
+  <i class="fa-solid fa-plus"></i> Abrir Ordem de Serviço
+</h1>
+
+<div class="card form-card">
+  <form method="POST" action="/ordens" enctype="multipart/form-data" class="formulario">
     <div class="form-grid">
-      <div>
+      <div class="grupo">
         <label>Equipamento</label>
         <select name="equipamento_id">
           <option value="">— Sem equipamento —</option>
-          <% equipamentos.forEach(eq => { %>
-            <option value="<%= eq.id %>" <%= (req.query.equipamento_id==eq.id) ? 'selected' : '' %>><%= eq.nome %></option>
-          <% }) %>
+          <% if (equipamentos && equipamentos.forEach) { %>
+            <% equipamentos.forEach(eq => { %>
+              <option value="<%= eq.id %>" <%= (typeof req !== 'undefined' && req.query && req.query.equipamento_id==eq.id) ? 'selected' : '' %>><%= eq.nome %></option>
+            <% }) %>
+          <% } %>
         </select>
       </div>
 
-      <div>
+      <div class="grupo">
         <label>Tipo</label>
         <input name="tipo" required placeholder="Ex: Preventiva / Corretiva">
       </div>
 
-      <div style="grid-column:1 / -1;">
+      <div class="grupo" style="grid-column:1 / -1;">
         <label>Descrição do problema</label>
         <textarea name="descricao" rows="5" required></textarea>
       </div>
 
-      <div style="grid-column:1 / -1;">
+      <div class="grupo" style="grid-column:1 / -1;">
         <label>Fotos (opcional)</label>
         <input type="file" name="fotos" accept="image/*" multiple>
       </div>
     </div>
 
-    <div style="margin-top:12px;">
-      <button class="btn-primary">Abrir OS</button>
-      <a href="/ordens" class="btn-primary" style="background:#777; margin-left:8px;">Cancelar</a>
+    <div style="margin-top:12px; display:flex; gap:8px;">
+      <button class="btn btn-verde-claro" type="submit">Abrir OS</button>
+      <a href="/ordens" class="btn btn-cinza-escuro">Cancelar</a>
     </div>
   </form>
 </div>
+
+<%- include("./partials/rodape") %>
