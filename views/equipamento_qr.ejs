@@ -7,23 +7,68 @@
 
 <div class="card" style="text-align:center; padding:30px;">
 
+    <!-- QR -->
     <div style="margin-bottom:25px;">
         <% if (qr) { %>
-            <img src="<%= qr %>"
-                 alt="QR Code"
+            <img src="<%= qr %>" 
+                 alt="QR Code" 
                  style="width:240px; height:240px; border-radius:16px; box-shadow:0 4px 18px rgba(0,0,0,0.25);">
         <% } else { %>
             <p>QR Code não disponível.</p>
         <% } %>
     </div>
 
-    <p style="font-size:16px; color:#0d4d2c;">
-        <strong>URL do equipamento:</strong><br>
+    <!-- URL do equipamento -->
+    <p style="font-size:16px; color:#0d4d2c; margin-bottom:20px;">
+        <strong>URL do Equipamento:</strong><br>
         <span style="word-break:break-all;"><%= url %></span>
     </p>
 
-    <div style="margin-top:20px;">
-        <a href="/equipamentos" class="btn btn-cinza-escuro">← Voltar</a>
+    <!-- MENU DE BOTÕES -->
+    <div style="display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-top:20px;">
+
+        <!-- ABRIR OS -->
+        <a href="/ordens/novo?equipamento_id=<%= equipamento.id %>"
+           class="action-btn btn-verde-claro">
+            <i class="fa-solid fa-file-circle-plus"></i>
+            <span class="btn-label">Abrir OS</span>
+        </a>
+
+        <!-- VER OS do equipamento -->
+        <a href="/equipamentos/<%= equipamento.id %>/historico"
+           class="action-btn btn-hist">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span class="btn-label">Histórico</span>
+        </a>
+
+        <!-- ASSOCIAR CORREIAS -->
+        <a href="/equipamentos/<%= equipamento.id %>/correias"
+           class="action-btn btn-corr">
+            <i class="fa-solid fa-gears"></i>
+            <span class="btn-label-dark">Correias</span>
+        </a>
+
+        <!-- QR CODE (atual) -->
+        <a href="/equipamentos/<%= equipamento.id %>/qrcode"
+           class="action-btn btn-qr">
+            <i class="fa-solid fa-qrcode"></i>
+            <span class="btn-label">QR</span>
+        </a>
+
+        <!-- MENU DO EQUIPAMENTO -->
+        <a href="/equipamentos/<%= equipamento.id %>/menu"
+           class="action-btn btn-cinza-claro">
+            <i class="fa-solid fa-bars"></i>
+            <span class="btn-label-dark">Menu</span>
+        </a>
+
+        <!-- VOLTAR -->
+        <a href="/equipamentos"
+           class="action-btn btn-cinza-escuro">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span class="btn-label">Voltar</span>
+        </a>
+
     </div>
 
 </div>
