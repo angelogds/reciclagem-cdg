@@ -1072,6 +1072,14 @@ app.get('/', authRequired, async (req, res) => {
       FROM ordens
       GROUP BY mes
       ORDER BY mes ASC
+    `); 
+    
+    // Top correias (para gráfico)
+    const correiasTop = await allAsync(`
+      SELECT nome, quantidade 
+      FROM correias
+      ORDER BY quantidade DESC
+      LIMIT 10
     `);
 
     res.render('dashboard', {
@@ -1084,6 +1092,7 @@ app.get('/', authRequired, async (req, res) => {
   tipos,
   porMes,
   ultimas
+  correiasTop 
 });
 
 
