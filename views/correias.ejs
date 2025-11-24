@@ -1,4 +1,4 @@
-<%- include("../partials/cabecalho") %>
+<%- include("./partials/cabecalho") %>
 
 <h1 class="page-title">
     <i class="fa-solid fa-gears"></i>
@@ -16,12 +16,12 @@
     <table class="tabela">
         <thead>
             <tr>
-                <th>ID</th>
+                <th style="width: 60px;">ID</th>
                 <th>Nome</th>
                 <th>Modelo</th>
                 <th>Medida</th>
-                <th>Quantidade</th>
-                <th style="text-align:center;">Ações</th>
+                <th style="width: 80px;">Qtd</th>
+                <th style="text-align:center; width: 150px;">Ações</th>
             </tr>
         </thead>
 
@@ -39,11 +39,8 @@
                 <td><%= c.nome %></td>
                 <td><%= c.modelo %></td>
                 <td><%= c.medida %></td>
-
                 <td>
-                    <span class="tag verde-escuro">
-                        <%= c.quantidade %>
-                    </span>
+                    <span class="tag verde-escuro"><%= c.quantidade %></span>
                 </td>
 
                 <td class="acoes">
@@ -70,12 +67,18 @@
 
 </div>
 
-<div class="pdf-box">
+<div class="relatorio-actions">
+
+    <a href="/correias/relatorio" class="btn btn-verde-escuro">
+        <i class="fa-solid fa-file-lines"></i> Ver Relatório
+    </a>
+
     <a href="/correias/relatorio/pdf"
        target="_blank"
        class="btn btn-verde-escuro">
-        <i class="fa-solid fa-file-pdf"></i> Baixar PDF Completo
+       <i class="fa-solid fa-file-pdf"></i> Baixar PDF
     </a>
+
 </div>
 
-<%- include("../partials/rodape") %>
+<%- include("./partials/rodape") %>
