@@ -2,7 +2,7 @@
 
 <h1 class="page-title">
     <i class="fa-solid fa-gears"></i>
-    Cadastrar Correia
+    <%= correia ? "Editar Correia" : "Cadastrar Correia" %>
 </h1>
 
 <div class="card form-card">
@@ -11,35 +11,58 @@
         <div class="alert-error"><%= error %></div>
     <% } %>
 
-    <form action="/correias/novo" method="POST" class="formulario">
+    <!-- FORM CORRETO PARA CRIAR / EDITAR -->
+    <form 
+        method="POST" 
+        action="<%= correia ? ('/correias/' + correia.id + '/editar') : '/correias/novo' %>" 
+        class="formulario"
+    >
 
         <div class="form-grid">
 
             <div class="grupo">
                 <label>Nome da Correia</label>
-                <input type="text" name="nome" required>
+                <input 
+                    type="text" 
+                    name="nome" 
+                    required 
+                    value="<%= correia ? correia.nome : '' %>"
+                >
             </div>
 
             <div class="grupo">
                 <label>Modelo</label>
-                <input type="text" name="modelo">
+                <input 
+                    type="text" 
+                    name="modelo" 
+                    value="<%= correia ? correia.modelo : '' %>"
+                >
             </div>
 
             <div class="grupo">
                 <label>Medida</label>
-                <input type="text" name="medida">
+                <input 
+                    type="text" 
+                    name="medida"
+                    value="<%= correia ? correia.medida : '' %>"
+                >
             </div>
 
             <div class="grupo">
                 <label>Quantidade em Estoque</label>
-                <input type="number" name="quantidade" min="0" value="0">
+                <input 
+                    type="number" 
+                    name="quantidade" 
+                    min="0"
+                    value="<%= correia ? correia.quantidade : 0 %>"
+                >
             </div>
 
-        </div> <!-- /form-grid -->
+        </div>
 
         <button class="btn btn-verde-claro btn-full" style="margin-top:12px;">
             <i class="fa-solid fa-floppy-disk"></i>
-            Cadastrar Correia
+            <%= correia ? "Salvar Alterações" : "Cadastrar Correia" %>
         </button>
 
     </form>
