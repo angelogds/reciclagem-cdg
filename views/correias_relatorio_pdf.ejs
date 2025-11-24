@@ -1,71 +1,64 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
 <meta charset="UTF-8">
 
+<title>Relatório de Correias</title>
+
 <style>
     body {
-        font-family: "Inter", sans-serif;
-        margin: 40px;
-        color: #083b1d;
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        margin: 20px;
     }
 
     h1 {
         text-align: center;
-        font-size: 26px;
-        margin-bottom: 6px;
-        color: #0b5e33;
+        margin-bottom: 8px;
+        font-size: 22px;
+        color: #0D6B33;
     }
 
-    h2 {
+    .sub {
         text-align: center;
-        font-size: 16px;
-        font-weight: 500;
-        margin-top: 0;
-        opacity: .8;
+        font-size: 13px;
+        margin-bottom: 25px;
+        color: #555;
     }
 
     table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 25px;
-        font-size: 13px;
+        margin-top: 15px;
+        font-size: 12px;
     }
 
     th {
-        background: #d8f3dc;
-        padding: 10px;
-        border: 1px solid #cde7d2;
-        text-align: left;
-        font-weight: 700;
-        color: #064e3b;
+        background: #0D6B33;
+        color: white;
+        padding: 8px;
+        font-size: 12px;
+        border: 1px solid #ccc;
     }
 
     td {
-        padding: 8px;
-        border: 1px solid #e1efe4;
+        padding: 7px;
+        border: 1px solid #ddd;
     }
 
-    tr:nth-child(even) td {
-        background: #f6fbf7;
+    .right {
+        text-align: right;
     }
 
-    .total {
-        font-weight: 700;
-        background: #d8f3dc;
+    .center {
+        text-align: center;
     }
 
     .footer {
-        margin-top: 40px;
+        margin-top: 35px;
         text-align: center;
-        font-size: 12px;
-        opacity: .7;
-    }
-
-    .logo {
-        width: 90px;
-        display: block;
-        margin: 0 auto 10px auto;
+        font-size: 11px;
+        color: #666;
     }
 
 </style>
@@ -73,43 +66,60 @@
 
 <body>
 
-    <img src="<%= logoBase64 %>" class="logo">
+    <!-- LOGO (se enviada do server.js) -->
+    <% if (logo) { %>
+        <div style="text-align:center; margin-bottom:15px;">
+            <img src="<%= logo %>" style="width:85px;">
+        </div>
+    <% } %>
 
-    <h1>Relatório de Consumo de Correias</h1>
-    <h2>Mês: <%= mes %></h2>
+    <h1>Relatório de Correias</h1>
+    <div class="sub">
+        Estoque completo atualizado em <%= dataGeracao %>
+    </div>
 
     <table>
         <thead>
             <tr>
-                <th>Equipamento</th>
-                <th>Correia</th>
-                <th>Total Consumido</th>
+                <th style="width:45px;">ID</th>
+                <th>Nome</th>
+                <th>Modelo</th>
+                <th>Medida</th>
+                <th style="width:70px;" class="center">Qtd</th>
             </tr>
         </thead>
 
         <tbody>
 
-            <% if (rel.length === 0) { %>
+            <% correias.forEach(c => { %>
             <tr>
-                <td colspan="3" style="text-align:center; padding:14px;">
-                    Nenhum consumo registrado neste mês.
-                </td>
-            </tr>
-            <% } %>
-
-            <% rel.forEach(r => { %>
-            <tr>
-                <td><%= r.equipamento %></td>
-                <td><%= r.correia %></td>
-                <td><%= r.total %></td>
+                <td class="center"><%= c.id %></td>
+                <td><%= c.nome %></td>
+                <td><%= c.modelo %></td>
+                <td><%= c.medida %></td>
+                <td class="center"><%= c.quantidade %></td>
             </tr>
             <% }) %>
+
+            <% if (correias.length === 0) { %>
+                <tr>
+                    <td colspan="5" class="center" style="padding:12px;">
+                        Nenhuma correia cadastrada.
+                    </td>
+                </tr>
+            <% } %>
 
         </tbody>
     </table>
 
+    <div style="margin-top:20px; font-size: 14px;">
+        <strong>Total de itens diferentes:</strong> <%= correias.length %>
+    </div>
+
     <div class="footer">
-        Sistema Campo do Gado • Relatório automático gerado em <%= new Date().toLocaleString() %>
+        Campo do Gado — Sistema de Manutenção  
+        <br>
+        Relatório gerado automaticamente.
     </div>
 
 </body>
