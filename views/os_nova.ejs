@@ -1,4 +1,4 @@
-<%- include("../partials/cabecalho") %>
+<%- include("./partials/cabecalho") %>
 
 <h1 class="page-title">
     <i class="fa-solid fa-file-circle-plus"></i>
@@ -8,14 +8,14 @@
 <div class="card form-card">
 
     <% if (error) { %>
-        <div class="alert alert-error"><%= error %></div>
+        <div class="alert-error"><%= error %></div>
     <% } %>
 
-    <form action="/os/nova" method="POST" class="formulario">
+    <form method="POST" action="/os/nova" class="formulario">
 
         <div class="grupo">
-            <label for="equipamento_id">Equipamento</label>
-            <select name="equipamento_id" id="equipamento_id" required>
+            <label>Equipamento</label>
+            <select name="equipamento_id" required>
                 <option value="">Selecione...</option>
                 <% equipamentos.forEach(eq => { %>
                     <option value="<%= eq.id %>"><%= eq.nome %></option>
@@ -24,8 +24,8 @@
         </div>
 
         <div class="grupo">
-            <label for="tipo">Tipo</label>
-            <select name="tipo" id="tipo" required>
+            <label>Tipo</label>
+            <select name="tipo" required>
                 <option value="Mecânica">Mecânica</option>
                 <option value="Elétrica">Elétrica</option>
                 <option value="Preventiva">Preventiva</option>
@@ -34,21 +34,21 @@
         </div>
 
         <div class="grupo">
-            <label for="descricao">Descrição</label>
-            <textarea name="descricao" id="descricao" rows="4" required></textarea>
+            <label>Descrição</label>
+            <textarea name="descricao" rows="4" required></textarea>
         </div>
 
-        <button class="btn btn-verde-claro btn-full">
+        <button class="btn btn-verde-claro btn-full" style="margin-top:8px;">
             <i class="fa-solid fa-floppy-disk"></i> Abrir OS
         </button>
-
     </form>
+
 </div>
 
 <div class="voltar-box">
-    <a href="/os" class="btn btn-cinza-escuro">
+    <a href="/ordens" class="btn btn-cinza-escuro">
         ← Voltar
     </a>
 </div>
 
-<%- include("../partials/rodape") %>
+<%- include("./partials/rodape") %>
