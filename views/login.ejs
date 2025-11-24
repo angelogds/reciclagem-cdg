@@ -1,35 +1,105 @@
-<!-- login.ejs -->
-<%- include("./partials/cabecalho") %>
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-<div class="login-box card" style="margin:48px auto;">
-  <h2 style="color:var(--green-900); text-align:center; margin-bottom:14px;">
-    <i class="fa-solid fa-lock"></i> Entrar no Sistema
-  </h2>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <% if (error) { %>
-    <div class="alert alert-error"><%= error %></div>
-  <% } %>
+    <title>Login • Sistema CDG</title>
 
-  <form action="/login" method="POST" style="display:flex; flex-direction:column; gap:12px;">
-    <div>
-      <label for="username">Usuário</label>
-      <input id="username" name="username" type="text" required placeholder="Digite seu usuário">
-    </div>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/style-print.css" media="print" />
+    <script src="https://kit.fontawesome.com/65d9d7e32a.js" crossorigin="anonymous"></script>
 
-    <div>
-      <label for="password">Senha</label>
-      <input id="password" name="password" type="password" required placeholder="Senha">
-    </div>
+    <style>
+        body {
+            background: #eef5f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 15px;
+        }
 
-    <button class="btn btn-verde-claro btn-full" type="submit">
-      <i class="fa-solid fa-right-to-bracket"></i> Entrar
-    </button>
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.12);
+            text-align: center;
+        }
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-      <a href="/forgot" class="small">Esqueci minha senha</a>
-      <a href="/register" class="small">Criar conta</a>
-    </div>
-  </form>
+        .login-title {
+            font-size: 28px;
+            color: var(--green-900);
+            font-weight: 800;
+        }
+
+        .login-sub {
+            margin-top: 4px;
+            font-size: 15px;
+            color: #3a5f46;
+            font-weight: 600;
+        }
+
+        .login-container input {
+            background: #f8fbf9;
+            border-radius: 10px;
+            border: 1px solid #cde3d5;
+        }
+
+        .login-container button {
+            margin-top: 10px;
+            height: 48px;
+            font-size: 18px;
+            border-radius: 10px;
+        }
+
+        .forgot-link {
+            display: block;
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: underline;
+            color: var(--green-900);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <h1 class="login-title">
+        <i class="fa-solid fa-wrench"></i> Sistema CDG
+    </h1>
+    <div class="login-sub">Reciclagem • Manutenção</div>
+
+    <% if (error) { %>
+        <div class="alert-error" style="margin-top:12px;">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <form action="/login" method="POST" style="margin-top:22px;">
+
+        <label for="username">Usuário</label>
+        <input id="username" name="username" type="text" required value="<%= username || '' %>" />
+
+        <label for="password">Senha</label>
+        <input id="password" name="password" type="password" required />
+
+        <button class="btn-verde-escuro btn-full">
+            Entrar
+        </button>
+
+    </form>
+
+    <a class="forgot-link" href="/forgot">Esqueci minha senha</a>
+
 </div>
 
-<%- include("./partials/rodape") %>
+</body>
+</html>
