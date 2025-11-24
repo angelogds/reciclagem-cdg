@@ -1,38 +1,31 @@
 <h1 class="page-title">
-    <i class="fa-solid fa-gears"></i> Estoque de Correias
+    <i class="fa-solid fa-gears"></i> Correias / Estoque
 </h1>
 
-<div style="margin-bottom:20px;">
+<div style="margin-bottom: 25px;">
     <a href="/correias/novo" class="btn-primary">
         <i class="fa-solid fa-plus"></i> Nova Correia
     </a>
 </div>
 
-<div class="card" style="
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 2px 6px #00000015;
-">
-
-    <table class="table">
+<div class="card">
+    <table class="table-modern">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Modelo</th>
                 <th>Medida</th>
-                <th>Qtd</th>
+                <th>Quantidade</th>
                 <th style="text-align:center;">Ações</th>
             </tr>
         </thead>
 
         <tbody>
+
             <% if (correias.length === 0) { %>
                 <tr>
-                    <td colspan="6" style="text-align:center; opacity:0.6; padding:15px;">
-                        Nenhuma correia cadastrada.
-                    </td>
+                    <td colspan="6" class="empty">Nenhuma correia cadastrada.</td>
                 </tr>
             <% } %>
 
@@ -40,27 +33,41 @@
                 <tr>
                     <td><%= c.id %></td>
                     <td><%= c.nome %></td>
-                    <td><%= c.modelo || '-' %></td>
-                    <td><%= c.medida || '-' %></td>
-                    <td><%= c.quantidade %></td>
+                    <td><%= c.modelo %></td>
+                    <td><%= c.medida %></td>
+                    <td>
+                        <span class="<%= c.quantidade <= 0 ? 'status-danger' : 'status-ok' %>">
+                            <%= c.quantidade %>
+                        </span>
+                    </td>
 
                     <td class="actions">
-                        <a href="/correias/<%= c.id %>/editar" class="btn-edit" title="Editar">
+
+                        <!-- EDITAR -->
+                        <a href="/correias/<%= c.id %>/editar"
+                           class="btn-edit btn-stack"
+                           style="width:85px; height:85px;">
                             <i class="fa-solid fa-pen"></i>
+                            <span class="btn-label">Editar</span>
                         </a>
 
+                        <!-- EXCLUIR -->
                         <form method="POST"
                               action="/correias/<%= c.id %>/delete"
                               onsubmit="return confirm('Excluir correia?');"
-                              style="display:inline-block;">
-                            <button class="btn-delete" title="Excluir">
+                              style="display:inline;">
+                            <button class="btn-delete btn-stack"
+                                    style="width:85px; height:85px;">
                                 <i class="fa-solid fa-trash"></i>
+                                <span class="btn-label">Excluir</span>
                             </button>
                         </form>
+
                     </td>
+
                 </tr>
             <% }) %>
+
         </tbody>
     </table>
-
 </div>
