@@ -1,77 +1,35 @@
+<%- include("./partials/cabecalho") %>
+
 <h1 class="page-title">
     <i class="fa-solid fa-qrcode"></i>
     QR Code do Equipamento
 </h1>
 
-<div class="card" style="text-align:center; padding:30px;">
+<div class="card" style="text-align:center; padding:40px;">
 
-    <h2 style="color:#0b5e33; margin-bottom:10px; font-size:22px; font-weight:800;">
+    <h2 style="margin-bottom:20px; color:var(--green-900); font-weight:800;">
         <%= equipamento.nome %>
     </h2>
 
-    <!-- QR CODE -->
-    <img 
-        src="<%= qr %>" 
-        alt="QR Code" 
-        style="width:260px; height:260px; margin:20px auto; display:block;"
-    >
-
-    <!-- LINK DO QR -->
-    <div style="margin-top:10px;">
-        <label style="font-weight:700; color:#0b5e33;">Link do equipamento:</label>
-        <input 
-            type="text" 
-            value="<%= url %>" 
-            readonly
-            style="margin-top:6px; text-align:center; padding:10px; width:100%; max-width:420px; border-radius:10px; border:1px solid #cfe4d6; background:#f7fff8;"
-        >
-
-        <button 
-            class="btn-primary"
-            onclick="copiarLink()"
-            style="margin-top:10px; width:200px;"
-        >
-            <i class="fa-solid fa-copy"></i> Copiar Link
-        </button>
+    <!-- QR code -->
+    <div style="margin-bottom:25px;">
+        <% if (qrCode) { %>
+            <img src="<%= qrCode %>" 
+                 alt="QR Code" 
+                 style="width:240px; height:240px; border-radius:16px; box-shadow:0 4px 18px rgba(0,0,0,0.25);">
+        <% } else { %>
+            <p class="empty">QR Code não encontrado.</p>
+        <% } %>
     </div>
 
-    <!-- AÇÕES -->
-    <div class="actions" style="margin-top:35px;">
-
-        <a href="/equipamentos/<%= equipamento.id %>/historico" 
-           class="btn-history btn-stack">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            <span class="btn-label">Histórico</span>
-        </a>
-
-        <a href="/equipamentos/<%= equipamento.id %>/correias" 
-           class="btn-correias btn-stack">
-            <i class="fa-solid fa-gears"></i>
-            <span class="btn-label">Correias</span>
-        </a>
-
-        <a href="/equipamentos/<%= equipamento.id %>/editar" 
-           class="btn-edit btn-stack">
-            <i class="fa-solid fa-pen"></i>
-            <span class="btn-label">Editar</span>
-        </a>
-
-        <a href="/equipamentos" 
-           class="btn-delete btn-stack"
-           style="background:#6c757d;">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span class="btn-label">Voltar</span>
-        </a>
-    </div>
+    <button onclick="window.print()" class="btn btn-verde-escuro" style="margin-bottom:16px;">
+        <i class="fa-solid fa-print"></i> Imprimir
+    </button>
 
 </div>
 
-<script>
-function copiarLink() {
-    const input = document.querySelector("input[readonly]");
-    input.select();
-    input.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(input.value);
-    alert("Link copiado!");
-}
-</script>
+<a href="/equipamentos/<%= equipamento.id %>" class="btn btn-cinza-escuro">
+    ← Voltar
+</a>
+
+<%- include("./partials/rodape") %>
