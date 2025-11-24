@@ -27,58 +27,56 @@
 
         <tbody>
 
-            <% if (correias.length === 0) { %>
+            <% if (!correias || correias.length === 0) { %>
                 <tr>
                     <td colspan="6" class="empty">Nenhuma correia cadastrada.</td>
                 </tr>
+            <% } else { %>
+
+                <% correias.forEach(c => { %>
+                <tr>
+                    <td><%= c.id %></td>
+                    <td><%= c.nome %></td>
+                    <td><%= c.modelo || '-' %></td>
+                    <td><%= c.medida || '-' %></td>
+                    <td>
+                        <span class="tag verde-escuro"><%= c.quantidade %></span>
+                    </td>
+
+                    <td class="actions">
+
+                        <a href="/correias/<%= c.id %>/editar" class="action-btn btn-edit" title="Editar">
+                            <i class="fa-solid fa-pen"></i>
+                            <span class="btn-label">Editar</span>
+                        </a>
+
+                        <form method="POST"
+                              action="/correias/<%= c.id %>/delete"
+                              onsubmit="return confirm('Excluir correia?');" style="display:inline-block;">
+                            <button class="action-btn btn-del" title="Excluir">
+                                <i class="fa-solid fa-trash"></i>
+                                <span class="btn-label">Excluir</span>
+                            </button>
+                        </form>
+
+                    </td>
+                </tr>
+                <% }) %>
+
             <% } %>
-
-            <% correias.forEach(c => { %>
-            <tr>
-                <td><%= c.id %></td>
-                <td><%= c.nome %></td>
-                <td><%= c.modelo %></td>
-                <td><%= c.medida %></td>
-                <td>
-                    <span class="tag verde-escuro"><%= c.quantidade %></span>
-                </td>
-
-                <td class="acoes">
-
-                    <a href="/correias/<%= c.id %>/editar"
-                       class="btn-mini verde-claro">
-                        <i class="fa-solid fa-pen"></i>
-                    </a>
-
-                    <form method="POST"
-                          action="/correias/<%= c.id %>/delete"
-                          onsubmit="return confirm('Excluir correia?');">
-                        <button class="btn-mini vermelho">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </form>
-
-                </td>
-            </tr>
-            <% }) %>
-
         </tbody>
     </table>
 
 </div>
 
-<div class="relatorio-actions">
-
+<div class="relatorio-actions" style="margin-top:14px;">
     <a href="/correias/relatorio" class="btn btn-verde-escuro">
         <i class="fa-solid fa-file-lines"></i> Ver Relatório
     </a>
 
-    <a href="/correias/relatorio/pdf"
-       target="_blank"
-       class="btn btn-verde-escuro">
+    <a href="/correias/relatorio/pdf" target="_blank" class="btn btn-verde-escuro">
        <i class="fa-solid fa-file-pdf"></i> Baixar PDF
     </a>
-
 </div>
 
 <%- include("./partials/rodape") %>
