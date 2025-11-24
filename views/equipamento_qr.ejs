@@ -1,39 +1,49 @@
-<td class="center">
-    <div class="actions">
+<h1 class="page-title">
+    <i class="fa-solid fa-qrcode"></i> QR Code do Equipamento
+</h1>
 
-        <a href="/equipamentos/<%= e.id %>/editar"
-           class="btn-edit"
-           title="Editar">
-            <i class="fa-solid fa-pen"></i>
+<div class="card" style="text-align:center;">
+
+    <h2 style="color:#0b5e33; font-weight:800; margin-bottom:12px;">
+        <%= equipamento.nome %>
+    </h2>
+
+    <img src="<%= qr %>" 
+         alt="QR Code" 
+         style="width:260px; height:260px; margin:20px auto; display:block;">
+
+    <p style="margin-top:10px; font-size:14px; opacity:0.8;">
+        Link destino:
+    </p>
+
+    <div style="
+        background:#f7fff8;
+        padding:10px;
+        border-radius:10px;
+        margin-bottom:25px;
+        word-break: break-all;
+        border:1px solid #d1e7dd;
+    ">
+        <%= url %>
+    </div>
+
+    <div class="actions" style="margin-top:20px;">
+
+        <a href="/equipamentos/<%= equipamento.id %>" class="btn-edit btn-stack">
+            <i class="fa-solid fa-eye"></i>
+            <span class="btn-label">Ver</span>
         </a>
 
-        <a href="/equipamentos/<%= e.id %>/qrcode"
-           class="btn-qr"
-           title="QR Code">
-            <i class="fa-solid fa-qrcode"></i>
+        <a href="/equipamentos" class="btn-qr btn-stack">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span class="btn-label">Voltar</span>
         </a>
 
-        <a href="/equipamentos/<%= e.id %>/historico"
-           class="btn-history"
-           title="Histórico">
-            <i class="fa-solid fa-clock-rotate-left"></i>
+        <a href="/equipamentos/<%= equipamento.id %>/menu" class="btn-history btn-stack">
+            <i class="fa-solid fa-bars"></i>
+            <span class="btn-label">Menu</span>
         </a>
-
-        <a href="/equipamentos/<%= e.id %>/correias"
-           class="btn-history"
-           style="background:#b7e4c7;"
-           title="Correias">
-            <i class="fa-solid fa-gears"></i>
-        </a>
-
-        <form method="POST"
-              action="/equipamentos/<%= e.id %>/delete"
-              onsubmit="return confirm('Remover equipamento?');"
-              style="display:inline;">
-            <button class="btn-delete" title="Excluir">
-                <i class="fa-solid fa-trash"></i>
-            </button>
-        </form>
 
     </div>
-</td>
+
+</div>
