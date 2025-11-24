@@ -1,0 +1,66 @@
+<%- include("./partials/cabecalho") %>
+
+<h1 class="page-title">
+    <i class="fa-solid fa-boxes-stacked"></i>
+    Relatório de Equipamentos
+</h1>
+
+<div class="card tabela-card">
+
+    <div class="info-relatorio">
+        <p><strong>Gerado em:</strong> <%= dataGeracao %></p>
+        <p><strong>Total de equipamentos:</strong> <%= equipamentos.length %></p>
+    </div>
+
+    <table class="tabela">
+        <thead>
+            <tr>
+                <th style="width:60px;">ID</th>
+                <th>Nome</th>
+                <th>Modelo</th>
+                <th>Localização</th>
+                <th>Código</th>
+                <th style="width:120px;">Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% if (equipamentos.length === 0) { %>
+                <tr>
+                    <td colspan="6" class="empty">Nenhum equipamento cadastrado.</td>
+                </tr>
+            <% } %>
+
+            <% equipamentos.forEach(eq => { %>
+                <tr>
+                    <td><%= eq.id %></td>
+                    <td><%= eq.nome %></td>
+                    <td><%= eq.modelo || '-' %></td>
+                    <td><%= eq.localizacao || '-' %></td>
+                    <td><%= eq.codigo || '-' %></td>
+                    <td class="acoes">
+                        <a href="/equipamentos/<%= eq.id %>" class="btn-mini cinza-claro" title="Ver">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a href="/equipamentos/<%= eq.id %>/editar" class="btn-mini verde-claro" title="Editar">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+</div>
+
+<div class="relatorio-actions">
+    <a href="/equipamentos/relatorio/pdf" target="_blank" class="btn btn-verde-escuro">
+        <i class="fa-solid fa-file-pdf"></i> Baixar PDF
+    </a>
+
+    <a href="/equipamentos" class="btn btn-cinza-escuro">
+        ← Voltar
+    </a>
+</div>
+
+<%- include("./partials/rodape") %>
