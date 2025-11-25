@@ -1047,22 +1047,19 @@ app.get('/solicitacao/pdf/:id', authRequired, async (req, res) => {
 app.get('/', authRequired, async (req, res) => {
   try {
     // Totais
-    const totalEquipRow = await getAsync(`SELECT COUNT(*) AS c FROM equipamentos`);
-    const totalAbertasRow = await getAsync(`SELECT COUNT(*) AS c FROM ordens WHERE status='aberta'`);
-    const totalFechadasRow = await getAsync(`SELECT COUNT(*) AS c FROM ordens WHERE status='fechada'`);
-    const correiasCountRow = await getAsync(`SELECT COUNT(*) AS c FROM correias`);
-    // técnicos: se não tiver tabela, mantém 0 (ajuste conforme sua estrutura)
-    const tecnicosCount = 0;
+    const totalEquip = await getAsync(`SELECT COUNT(*) AS c FROM equipamentos`);
+    const totalAbertas = await getAsync(`SELECT COUNT(*) AS c FROM ordens WHERE status='aberta'`);
+    const totalFechadas = await getAsync(`SELECT COUNT(*) AS c FROM ordens WHERE status='fechada'`);
+    const totalCorreias = await getAsync(`SELECT SUM(quantidade) AS total FROM correias`);
 
     const totais = {
-      equipamentos: totalEquipRow?.c || 0,
-      abertas: totalAbertasRow?.c || 0,
-      fechadas: totalFechadasRow?.c || 0,
-      correias: correiasCountRow?.c || 0,
-      tecnicos: tecnicosCount
+      equipamentos: totalEquip?.c || 0,
+      abertas: totalAbertas?.c || 0,
+      fechadas: totalFechadas?.c || 0,
+      correias: totalCorreias?.total || 0
     };
 
-    // Últimas ordens (para listar, se quiser)
+    // Últimas ordens
     const ultimas = await allAsync(`
       SELECT o.*, e.nome AS equipamento_nome
       FROM ordens o
@@ -1071,40 +1068,37 @@ app.get('/', authRequired, async (req, res) => {
       LIMIT 6
     `);
 
-    // Ordens por tipo (para o gráfico de pizza)
-    const tiposRows = await allAsync(`
+    // ORDENS POR TIPO — formato ARRAY para o gráfico
+    const tipos = await allAsync(`
       SELECT tipo, COUNT(*) AS total
       FROM ordens
       GROUP BY tipo
     `);
-    // transformar em objeto { tipo: total }
-    const ordensPorTipo = {};
-    tiposRows.forEach(r => { ordensPorTipo[r.tipo || '—'] = r.total; });
 
-    // Top 10 correias (para gráfico horizontal)
-    const correiasTopRows = await allAsync(`
-      SELECT nome, quantidade
+    // TOP 10 CORREIAS — formato ARRAY para gráfico
+    const correiasTop = await allAsync(`
+      SELECT nome, quantidade AS total
       FROM correias
-      ORDER BY quantidade DESC
+      ORDER BY total DESC
       LIMIT 10
     `);
-    const correiasTop = {};
-    correiasTopRows.forEach(r => { correiasTop[r.nome] = r.quantidade; });
 
-    // Dados prontos para o template
+    // Renderizar dashboard
     res.render('dashboard', {
       active: 'dashboard',
       totais,
       ultimas,
-      ordensPorTipo,   // objeto
-      correiasTop,     // objeto
-      chartjs: true    // faz o layout incluir Chart.js
+      tipos,          // array certo
+      correiasTop,    // array certo
+      chartjs: true
     });
+
   } catch (err) {
-    console.error('Erro ao carregar dashboard:', err);
-    res.send('Erro ao carregar dashboard.');
+    console.error("Erro ao carregar dashboard:", err);
+    res.send("Erro ao carregar dashboard.");
   }
 });
+
 
 
 // =====================================================
