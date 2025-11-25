@@ -953,12 +953,14 @@ app.post('/ordens/:id/fechar', upload.array('fotos', 10), async (req, res) => {
 });
 
 // -------------------------------------------------------
-// PDF COMPLETO DA OS (com fotos antes e depois)
+// PDF PROFISSIONAL DA OS (separado: abertura e fechamento)
 // -------------------------------------------------------
 app.get('/solicitacao/pdf/:id', authRequired, async (req, res) => {
   try {
     const ordem = await getAsync(`
-      SELECT o.*, e.nome AS equipamento_nome, e.codigo AS equipamento_codigo
+      SELECT o.*, 
+             e.nome AS equipamento_nome,
+             e.codigo AS equipamento_codigo
       FROM ordens o
       LEFT JOIN equipamentos e ON e.id = o.equipamento_id
       WHERE o.id = ?
@@ -983,44 +985,87 @@ app.get('/solicitacao/pdf/:id', authRequired, async (req, res) => {
 
     doc.pipe(res);
 
-    // Cabeçalho
-    doc.fontSize(20).text('Ordem de Serviço (OS)', { align: 'center' });
-    doc.moveDown();
+    // -------------------------
+    // CABEÇALHO E DADOS DA OS
+    --------------------------
+    doc.fontSize(22).text('Ordem de Serviço (OS)', { align: 'center' });
+    doc.moveDown(2);
 
-    doc.fontSize(12).text(`ID da OS: ${ordem.id}`);
+    doc.fontSize(13).text(`ID da OS: ${ordem.id}`);
     doc.text(`Solicitante: ${ordem.solicitante}`);
-    doc.text(`Equipamento: ${ordem.equipamento_nome} (${ordem.equipamento_codigo || 'sem código'})`);
+    doc.text(`Equipamento: ${ordem.equipamento_nome} (${ordem.equipamento_codigo || '-'})`);
     doc.text(`Tipo: ${ordem.tipo}`);
     doc.text(`Aberta em: ${ordem.aberta_em}`);
-    doc.moveDown();
-
-    doc.text('Descrição:');
-    doc.fontSize(11).text(ordem.descricao, { indent: 14 });
-    doc.moveDown();
-
-    doc.fontSize(12).text(`Status: ${ordem.status}`);
     if (ordem.status === 'fechada') {
       doc.text(`Fechada em: ${ordem.fechada_em}`);
-      doc.text(`Resultado:`);
-      doc.fontSize(11).text(ordem.resultado, { indent: 14 });
+    }
+    doc.moveDown();
+
+    doc.fontSize(12).text("Descrição:");
+    doc.fontSize(11).text(ordem.descricao || "-", { indent: 15 });
+    doc.moveDown(1.5);
+
+    if (ordem.status === 'fechada') {
+      doc.fontSize(12).text("Resultado:");
+      doc.fontSize(11).text(ordem.resultado || "-", { indent: 15 });
     }
 
-    // Fotos
-    if (fotos.length > 0) {
-      doc.addPage();
-      doc.fontSize(16).text('Fotos da OS', { align: 'center' });
-      doc.moveDown(2);
+    // -------------------------
+    // FOTOS — separadas
+    // -------------------------
+    const abertura = fotos.filter(f => f.tipo === "abertura");
+    const fechamento = fotos.filter(f => f.tipo === "fechamento");
 
-      for (const foto of fotos) {
-        doc.fontSize(12).text(foto.tipo === 'abertura' ? 'Abertura' : 'Fechamento');
+    // Forçar nova página
+    doc.addPage();
+
+    // ======== ABERTURA ========
+    doc.fontSize(18).text("📌 Fotos de Abertura", { underline: true });
+    doc.moveDown(1);
+
+    if (abertura.length === 0) {
+      doc.fontSize(12).text("Nenhuma foto de abertura enviada.");
+    } else {
+      for (const foto of abertura) {
+
+        if (doc.y > 650) doc.addPage();
+
+        doc.moveDown(1);
 
         try {
           doc.image(path.join(__dirname, 'public', foto.caminho), {
-            fit: [420, 420],   // TAMANHO IDEAL
+            fit: [500, 400],
+            align: 'center',
+            valign: 'center'
+          });
+        } catch (err) {
+          doc.fontSize(10).text('(Erro ao carregar imagem)');
+        }
+
+        doc.moveDown(2);
+      }
+    }
+
+    // ======== FECHAMENTO ========
+    doc.addPage();
+    doc.fontSize(18).text("📌 Fotos de Fechamento", { underline: true });
+    doc.moveDown(1);
+
+    if (fechamento.length === 0) {
+      doc.fontSize(12).text("Nenhuma foto de fechamento enviada.");
+    } else {
+      for (const foto of fechamento) {
+
+        if (doc.y > 650) doc.addPage();
+
+        doc.moveDown(1);
+
+        try {
+          doc.image(path.join(__dirname, 'public', foto.caminho), {
+            fit: [500, 400],
             align: 'center'
           });
         } catch (err) {
-          console.log('Erro ao carregar imagem no PDF:', err);
           doc.fontSize(10).text('(Erro ao carregar imagem)');
         }
 
@@ -1034,6 +1079,7 @@ app.get('/solicitacao/pdf/:id', authRequired, async (req, res) => {
     res.send('Erro ao gerar PDF.');
   }
 });
+
 // =======================
 // RELATÓRIO DE EQUIPAMENTOS (PDF)
 // =======================
