@@ -1202,6 +1202,35 @@ app.get('/relatorios/gerar-pdf-dashboard', authRequired, async (req, res) => {
     res.status(500).send("Erro ao gerar PDF.");
   }
 });
+// =====================================================
+//  RELATÓRIOS — Página principal
+// =====================================================
+app.get('/relatorios', authRequired, async (req, res) => {
+  try {
+
+    // Totais gerais
+    const totalEquip = await getAsync(`SELECT COUNT(*) AS c FROM equipamentos`);
+    const totalOrdens = await getAsync(`SELECT COUNT(*) AS c FROM ordens`);
+    const totalAbertas = await getAsync(`SELECT COUNT(*) AS c FROM ordens WHERE status='aberta'`);
+    const totalFechadas = await getAsync(`SELECT COUNT(*) AS c FROM ordens WHERE status='fechada'`);
+    const totalCorreias = await getAsync(`SELECT COUNT(*) AS c FROM correias`);
+
+    res.render('relatorios', {
+      active: 'relatorios',
+      totais: {
+        equipamentos: totalEquip?.c || 0,
+        ordens: totalOrdens?.c || 0,
+        abertas: totalAbertas?.c || 0,
+        fechadas: totalFechadas?.c || 0,
+        correias: totalCorreias?.c || 0
+      }
+    });
+
+  } catch (err) {
+    console.error("Erro ao carregar relatórios:", err);
+    res.send("Erro ao carregar relatórios.");
+  }
+});
 
 
 // =====================================================
