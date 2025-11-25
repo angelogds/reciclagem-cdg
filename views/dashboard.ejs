@@ -1,110 +1,104 @@
+<% layout('layout') %>
+
 <h1 class="page-title"><i class="fa-solid fa-chart-pie"></i> Dashboard</h1>
 
-<!-- GRID de 4 cards (lado a lado em desktop) -->
+<!-- MÉTRICAS SUPERIORES -->
 <div class="grid-cards">
-  <div class="metric-card card">
-    <h3>Total de Equipamentos</h3>
-    <p class="metric-value"><%= totais?.equipamentos ?? 0 %></p>
-  </div>
+    <div class="metric-card card">
+        <h3>Total de Equipamentos</h3>
+        <p class="metric-value"><%= totais.equipamentos %></p>
+    </div>
 
-  <div class="metric-card card">
-    <h3>Ordens Abertas</h3>
-    <p class="metric-value"><%= totais?.abertas ?? 0 %></p>
-  </div>
+    <div class="metric-card card">
+        <h3>Ordens Abertas</h3>
+        <p class="metric-value"><%= totais.abertas %></p>
+    </div>
 
-  <div class="metric-card card">
-    <h3>Ordens Fechadas</h3>
-    <p class="metric-value"><%= totais?.fechadas ?? 0 %></p>
-  </div>
+    <div class="metric-card card">
+        <h3>Ordens Fechadas</h3>
+        <p class="metric-value"><%= totais.fechadas %></p>
+    </div>
 
-  <div class="metric-card card">
-    <h3>Total de Correias em Estoque</h3>
-    <p class="metric-value"><%= totais?.correias ?? 0 %></p>
-  </div>
+    <div class="metric-card card">
+        <h3>Total de Correias em Estoque</h3>
+        <p class="metric-value"><%= correiasCount || 0 %></p>
+    </div>
 </div>
 
-<!-- Gráficos -->
-<div class="charts-wrapper">
-
-    <div class="card chart-card chart-small">
+<!-- GRÁFICOS LADO A LADO -->
+<div class="chart-row">
+    <!-- ORDENS POR TIPO -->
+    <div class="chart-card card">
         <h2>Ordens por Tipo</h2>
         <canvas id="chartOrdensTipo"></canvas>
     </div>
 
-    <div class="card chart-card chart-small">
+    <!-- TOP 10 CORREIAS -->
+    <div class="chart-card card">
         <h2>Top 10 Correias — Estoque</h2>
         <canvas id="chartCorreias"></canvas>
     </div>
-
 </div>
 
+<!-- BOTÕES -->
 <div class="relatorio-actions">
-  <a href="/relatorios/gerar-pdf-dashboard" class="btn btn-verde-escuro">
-    <i class="fa-solid fa-file-pdf"></i> Exportar PDF do Dashboard
-  </a>
-  <a href="/relatorios" class="btn btn-cinza-escuro">Ver relatórios</a>
+    <a href="/relatorios/gerar-pdf-dashboard" class="btn btn-verde-escuro">
+        <i class="fa-solid fa-file-pdf"></i> Exportar PDF do Dashboard
+    </a>
+
+    <a href="/relatorios" class="btn btn-cinza-escuro">Ver relatórios</a>
 </div>
 
-<%- include("partials/rodape") %>
-
+<!-- SCRIPTS -->
 <script>
-  // dados passados pelo server
-  window.REL_ORDENS = <%- JSON.stringify(ordensPorTipo || {}) %>;
-  window.REL_CORREIAS = <%- JSON.stringify(correiasTop || {}) %>;
+    const REL_ORDENS = <%- JSON.stringify(tipos || []) %>;
+    const REL_CORREIAS = <%- JSON.stringify(correiasTop || []) %>;
 
-  (function(){
-    if (typeof Chart === 'undefined') {
-      console.warn('Chart.js não encontrado.');
-      return;
-    }
+    /* ---------------------
+       GRÁFICO ORDENS POR TIPO
+    ------------------------ */
+    const ordensLabels = REL_ORDENS.map(x => x.tipo);
+    const ordensValues = REL_ORDENS.map(x => x.total);
 
-    try {
-      const ordensData = window.REL_ORDENS || {};
-      const labels1 = Object.keys(ordensData);
-      const values1 = Object.values(ordensData);
-
-      const ctx1 = document.getElementById('chartOrdensTipo').getContext('2d');
-      new Chart(ctx1, {
+    new Chart(document.getElementById('chartOrdensTipo'), {
         type: 'pie',
         data: {
-          labels: labels1,
-          datasets: [{
-            data: values1,
-            borderWidth: 0
-          }]
+            labels: ordensLabels,
+            datasets: [{
+                data: ordensValues,
+                borderWidth: 0
+            }]
         },
         options: {
-          responsive: true,
-          plugins: { legend: { position: 'bottom' } }
+            responsive: true,
+            maintainAspectRatio: true,
+            devicePixelRatio: 2,
+            plugins: { legend: { position: "bottom" } }
         }
-      });
+    });
 
-      const correiasData = window.REL_CORREIAS || {};
-      const labels2 = Object.keys(correiasData);
-      const values2 = Object.values(correiasData);
+    /* ---------------------
+       GRÁFICO TOP 10 CORREIAS
+    ------------------------ */
+    const corrLabels = REL_CORREIAS.map(x => x.nome);
+    const corrValues = REL_CORREIAS.map(x => x.total);
 
-      const ctx2 = document.getElementById('chartCorreias').getContext('2d');
-      new Chart(ctx2, {
+    new Chart(document.getElementById('chartCorreias'), {
         type: 'bar',
         data: {
-          labels: labels2,
-          datasets: [{
-            label: 'Quantidade',
-            data: values2,
-            borderWidth: 0
-          }]
+            labels: corrLabels,
+            datasets: [{
+                label: "Estoque",
+                data: corrValues,
+                borderWidth: 0
+            }]
         },
         options: {
-          indexAxis: 'y',
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { beginAtZero: true }
-          }
+            responsive: true,
+            maintainAspectRatio: true,
+            devicePixelRatio: 2,
+            indexAxis: 'y',
+            plugins: { legend: { display: false } }
         }
-      });
-    } catch (e) {
-      console.warn('Erro ao inicializar gráficos do dashboard', e);
-    }
-  })();
+    });
 </script>
