@@ -14,23 +14,25 @@
 </head>
 <body>
 
-  <!-- BOTÃO DO MENU -->
-  <button id="menuToggle" class="menu-toggle smooth">
-    <img 
-      src="<%= session?.logo ? '/uploads/' + session.logo : '/img/logo_menu_256.png' %>"
-      class="menu-logo-icon"
-      onerror="this.src='/img/logo_menu_256.png'">
-  </button>
+<!-- BOTÃO DO MENU -->
+<button id="menuToggle" class="menu-toggle smooth">
+  <img 
+    src="/img/logo_menu.png"
+    class="menu-logo-icon"
+    onerror="this.src='/img/logo_menu.png'">
+</button>
+
 
   <!-- SIDEBAR -->
-  <aside id="sidebar" class="sidebar smooth">
-    <div class="logo-area">
-      <img 
-        src="<%= session?.logo ? '/uploads/' + session.logo : '/img/logo_menu_256.png' %>"
-        class="logo"
-        onerror="this.src='/img/logo_menu_256.png'">
-      <h2>Campo do Gado</h2>
-    </div>
+<aside id="sidebar" class="sidebar smooth">
+  <div class="logo-area">
+    <img 
+      src="/img/logo_manutencao.png"
+      class="logo"
+      onerror="this.src='/img/logo_manutencao.png'">
+    <h2>Campo do Gado</h2>
+  </div>
+
 
     <ul class="menu">
       <li><a href="/" class="<%= active === 'dashboard' ? 'active' : '' %>"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
