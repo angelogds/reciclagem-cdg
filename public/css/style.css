@@ -576,3 +576,19 @@ td img, .tabela td img {
         height: 360px;
     }
 }
+/* GRÁFICOS LADO A LADO */
+.chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+/* Canvas nítido */
+.chart-card canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 520px;
+    max-height: 320px;
+    margin: 0 auto;
+    display: block;
+}
