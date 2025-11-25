@@ -23,5 +23,6 @@
     "sqlite3": "^5.1.6",
     "uuid": "^9.0.0",
     "qrcode": "^1.5.3"
+    npm install chartjs-node-canvas chart.js canvas
   }
 }
