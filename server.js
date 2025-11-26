@@ -1318,7 +1318,7 @@ app.get('/relatorios', authRequired, async (req, res) => {
   }
 });
 // -------------------------------------------------------
-// PDF COMPLETO — LISTAGEM DE TODAS AS OS (PROFISSIONAL)
+// PDF COMPLETO — LISTAGEM DE TODAS AS OS (PERFEITO)
 // -------------------------------------------------------
 app.get('/relatorios/gerar-pdf-completo', authRequired, async (req, res) => {
     try {
@@ -1335,10 +1335,11 @@ app.get('/relatorios/gerar-pdf-completo', authRequired, async (req, res) => {
         FROM ordens o
         LEFT JOIN equipamentos e ON e.id = o.equipamento_id
         ORDER BY e.nome ASC,
-                 CASE WHEN o.status = 'aberta' THEN 0 ELSE 1 END,
+                 CASE WHEN o.status='aberta' THEN 0 ELSE 1 END,
                  o.id DESC
         `);
 
+        // Agrupar por equipamento
         const grupos = {};
         ordens.forEach(o => {
             if (!grupos[o.equipamento]) grupos[o.equipamento] = [];
@@ -1348,7 +1349,7 @@ app.get('/relatorios/gerar-pdf-completo', authRequired, async (req, res) => {
         const PDFDocument = require("pdfkit");
         const doc = new PDFDocument({ margin: 40 });
 
-        res.setHeader('Content-Disposition', 'attachment; filename=Relatorio_Completo_OS.pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=Relatorio_OS.pdf');
         res.setHeader('Content-Type', 'application/pdf');
 
         doc.pipe(res);
@@ -1357,12 +1358,12 @@ app.get('/relatorios/gerar-pdf-completo', authRequired, async (req, res) => {
         // LOGO + TÍTULO
         // ==============================
         try {
-            doc.image(path.join(__dirname, 'public/img/logo_campo_do_gado.png'), 40, 25, { width: 90 });
+            doc.image(path.join(__dirname, 'public/img/logo_campo_do_gado.png'), 40, 30, { width: 90 });
         } catch {}
 
         doc.fillColor('#0D6B33')
            .fontSize(22)
-           .text("Relatório Completo de Ordens de Serviço", 140, 40);
+           .text("Relatório Completo de Ordens de Serviço", 150, 40);
 
         doc.moveDown(2);
         doc.fillColor('#444')
@@ -1371,80 +1372,77 @@ app.get('/relatorios/gerar-pdf-completo', authRequired, async (req, res) => {
         doc.moveDown(2);
 
         // ==============================
-        // Função para Cabeçalho da Tabela
+        // Cabeçalho da Tabela
         // ==============================
-        function headerTable() {
+        function tableHeader(y) {
             doc.fillColor('#0D6B33')
-               .rect(40, doc.y, 515, 18)
+               .rect(40, y, 515, 20)
                .fill();
 
             doc.fillColor('#fff')
                .fontSize(11)
-               .text("ID", 45, doc.y + 3)
-               .text("Tipo", 90, doc.y + 3)
-               .text("Status", 170, doc.y + 3)
-               .text("Abertura", 250, doc.y + 3)
-               .text("Fechamento", 350, doc.y + 3)
-               .text("Técnico", 460, doc.y + 3);
+               .text("ID", 45, y + 4)
+               .text("Tipo", 90, y + 4)
+               .text("Status", 170, y + 4)
+               .text("Abertura", 245, y + 4)
+               .text("Fechamento", 330, y + 4)
+               .text("Técnico", 440, y + 4);
 
-            doc.moveDown(1.5);
-            doc.fillColor('#000');
+            return y + 25;
         }
 
         // ==============================
-        // GERAR AGRUPAMENTO POR EQUIPAMENTO
+        // Gerar PDF Equipamento por Equipamento
         // ==============================
+        let y = doc.y;
+
         for (const equip in grupos) {
 
-            // Título do Equipamento
+            // Nome do equipamento
             doc.fillColor('#0D6B33')
                .fontSize(16)
-               .text(`Equipamento: ${equip}`, { underline: true });
-            doc.moveDown(1);
+               .text(`Equipamento: ${equip}`, 40, y, { underline: true });
 
-            headerTable();
+            y += 28;
+            y = tableHeader(y);
 
             let zebra = false;
 
             for (const o of grupos[equip]) {
 
-                if (doc.y > 740) {
+                // Quebra de página
+                if (y > 750) {
                     doc.addPage();
-                    headerTable();
+                    y = 40;
+                    y = tableHeader(y);
                 }
 
-                // Linha Zebra
+                // Fundo zebra
                 if (zebra) {
-                    doc.rect(40, doc.y, 515, 18).fill('#F4F4F4');
+                    doc.rect(40, y, 515, 18).fill('#F4F4F4');
                     doc.fillColor('#000');
                 }
                 zebra = !zebra;
 
-                // Linha de Dados
-                doc.fontSize(10);
+                // Linha
+                doc.fontSize(10).fillColor('#000');
+                doc.text(o.id.toString(), 45, y + 3);
+                doc.text(o.tipo || "-", 90, y + 3);
+                doc.text(o.status || "-", 170, y + 3);
+                doc.text(o.aberta_em || "-", 245, y + 3);
+                doc.text(o.fechada_em || "-", 330, y + 3);
 
-                doc.text(o.id.toString(), 45, doc.y + 3);
-                doc.text(o.tipo || "-", 90, doc.y + 3);
-                doc.text(o.status || "-", 170, doc.y + 3);
-                doc.text(o.aberta_em || "-", 250, doc.y + 3);
-                doc.text(o.fechada_em || "-", 350, doc.y + 3);
+                // Evitar quebra torta do técnico
+                doc.text(o.solicitante || "-", 440, y + 3, { width: 100, ellipsis: true });
 
-                // Técnica → largura fixa de 80px
-                doc.text(o.solicitante || "-", 460, doc.y + 3, {
-                    width: 80,
-                    align: "left"
-                });
-
-                doc.moveDown(1.5);
+                y += 20;
             }
 
-            doc.moveDown(1);
             doc.addPage();
+            y = 40;
         }
 
-        // ==============================
-        // Rodapé Bonito
-        // ==============================
+        // RODAPÉ
         doc.fontSize(10)
            .fillColor('#777')
            .text("Campo do Gado — Sistema de Manutenção", 40, 800, { align: 'center' });
@@ -1456,6 +1454,8 @@ app.get('/relatorios/gerar-pdf-completo', authRequired, async (req, res) => {
         res.status(500).send("Erro ao gerar PDF");
     }
 });
+
+
 
 // =====================================================
 // ================== START DO SERVIDOR ================
