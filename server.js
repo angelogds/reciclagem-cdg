@@ -1324,20 +1324,22 @@ app.get('/relatorios/gerar-pdf-completo', authRequired, async (req, res) => {
     try {
 
         const ordens = await allAsync(`
-        SELECT 
-            o.id,
-            e.nome AS equipamento,
-            o.tipo,
-            o.status,
-            o.aberta_em,
-            o.fechada_em,
-            o.solicitante
-        FROM ordens o
-        LEFT JOIN equipamentos e ON e.id = o.equipamento_id
-        ORDER BY e.nome ASC,
-                 CASE WHEN o.status='aberta' THEN 0 ELSE 1 END,
-                 o.id DESC
-        `);
+    SELECT 
+        o.id,
+        e.nome AS equipamento,
+        o.tipo,
+        o.status,
+        o.aberta_em,
+        o.fechada_em,
+        o.solicitante
+    FROM ordens o
+    LEFT JOIN equipamentos e ON e.id = o.equipamento_id
+    WHERE o.aberta_em >= datetime('now', '-30 days')
+    ORDER BY e.nome ASC,
+             CASE WHEN o.status='aberta' THEN 0 ELSE 1 END,
+             o.id DESC
+`);
+
 
         const grupos = {};
         ordens.forEach(o => {
