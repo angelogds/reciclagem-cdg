@@ -1703,6 +1703,103 @@ app.get('/relatorios/gerar-pdf-completo', authRequired, async (req, res) => {
         res.status(500).send("Erro ao gerar PDF");
     }
 });
+// ----------------------------------------------------------
+// RELATÓRIO PROFISSIONAL DE EQUIPAMENTOS (COM FOTOS)
+// ----------------------------------------------------------
+app.get('/equipamentos/relatorio/pdf', authRequired, async (req, res) => {
+    try {
+        const PDFDocument = require("pdfkit");
+
+        const GREEN = "#0A5C2F";
+
+        const equipamentos = await allAsync(`
+            SELECT id, nome, codigo, local, descricao, imagem, created_at
+            FROM equipamentos
+            ORDER BY nome ASC
+        `);
+
+        const doc = new PDFDocument({ margin: 40 });
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", "inline; filename=equipamentos_relatorio.pdf");
+        doc.pipe(res);
+
+        // ---------------------- CABEÇALHO ----------------------
+        try {
+            doc.image(path.join(__dirname, "public/img/logo_campo_do_gado.png"), 40, 20, { width: 70 });
+        } catch {}
+
+        doc.fillColor(GREEN).fontSize(22)
+           .text("Relatório de Equipamentos", 120, 40);
+
+        doc.fillColor("#444").fontSize(10)
+           .text(`Gerado em: ${new Date().toLocaleString()}`, 120, 70);
+
+        doc.moveDown(3);
+
+        // ---------------------- LOOP DOS EQUIPAMENTOS ----------------------
+        let y = doc.y;
+        let zebra = false;
+
+        equipamentos.forEach(eq => {
+
+            // Nova página se estiver muito baixo
+            if (doc.y > 700) {
+                doc.addPage();
+                y = 60;
+            }
+
+            // Fundo zebra
+            const boxY = doc.y;
+            if (zebra) {
+                doc.rect(30, boxY - 4, 550, 110).fill("#F3F3F3");
+            }
+            zebra = !zebra;
+
+            // FOTO (lado esquerdo)
+            const imgPath = eq.imagem ? path.join(__dirname, "public", eq.imagem) : null;
+
+            if (imgPath && fs.existsSync(imgPath)) {
+                try {
+                    doc.image(imgPath, 40, boxY, {
+                        width: 120,
+                        height: 100,
+                        fit: [120, 100]
+                    });
+                } catch (e) {
+                    console.log("Erro ao carregar imagem:", e);
+                }
+            } else {
+                // Caixa cinza quando não existe imagem
+                doc.rect(40, boxY, 120, 100).fill("#DDDDDD");
+                doc.fillColor("#666").fontSize(10)
+                   .text("Sem imagem", 40, boxY + 40, { width: 120, align: "center" });
+            }
+
+            // TEXTO (lado direito)
+            doc.fillColor("#000").fontSize(14)
+               .text(`• ${eq.nome}`, 180, boxY + 2);
+
+            doc.fontSize(11);
+            doc.text(`Código: ${eq.codigo || "-"}`, 180, boxY + 28);
+            doc.text(`Local: ${eq.local || "-"}`, 180, boxY + 42);
+            doc.text(`Descrição: ${eq.descricao || "-"}`, 180, boxY + 56);
+            doc.text(`Criado em: ${eq.created_at || "-"}`, 180, boxY + 70);
+
+            doc.moveDown(5);
+        });
+
+        // ---------------------- RODAPÉ ----------------------
+        doc.fillColor("#777").fontSize(10)
+           .text("Campo do Gado — Sistema de Manutenção", 40, 800, { align: "center" });
+
+        doc.end();
+
+    } catch (err) {
+        console.error("ERRO RELATORIO EQUIPAMENTOS:", err);
+        res.status(500).send("Erro ao gerar relatório de equipamentos.");
+    }
+});
 
 
 // =====================================================
